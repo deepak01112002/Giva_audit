@@ -1,0 +1,218 @@
+import React from "react";
+import Box from "../../common/Box";
+import CTable from "../../common/CTable";
+import Stack from "../../common/Stack";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import EditIcon from "@mui/icons-material/Edit";
+import DownloadIcon from "@mui/icons-material/Download";
+import Button from "../../common/Button";
+import Text from "../../common/Text";
+import AppStyle from "../../utils/colors";
+import MDatePicker from "../../common/DatePicker";
+import Role from "../../utils/roles";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { FormControl, InputLabel, MenuItem , Container} from "@mui/material";
+
+export default function InternalAdminTable({
+  navigate,
+  tableData,
+  handleOnViewClick,
+  onEditClick,
+  handleOnDownlodClick,
+  role,
+  handleSelectDate,
+  handleFilter,
+  userDataLoading,
+  handleCsvClick,
+  compaignList,
+  handleCampaignChange
+}) {
+  const columns = [
+    {
+			field: 'Campaign',
+			headerName: 'Campaign Name',
+		},
+		{
+			field: 'store_code',
+			headerName: 'Store code',
+		},
+		{
+			field: 'Store',
+			headerName: 'Store Name',
+		},
+		{
+			field: 'City',
+			headerName: 'City',
+		},
+		{
+			field: 'State',
+			headerName: 'State',
+		},
+		{
+			field: 'Region',
+			headerName: 'Region',
+		},
+    {
+      field: "score",
+      headerName: "Actions",
+
+      valueGetter: (v, d) => {
+        return (
+          <>
+            {
+              <>
+                <Stack direction='row' justifyContent='space-around'>
+                  <Box sx={{ width: "20%" }}>
+                    <RemoveRedEyeIcon
+                    	sx={{
+												cursor: 'pointer',
+											}}
+                      onClick={() => {
+                        handleOnViewClick({
+                          formID: d.formId,
+                          userID: d.username,
+                        });
+                      }}
+                    />
+                  </Box>
+                  {role === Role.internalAdmin ? (
+                    <Box sx={{ width: "20%" }}>
+                      <EditIcon
+                      	sx={{
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                          onEditClick({
+                            formID: d.formId,
+                            userID: d.username,
+                          });
+                        }}
+                      />
+                    </Box>
+                  ) : null}
+                  <Box sx={{ width: "20%" }}>
+                    <DownloadIcon
+                      onClick={() => {
+                        handleOnDownlodClick({
+                          formID: d.formId,
+                          userID: d.username,
+                        });
+                      }}
+                    />
+                  </Box>
+                </Stack>
+              </>
+            }
+          </>
+        );
+      },
+    },
+  ];
+
+  return (
+
+      <div style={{ padding: "30px" }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{
+            backgroundColor: AppStyle.primaryBG,
+            padding: 2,
+            borderRadius: "10px 10px 0px 0px",
+          }}
+        >
+          <Text
+            sx={{
+              color: AppStyle.primaryText,
+              fontWeight: "bold",
+              fontSize: "1rem",
+            }}
+          >
+            Audit list
+          </Text>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Button
+              sx={{
+                backgroundColor: AppStyle.primaryText,
+                color: AppStyle.primaryBG,
+                "&:hover": {
+                  backgroundColor: AppStyle.primaryText,
+                  color: AppStyle.primaryBG,
+                },
+              }}
+              onClick={handleCsvClick}
+            >
+              Export CSV
+            </Button>
+          </Stack>
+        </Stack>
+        <Stack
+          container
+          direction="row"
+          justifyContent="flex-end"
+          spacing={2}
+          sx={{ paddingTop: "10px", paddingBottom: "10px" }}
+        >
+          <Box flex={2} sx={{ width: "20%" }}>
+            <MDatePicker
+              // value={selectedDates?.sdate ?? new Date()}
+              onChange={(date) => {
+                if (Date.parse(date)) {
+                  handleSelectDate(date, "sdate");
+                }
+              }}
+            />
+          </Box>
+          <Box flex={2}>
+            <MDatePicker
+              // value={new Date().toISOString()}
+              onChange={(date) => {
+                if (Date.parse(date)) {
+                  handleSelectDate(date, "edate");
+                }
+              }}
+            />
+          </Box>
+          <Box flex={2}>
+            <FormControl sx={{ m: 1, minWidth: "100%", width: 50 }}>
+              <InputLabel id="demo-select-small-label">Campaign</InputLabel>
+              <Select
+                sx={{ marginRight: 0 }}
+                size="big"
+                label="Compaign"
+                labelId="demo-select-small-label"
+                placeholder="Select"
+                onChange={(item)=> {
+                  handleCampaignChange(item.target.value)
+                }}
+              >
+                {compaignList?.length > 0
+                  ? compaignList.map((item, i) => {
+                      return <MenuItem value={item._id}>{item.name}</MenuItem>;
+                    })
+                  : null}
+              </Select>
+            </FormControl>
+          </Box>
+          <Box 
+            sx={{
+              alignItems: "center",
+              justifyContent: "center",
+              alignSelf : 'center'
+              // paddingTop: "1.2%",
+              
+            }}
+          >
+            <Button sx={{height: 50, width: 100}}  onClick={handleFilter}>Filter</Button>
+          </Box>
+        </Stack>
+        <CTable
+          isLoading={userDataLoading}
+          columns={columns}
+          data={tableData}
+        />
+      </div>
+
+  );
+}
