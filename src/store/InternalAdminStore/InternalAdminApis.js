@@ -10,6 +10,6 @@ export const fetchPdfDataApi = (params) => {
 };
 
 export const getCompaignListApi = (params) => {
-  return axios.get(GET_COMPAIGNS);
+  return axios.get(GET_COMPAIGNS,{params});
 };
 

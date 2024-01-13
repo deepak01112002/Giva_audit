@@ -54,7 +54,7 @@ export const getCompaign = createAsyncThunk(
   "getCompaign",
   async (payload) => {
     try {
-      const response = await getCompaignListApi();
+      const response = await getCompaignListApi(payload);
       return response?.data ?? [];
     } catch (error) {
       console.log(error);

@@ -81,7 +81,7 @@ const fetchOptions = async (opt, url) => {
 
       return { retData, extraStore: [], extraCampaign: [] };
     } else {
-      let retData = res?.data?.data?.map((item) => {
+      let retData = res?.res?.data?.data?.map((item) => {
         let wt = {
           props: {
             value: item.store_name ?? item.name,
@@ -94,10 +94,10 @@ const fetchOptions = async (opt, url) => {
         return wt;
       });
 
-      if (res?.data?.data[0]?.city) {
-        return { retData, extraStore: res?.data?.data, extraCampaign: [] };
+      if (res?.api == "/api/gmr/getStores") {
+        return { retData, extraStore: res?.res.data?.data, extraCampaign: [] };
       } else {
-        return { retData, extraCampaign: res?.data?.data, extraStore: [] };
+        return { retData, extraCampaign: res?.res?.data?.data, extraStore: [] };
       }
     }
   } catch (err) {

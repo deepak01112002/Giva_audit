@@ -31,6 +31,7 @@ const Select = (props) => {
   const onChangeInside = (e) => {
     onChange(e.target.value);
   };
+  console.log("attributes?.attributes?.contentvalue", list)
 
   return (
     <MNativeSelect

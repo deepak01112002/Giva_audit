@@ -11,7 +11,6 @@ const SelectBuilder = (attributes) => {
 			value = attributes.inputValue[attributes.attributes.props.name]['answer'] ?? null;
 		}
 	}
-
 	let drop = (attributes?.attributes?.contentvalue ?? []).map((e) => e.props.innerHTML);
 	let extraData = (attributes?.attributes?.contentvalue ?? []).map((e) => e.extraData);
 
@@ -28,7 +27,7 @@ const SelectBuilder = (attributes) => {
 	return (
 		<>
 			<InputLabel id={attributes.attributes.props.name}>{attributes.label}</InputLabel>
-			{attributes.label === 'Store Name' ? (
+			{/* {attributes.label === 'Store Name' ? (
 				<Autocomplete
 					{...defaultProps}
 					id='auto-select'
@@ -39,20 +38,19 @@ const SelectBuilder = (attributes) => {
 						attributes.handleOnChange(newValue, attributes.attributes.props.name, extraData,event);
 					}}
 				/>
-			) : (
+			) : ( */}
 				<Select
 					id={attributes.attributes.props.name}
 					placeholder={attributes.label}
 					required={attributes.attributes.props.required}
 					onChange={(e) => {
-						console.log(e);
-						attributes.handleOnChange(e, attributes.attributes.props.name, extraData);
+						attributes.handleOnChange(e, attributes.attributes.props.name, extraData, e);
 					}}
 					value={value}
 					data={drop}
 					sx={{ marginTop: '10px' }}
 				/>
-			)}
+			{/* )} */}
 		</>
 	);
 };

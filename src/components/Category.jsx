@@ -3,8 +3,7 @@ import Box from '../common/Box';
 import SelectCategory from '../common/SelectCategory';
 import Button from '../common/Button';
 export default function Category(props) {
-  const { getAllCategory, getAllSubCategory, selectedCategorary, handleOnChane } = props.data;
-  const [selectSub, setSelectSub] = useState("");
+  const { getAllCategory, getAllSubCategory, selectedCategorary, handleOnChane , selectedSubCategory, onSubmit} = props.data;
 
   return (
     <div>
@@ -12,24 +11,25 @@ export default function Category(props) {
         <SelectCategory
           label={'Category'}
           value={selectedCategorary}
-          dataKey={'catgeory'}
+          dataKey={'category'}
           onChange={(e) => {
-            handleOnChane(e.target.value)
+            handleOnChane(e.target.value, "selectedCategorary")
           }}
           options={getAllCategory}
         />
         <SelectCategory
           label={'Sub category'}
-          value={selectSub}
+          value={selectedSubCategory}
           dataKey={'category'}
           onChange={(e) => {
-            setSelectSub(e.target.value);
+            handleOnChane(e.target.value, "selectedSubCategory")
+
           }}
-          options={getAllSubCategory}
+          options={selectedCategorary ? getAllSubCategory : []}
         />
+      <Button onClick={onSubmit} disabled = {selectedSubCategory ? false : true} sx={{width : "500px", marginTop : "50px"}} size = "large" variant="contained">Continue</Button>
 
       </Box>
-      <Button variant="contained">Next</Button>
 
     </div>
   )
