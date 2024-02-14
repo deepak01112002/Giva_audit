@@ -44,7 +44,6 @@ class FormContainer extends Component {
     const userData = user["data"];
     let categoryIds = getCookie("categoryIds");
     let categoryIdsParsed = JSON.parse(categoryIds);
-    console.error("categoryIds", categoryIdsParsed);
     if (userData) {
       await this.props.getFormData({
         // username: userData['user_type'] == Role.user ? userData.username : this.props.userID ?? '',
@@ -112,9 +111,11 @@ class FormContainer extends Component {
     let buildFormData = JSON.parse(JSON.stringify(currentFormData));
     if (type === "image") {
       buildFormData[this.state.activeFormId][name]["answer"] = "image";
+      buildFormData[this.state.activeFormId][name]["imageData"] = URL.createObjectURL( new Blob([val[0]]));
+
       if (imageData.length > 0) {
         imageData.map((item, i) => {
-          if (item.name === name) {
+          if (item.name === name && item.formId === this.state.activeFormId) {
             imageData[i] = {
               image: val,
               formId: this.state.activeFormId,
@@ -443,7 +444,9 @@ class FormContainer extends Component {
     } = this.props;
     const { tabs, formContent, campaign_id } = form_data;
     const { submitFormData } = this.state;
-    console.log("form_data", this.props.form_data.extraStore);
+  
+
+    
 
     if (formDataLoading) {
       return (
@@ -501,6 +504,7 @@ class FormContainer extends Component {
             <Container>
               {activeFormId ? (
                 <Form
+                activeFormId ={activeFormId}
                   handleOnSubmit={this.handleOnSubmit}
                   handleOnPrev={this.handleOnPrev}
                   handleOnChange={this.handleOnChange}

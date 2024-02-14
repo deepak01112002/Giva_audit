@@ -12,11 +12,11 @@ export default function Form({
   handleOnChange,
   handleOnSubmit,
   handleOnPrev,
+  activeFormId
 }) {
-
   return (
     <>
-    <form onSubmit={handleOnSubmit.bind(this)}>
+    <form key={activeFormId} onSubmit={handleOnSubmit.bind(this)}>
       {formContent.map((element) => (
         <TagFieldBuilder {...element} handleOnChange={handleOnChange} inputValue={formData} />
       ))}

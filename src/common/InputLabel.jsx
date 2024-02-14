@@ -1,10 +1,10 @@
 import React from "react"
-import { InputLabel as mInputLabel } from "@mui/material"
+import { InputLabel as MInputLabel } from "@mui/material"
 
 const InputLabel = (props) => {
     return (
         <>
-            <mInputLabel {...props}/>
+            <MInputLabel {...props}/>
         </>
     )
 }

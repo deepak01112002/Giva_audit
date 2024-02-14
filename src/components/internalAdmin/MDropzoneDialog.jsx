@@ -10,11 +10,12 @@ export default function MDropzoneDialog({
   handleOnChange,
   handleClose,
   value,
+  imageValue
 }) {
   const [imgUrl, setImgUrl] = React.useState("");
 
   const onChange = (val) => {
-    var reader = new FileReader();
+    let reader = new FileReader();
 
     reader.onload = function (e) {
       setImgUrl(e.target.result);
@@ -23,6 +24,23 @@ export default function MDropzoneDialog({
     reader.readAsDataURL(val.target.files[0]);
     handleOnChange(val);
   };
+
+  const imgReader = (val) => {
+    let res = ''
+    // let reader = new FileReader();
+    // reader.onload = function (e) {
+    //   res = e.target.result;
+    // };
+    // reader.readAsDataURL(val.target.files[0]);
+    if(val){
+console.log("res",val)
+
+    return  URL.createObjectURL( new Blob([val[0]]))
+    }else{
+      return ''
+    }
+  }
+
   return (
     <div>
       {/* <DropzoneArea /> */}
@@ -42,7 +60,7 @@ export default function MDropzoneDialog({
             height: '100px'
           }}
         >
-          <img src={imgUrl ? imgUrl : value} height="100%" width="100%"  />
+          <img src={imageValue ? imageValue : value} height="100%" width="100%"  />
         </Box>
       ) : null}
       <Box

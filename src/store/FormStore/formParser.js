@@ -68,8 +68,9 @@ const getInputAttributes = (tag, e) => {
 };
 
 const fetchOptions = async (opt, url) => {
+  let res = await getOptions(url);
+
   try {
-    let res = await getOptions(url);
 
     if (opt.length > 0) {
       let retData = await Promise.all(
@@ -116,6 +117,7 @@ const getSelectAttributes = async (tag, e, isCheckbox = false) => {
   if (validation.length > 0) {
     attributes["required"] = _.get(validation[0], "required_field", false);
   }
+
 
   let { retData, extraStore, extraCampaign } = await fetchOptions(
     _.get(e, "options", []),
@@ -248,6 +250,7 @@ export const parseData = async (res) => {
   } catch (err) {
     console.log("error in catch=> ", err);
   }
+  
   
   return {
     formContent,

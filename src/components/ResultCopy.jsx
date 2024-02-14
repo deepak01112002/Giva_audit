@@ -162,7 +162,6 @@ function isURL(str) {
   // var pattern = /^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:www\.)?(?:[^\s.]+\.\S{2}|localhost[\:?\d]*)\S*$/;
   var pattern = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
-  console.log("isUrls==> ", pattern.test(str))
   return pattern.test(str);
 }
 

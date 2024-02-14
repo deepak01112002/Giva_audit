@@ -15,7 +15,6 @@ export const getFormData = createAsyncThunk("getFormData", async (payload) => {
   try {
     const response = await getFormDataApi(payload);
     const data = await parseData(response);
-    //  console.log("parsed Data", data)
     return data;
   } catch (error) {
     throw new Error(error);
@@ -118,7 +117,6 @@ export const formSlice = createSlice({
   initialState,
   reducers: {
     insertExtraVal: (state, action) => {
-      console.log("extra values", action.payload)
       state.extraValues = action.payload;
     },
     setSelectedCategoriesIds : (state, action) => {

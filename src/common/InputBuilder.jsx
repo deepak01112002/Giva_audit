@@ -9,11 +9,14 @@ import dayjs from "dayjs";
 
 const InputBuilder = (attributes) => {
   let value = "";
+  let imageValue = ""
   if (Object.keys(attributes?.inputValue).length > 0) {
 
     if(attributes?.attributes?.props?.name in attributes?.inputValue){
     value =
       attributes?.inputValue[attributes?.attributes?.props?.name]["answer"] ??
+      "";
+      imageValue = attributes?.inputValue[attributes?.attributes?.props?.name]["imageData"] ??
       "";
     }
   }
@@ -75,6 +78,7 @@ const InputBuilder = (attributes) => {
       tag = (
         <Box sx={{ marginTop: "10px" }}>
           <MDropzoneDialog
+          imageValue = {imageValue}
             value={value}
             handleOnChange={(val) => {
               try {
