@@ -96,7 +96,8 @@ class FormContainer extends Component {
     }
   }
 
-  handleOnChange = (val, name, type, event) => {
+  handleOnChange = async (val, name, type, event) => {
+    try{
     let currentFormData = this.state.submitFormData;
     let extradatatemp = this.state.extradata;
 
@@ -110,39 +111,43 @@ class FormContainer extends Component {
     }
     let buildFormData = JSON.parse(JSON.stringify(currentFormData));
     if (type === "image") {
-      buildFormData[this.state.activeFormId][name]["answer"] = "image";
+      // buildFormData[this.state.activeFormId][name]["answer"] = "image";
       buildFormData[this.state.activeFormId][name]["imageData"] = URL.createObjectURL( new Blob([val[0]]));
+      let formData = new FormData();
 
-      if (imageData.length > 0) {
-        imageData.map((item, i) => {
-          if (item.name === name && item.formId === this.state.activeFormId) {
-            imageData[i] = {
-              image: val,
-              formId: this.state.activeFormId,
-              name: name,
-              path: "",
-            };
-          } else {
-            imageData.push({
-              image: val,
-              formId: this.state.activeFormId,
-              name: name,
-              path: "",
-            });
-          }
-        });
-      } else {
-        imageData.push({
-          image: val,
-          formId: this.state.activeFormId,
-          name: name,
-          path: "",
-        });
-      }
+      formData.append("file", val[0]);
+      const imageResponse = await this.props.uploadFile(formData);
+      buildFormData[this.state.activeFormId][name]["answer"] =  imageResponse.payload.data.data.result.file.filename;
+      // if (imageData.length > 0) {
+      //   imageData.map((item, i) => {
+      //     if (item.name === name && item.formId === this.state.activeFormId) {
+      //       imageData[i] = {
+      //         image: val,
+      //         formId: this.state.activeFormId,
+      //         name: name,
+      //         path: "",
+      //       };
+      //     } else {
+      //       imageData.push({
+      //         image: val,
+      //         formId: this.state.activeFormId,
+      //         name: name,
+      //         path: "",
+      //       });
+      //     }
+      //   });
+      // } else {
+      //   imageData.push({
+      //     image: val,
+      //     formId: this.state.activeFormId,
+      //     name: name,
+      //     path: "",
+      //   });
+      // }
 
-      this.setState({
-        images: imageData,
-      });
+      // this.setState({
+      //   images: imageData,
+      // });
     } else {
       // if (name == 'store_name') {
       // 	if (type && type.length > 0) {
@@ -178,6 +183,9 @@ class FormContainer extends Component {
     this.setState({
       submitFormData: buildFormData,
     });
+  }catch(e){
+
+  }
   };
 
   handleChange = (event, newValue) => {
@@ -275,16 +283,16 @@ class FormContainer extends Component {
       if (user) {
         //file upload section
         var ourData = this.state.submitFormData;
-        await Promise.all(
-          this.state.images.map(async (val, i) => {
-            let formData = new FormData();
-            formData.append("file", val.image[0]);
-            const imageResponse = await this.props.uploadFile(formData);
-            ourData[val.formId][val.name]["answer"] =
-              imageResponse.payload.data.data.result.file.filename;
-            return;
-          })
-        );
+        // await Promise.all(
+        //   this.state.images.map(async (val, i) => {
+        //     let formData = new FormData();
+        //     formData.append("file", val.image[0]);
+        //     const imageResponse = await this.props.uploadFile(formData);
+        //     ourData[val.formId][val.name]["answer"] =
+        //       imageResponse.payload.data.data.result.file.filename;
+        //     return;
+        //   })
+        // );
         let submitFormData = JSON.parse(
           JSON.stringify(this.props.form_data.answerContent)
         );
