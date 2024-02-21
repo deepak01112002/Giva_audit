@@ -364,7 +364,7 @@ class FormContainer extends Component {
           builderData["campaign_id"] = this.props?.form_data?.campaign_id;
           builderData["store_code"] = auditAlldetail.store_code ?? "";
           builderData["region"] = auditAlldetail?.region ?? "";
-          builderData["store_name"] = auditAlldetail?.store_name ?? "";
+          builderData["store_name"] = auditAlldetail?.name ?? "";
           builderData["campaign_id"] = campaignAlldetail?._id ?? "";
           builderData["campaign_name"] = campaignAlldetail?.name ?? "";
           builderData["category_id"] =
@@ -453,7 +453,6 @@ class FormContainer extends Component {
     } = this.props;
     const { tabs, formContent, campaign_id } = form_data;
     const { submitFormData } = this.state;
-  
 
     
 
