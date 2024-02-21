@@ -33,7 +33,6 @@ export default function MDropzoneDialog({
     // };
     // reader.readAsDataURL(val.target.files[0]);
     if(val){
-console.log("res",val)
 
     return  URL.createObjectURL( new Blob([val[0]]))
     }else{

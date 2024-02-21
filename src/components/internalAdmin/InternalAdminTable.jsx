@@ -85,6 +85,8 @@ export default function InternalAdminTable({
                           onEditClick({
                             formID: d.formId,
                             userID: d.username,
+                            selectedCategorary : d.category_id,
+                            selectedSubCategory : d.sub_category_id
                           });
                         }}
                       />

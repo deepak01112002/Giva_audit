@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ResponsiveAppBar from "../../components/Appbar";
 import InternalAdminTable from "../../components/internalAdmin/InternalAdminTable";
-import { isAuth } from "../../helpers/cookies";
+import { isAuth, setCookie } from "../../helpers/cookies";
 import { axios } from "../../helpers/axios";
 import { FETCH_USER } from "../../store/InternalAdminStore/InternalAdminConstant";
 export default class InternalAdminContainer extends Component {
@@ -12,15 +12,14 @@ export default class InternalAdminContainer extends Component {
         sdate: "",
         edate: "",
         campaign_id: "",
-
       },
       csvData: "",
     };
   }
 
   componentDidMount() {
-    this.props.fetchUsers({ project_code: "audit" });
-    this.props.getCompaign()
+    this.props.fetchUsers({ project_code: "gmr" });
+    this.props.getCompaign();
   }
 
   handleOnViewClick = async (payload) => {
@@ -37,7 +36,19 @@ export default class InternalAdminContainer extends Component {
   };
 
   onEditClick = async (payload) => {
-    await this.props.setFormCreds(payload);
+    await this.props.setFormCreds({
+      formID: payload.formID,
+      userID: payload.userID,
+    });
+    setCookie('categoryIds',JSON.stringify({
+      selectedCategorary: payload.selectedCategorary,
+      selectedSubCategory: payload.selectedSubCategory,
+    }))
+
+    this.props.setSelectedCategoriesIds({
+      selectedCategorary: payload.selectedCategorary,
+      selectedSubCategory: payload.selectedSubCategory,
+    });
     this.props.navigate(`/admin/dashboard`);
   };
 
@@ -64,26 +75,26 @@ export default class InternalAdminContainer extends Component {
 
   handleCampaignChange = (value) => {
     let dates = this.state.selectedDates;
-    dates.campaign_id = value
-      this.setState({
-        selectedDates : dates
-      })
+    dates.campaign_id = value;
+    this.setState({
+      selectedDates: dates,
+    });
   };
 
   downloadFile = ({ data, fileName, fileType }) => {
-    const blob = new Blob([data], { type: fileType })
-  
-    const a = document.createElement('a')
-    a.download = fileName
-    a.href = window.URL.createObjectURL(blob)
-    const clickEvt = new MouseEvent('click', {
+    const blob = new Blob([data], { type: fileType });
+
+    const a = document.createElement("a");
+    a.download = fileName;
+    a.href = window.URL.createObjectURL(blob);
+    const clickEvt = new MouseEvent("click", {
       view: window,
       bubbles: true,
       cancelable: true,
-    })
-    a.dispatchEvent(clickEvt)
-    a.remove()
-  }
+    });
+    a.dispatchEvent(clickEvt);
+    a.remove();
+  };
 
   handleCsvClick = async (event, done) => {
     let res = await axios.get(FETCH_USER, {
@@ -95,7 +106,6 @@ export default class InternalAdminContainer extends Component {
     });
 
     if (res.status === 200) {
-
       this.downloadFile({
         data: res.data,
         fileName: "users.csv",
@@ -115,7 +125,7 @@ export default class InternalAdminContainer extends Component {
         <ResponsiveAppBar />
         <InternalAdminTable
           handleCampaignChange={this.handleCampaignChange}
-          compaignList = {this?.props?.compaignList?.data??[]}
+          compaignList={this?.props?.compaignList?.data ?? []}
           tableData={usersDataList}
           navigate={navigate}
           onEditClick={this.onEditClick}

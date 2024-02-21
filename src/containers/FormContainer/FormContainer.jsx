@@ -51,8 +51,9 @@ class FormContainer extends Component {
         sub_category_id: categoryIdsParsed.selectedSubCategory,
       });
       const { form_data } = this.props;
-      console.error("sdfskd", form_data);
       const { tabs } = form_data;
+
+
 
       if (
         this.props.formID !== undefined &&

@@ -9,6 +9,7 @@ export const fetchedUserDataParser = (res) => {
     return [];
   }
   const data = res.map((e) => {
+
     var data = {
       date: _get(e, "Date", ""),
       empcode: _get(e, "Empcode", ""),
@@ -25,6 +26,10 @@ export const fetchedUserDataParser = (res) => {
       Store: _get(e?.audit_details, "store_name", ""),
       store_code: _get(e?.audit_details, "store_code", ""),
       audit_date: _get(e?.audit_details, "audit_date", ""),
+      category_id: _get(e?.audit_details, "category_id", ""),
+      sub_category_id: _get(e?.audit_details, "sub_category_id", ""),
+
+
     };
 
     if (data.formId??"") {
