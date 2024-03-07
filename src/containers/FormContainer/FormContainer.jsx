@@ -194,6 +194,7 @@ class FormContainer extends Component {
   };
 
   getQuestinaire(data) {
+    console.log("data in questionaries", data)
     let questionaire = [];
     for (let a in data) {
       let answerData = {
@@ -224,6 +225,14 @@ class FormContainer extends Component {
         answerData["max_marks"] = 1;
       }
       if (!data[a].non_scoring) {
+
+        /* Note :  Uncomment it in future project */
+
+        // if(data[a]["options"]?.length > 0){
+        //   answerData["marks"] = data[a]["answer"]?.toLowerCase == "no" ? 0 : 1;
+        //   answerData["max_marks"] = 1;
+        // }
+
         if (
           data[a]["question"].includes("0 to 5") ||
           data[a]["question"].includes("1 to 5")
@@ -254,10 +263,11 @@ class FormContainer extends Component {
 
   getAnswerSheet = (data) => {
     let answerSheet = [];
+    
     for (let category in data) {
       let answerElement = {
         category: category,
-        questionnarie: this.getQuestinaire(data[category]),
+        questionnarie: this.getQuestinaire({...this.props.fetchSubmitData[category], ...data[category]}),
       };
       answerSheet.push(answerElement);
     }
@@ -386,6 +396,7 @@ class FormContainer extends Component {
             category_id: categoryIdsParsed.selectedCategorary,
           };
         }
+        console.log("builder data",builderData )
         var response = "";
         if (user["user_type"] == Role.user) {
           response = await this.props.submitFormData(builderData);
@@ -453,7 +464,7 @@ class FormContainer extends Component {
     } = this.props;
     const { tabs, formContent, campaign_id } = form_data;
     const { submitFormData } = this.state;
-
+console.log("submit data => ",submitFormData )
     
 
     if (formDataLoading) {
