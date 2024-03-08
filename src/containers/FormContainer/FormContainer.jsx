@@ -193,26 +193,31 @@ class FormContainer extends Component {
     this.setState({ activeFormId: newValue });
   };
 
-  getQuestinaire(data) {
-    console.log("data in questionaries", data)
+  getQuestinaire(mergedData, formData) {
     let questionaire = [];
-    for (let a in data) {
+    for (let a in mergedData) {
+      let data = {...formData[a], ...mergedData[a]}
+
+      console.log("test merged",data )
       let answerData = {
-        question: data[a]["question"],
-        answer: data[a]["answer"].toString(),
+        question: data["question"],
+        answer: data["answer"].toString(),
         label_key: a,
-        question_no: data[a]["question_no"],
+        question_no: data["question_no"],
       };
-      if (!data[a].non_scoring && Array.isArray(data[a]["answer"])) {
-        if (!data[a]["answer"].includes("None of the above")) {
-          answerData["marks"] = data[a]["answer"].length ?? 0;
+      if (!data.non_scoring && Array.isArray(data["answer"])) {
+        if (!data["answer"].includes("None of the above")) {
+          answerData["marks"] = data["answer"].length ?? 0;
         } else {
           answerData["marks"] = 0;
           answerData["answer"] = "None of the above";
         }
-        answerData["max_marks"] = data[a]["options"]?.length ?? 0;
+        answerData["max_marks"] = data["options"]?.length ?? 0;
+      }else if(!data.non_scoring && data?.type == "checkbox"){
+          answerData["marks"] = data?.marks;
+        answerData["max_marks"] = data?.max_marks?? 0;
       }
-      let tostr = data[a]["answer"].toString();
+      let tostr = data["answer"].toString();
       let rawMarks = tostr.toLowerCase();
       if (
         rawMarks == "yes" ||
@@ -224,29 +229,31 @@ class FormContainer extends Component {
         answerData["marks"] = marks;
         answerData["max_marks"] = 1;
       }
-      if (!data[a].non_scoring) {
+      if (!data.non_scoring ) {
+
+      
 
         /* Note :  Uncomment it in future project */
 
-        // if(data[a]["options"]?.length > 0){
-        //   answerData["marks"] = data[a]["answer"]?.toLowerCase == "no" ? 0 : 1;
+        // if(data["options"]?.length > 0){
+        //   answerData["marks"] = data["answer"]?.toLowerCase == "no" ? 0 : 1;
         //   answerData["max_marks"] = 1;
         // }
 
         if (
-          data[a]["question"]?.includes("0 to 5") ||
-          data[a]["question"]?.includes("1 to 5")
+          data["question"]?.includes("0 to 5") ||
+          data["question"]?.includes("1 to 5")
         ) {
           let scoreScale = "1 to 5".trim().replace(".", "").split("to");
-          answerData["marks"] = data[a]["answer"];
+          answerData["marks"] = data["answer"];
           answerData["max_marks"] = 5;
         }
-        if (data[a]["question"]?.includes("0(lowest) to 5 (highest)")) {
+        if (data["question"]?.includes("0(lowest) to 5 (highest)")) {
           // let scoreScale = "1(lowest) to 5 (highest)".trim().replace(".", "");
-          answerData["marks"] = data[a]["answer"];
+          answerData["marks"] = data["answer"];
           answerData["max_marks"] = 5;
         }
-        if (data[a].type === "date") {
+        if (data.type === "date") {
           if (answerData["answer"] === "") {
             const currentDate = new Date().toISOString().split("T")[0];
             answerData["answer"] = currentDate;
@@ -263,11 +270,14 @@ class FormContainer extends Component {
 
   getAnswerSheet = (data) => {
     let answerSheet = [];
+    console.log("this.props.fetchSubmitData", this.props.form_data.answerContent)
+    console.log("this.props.fetchSubmitData", data)
+
     
     for (let category in data) {
       let answerElement = {
         category: category,
-        questionnarie: this.getQuestinaire({...this.props.fetchSubmitData[category], ...data[category]}),
+        questionnarie: this.getQuestinaire(data[category], this.props.form_data.answerContent[category]),
       };
       answerSheet.push(answerElement);
     }

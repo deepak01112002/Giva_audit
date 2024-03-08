@@ -56,6 +56,9 @@ export const parseSubmittedData = (res) => {
       questionaire[questionData['label_key']] = {
       	answer:questionData['answer'],
         question:questionData['question'],
+        marks : questionData['marks']??0,
+        max_marks : questionData['max_marks']??0
+
         
       };
     });
