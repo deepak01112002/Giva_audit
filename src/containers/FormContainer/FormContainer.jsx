@@ -234,14 +234,14 @@ class FormContainer extends Component {
         // }
 
         if (
-          data[a]["question"].includes("0 to 5") ||
-          data[a]["question"].includes("1 to 5")
+          data[a]["question"]?.includes("0 to 5") ||
+          data[a]["question"]?.includes("1 to 5")
         ) {
           let scoreScale = "1 to 5".trim().replace(".", "").split("to");
           answerData["marks"] = data[a]["answer"];
           answerData["max_marks"] = 5;
         }
-        if (data[a]["question"].includes("0(lowest) to 5 (highest)")) {
+        if (data[a]["question"]?.includes("0(lowest) to 5 (highest)")) {
           // let scoreScale = "1(lowest) to 5 (highest)".trim().replace(".", "");
           answerData["marks"] = data[a]["answer"];
           answerData["max_marks"] = 5;
