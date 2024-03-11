@@ -16,6 +16,9 @@ export const UPDATE_AUDIT_DATA = `/${client_code}/updateAuditData`
 export const SUBMIT_AUDIT_DATA = `/${client_code}/submitTabData`
 
 
+// delete audit endpoint
+export const DELETE_AUDIT = `/${client_code}/deleteAudit/`
+
 //export const GET_COMPAIGNS = '/titan/getCampaigns'
 export const GET_COMPAIGNS = `/${client_code}/getCampaigns`
 
