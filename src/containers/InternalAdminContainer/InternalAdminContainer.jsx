@@ -35,12 +35,23 @@ export default class InternalAdminContainer extends Component {
     // ReactDOM.render(<Result />, document.getElementById('root'));
   };
 
+
+  handleOnDeleteClick = async (payload) => {
+    // console.log('handleOnDeleteClick payload',  this.props)
+    if (window.confirm('Are you sure you want to Delete this audit?')) {
+      await this.props.delete_audit(payload)
+      this.props.fetchUsers({ project_code: "audit" });
+    };
+  };
+
+
+
   onEditClick = async (payload) => {
     await this.props.setFormCreds({
       formID: payload.formID,
       userID: payload.userID,
     });
-    setCookie('categoryIds',JSON.stringify({
+    setCookie('categoryIds', JSON.stringify({
       selectedCategorary: payload.selectedCategorary,
       selectedSubCategory: payload.selectedSubCategory,
     }))
@@ -54,13 +65,9 @@ export default class InternalAdminContainer extends Component {
 
   handleSelectDate = (val, name) => {
     let dates = this.state.selectedDates;
-
     let date = new Date(val);
-
     date = date.toISOString();
-
     dates[name] = date;
-
     this.setState({
       selectedDates: dates,
     });
@@ -131,6 +138,7 @@ export default class InternalAdminContainer extends Component {
           onEditClick={this.onEditClick}
           handleOnViewClick={(val) => this.handleOnViewClick(val)}
           handleOnDownlodClick={this.handleOnDownlodClick}
+          handleOnDeleteClick={this.handleOnDeleteClick}
           role={user.data.user_type}
           handleSelectDate={this.handleSelectDate}
           handleFilter={this.handleFilter}

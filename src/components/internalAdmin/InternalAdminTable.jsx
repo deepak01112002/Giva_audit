@@ -4,6 +4,7 @@ import CTable from "../../common/CTable";
 import Stack from "../../common/Stack";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from "@mui/icons-material/Download";
 import Button from "../../common/Button";
 import Text from "../../common/Text";
@@ -25,7 +26,9 @@ export default function InternalAdminTable({
   userDataLoading,
   handleCsvClick,
   compaignList,
-  handleCampaignChange
+  handleCampaignChange,
+  handleOnDeleteClick
+
 }) {
   const columns = [
     {
@@ -93,14 +96,22 @@ export default function InternalAdminTable({
                     </Box>
                   ) : null}
                   <Box sx={{ width: "20%" }}>
-                    <DownloadIcon
-                      onClick={() => {
-                        handleOnDownlodClick({
-                          formID: d.formId,
-                          userID: d.username,
-                        });
-                      }}
-                    />
+                  {role === Role.internalAdmin ?
+											<DeleteIcon
+												sx={{ cursor: 'pointer' }}
+												onClick={() => {
+													handleOnDeleteClick(d.formId);
+												}}
+											/> :
+											<DownloadIcon
+												sx={{ cursor: 'pointer' }}
+												onClick={() => {
+													handleOnDownlodClick({
+														formID: d.formID,
+														userID: d.userID,
+													});
+												}}
+											/>}
                   </Box>
                 </Stack>
               </>

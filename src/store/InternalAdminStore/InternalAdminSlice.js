@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchPdfDataApi, fetchUsersApi, getCompaignListApi } from "./InternalAdminApis";
+import { deleteAuditApi, fetchPdfDataApi, fetchUsersApi, getCompaignListApi } from "./InternalAdminApis";
 import {
   fetchedUserDataParser,
   parseSubmittedData,
@@ -21,6 +21,25 @@ export const setFormCreds = createAsyncThunk(
   "setFormCreds",
   async (payload) => {
     return payload;
+  }
+);
+
+
+
+// delete api/gmr/deleteAudit/
+export const delete_audit = createAsyncThunk(
+  "delete_audit",
+  async (payload) => {
+    // console.log('deleteAuditLoading payload', payload)
+    try {
+      const response = await deleteAuditApi(payload);
+      // const data = parseSubmittedData(response.data);
+      alert(" Audit Deleted", response.status)
+      // console.log(' delete_audit response', response)
+      // return data;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 );
 
@@ -74,7 +93,7 @@ const initialState = {
 
   submitDataLoading: false,
 
-  compaignList : [],
+  compaignList: [],
 
   //active form where we have to redirect
   activeFormId: {
@@ -135,7 +154,20 @@ export const internalAdminSlice = createSlice({
     },
     [fetchPdfData.rejected]: (state, action) => {
       state.pdfDataLoading = false;
+    }, 
+
+    // delete audit
+    [delete_audit.pending]: (state, action) => {
+      state.deleteAuditLoading = true;
     },
+    [delete_audit.fulfilled]: (state, action) => {
+      state.submitData = action.payload;
+      state.deleteAuditLoading = false;
+    },
+    [delete_audit.rejected]: (state, action) => {
+      state.deleteAuditLoading = false;
+    }, 
+
     [setFormCreds.pending]: (state, action) => {
       state.userID = "";
       state.formID = "";
