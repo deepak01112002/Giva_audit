@@ -103,15 +103,14 @@ export default function InternalAdminTable({
 													handleOnDeleteClick(d.formId);
 												}}
 											/> :
-											<DownloadIcon
-												sx={{ cursor: 'pointer' }}
-												onClick={() => {
-													handleOnDownlodClick({
-														formID: d.formID,
-														userID: d.userID,
-													});
-												}}
-											/>}
+                      <DownloadIcon
+                      onClick={() => {
+                        handleOnDownlodClick({
+                          formID: d.formId,
+                          userID: d.username,
+                        });
+                      }}
+                    /> }
                   </Box>
                 </Stack>
               </>
