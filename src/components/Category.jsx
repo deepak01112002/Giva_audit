@@ -3,7 +3,7 @@ import Box from '../common/Box';
 import SelectCategory from '../common/SelectCategory';
 import Button from '../common/Button';
 export default function Category(props) {
-  const { getAllCategory, getAllSubCategory, selectedCategorary, handleOnChane , selectedSubCategory, onSubmit} = props.data;
+  const { getAllCategory, selectedCategorary, handleOnChane, selectedSubCategory, onSubmit } = props.data;
 
   return (
     <div>
@@ -17,7 +17,7 @@ export default function Category(props) {
           }}
           options={getAllCategory}
         />
-        <SelectCategory
+        {/* <SelectCategory
           label={'Sub category'}
           value={selectedSubCategory}
           dataKey={'category'}
@@ -26,8 +26,8 @@ export default function Category(props) {
 
           }}
           options={selectedCategorary ? getAllSubCategory : []}
-        />
-      <Button onClick={onSubmit} disabled = {selectedSubCategory ? false : true} sx={{width : "500px", marginTop : "50px"}} size = "large" variant="contained">Continue</Button>
+        /> */}
+        <Button onClick={onSubmit} disabled={selectedCategorary ? false : true} sx={{ width: "500px", marginTop: "50px" }} size="large" variant="contained">Continue</Button>
 
       </Box>
 

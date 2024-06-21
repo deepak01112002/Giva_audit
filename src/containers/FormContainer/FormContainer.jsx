@@ -37,6 +37,8 @@ class FormContainer extends Component {
   async componentDidMount() {
     await this.getFormDataApiCall();
     await this.handleInitialSubmitFormData();
+    this.props.getCompaign();
+    console.log('this?.props?.compaignList?.data ?? []', this?.props?.compaignList?.data ?? []);
   }
 
   async getFormDataApiCall() {
@@ -47,8 +49,8 @@ class FormContainer extends Component {
     if (userData) {
       await this.props.getFormData({
         // username: userData['user_type'] == Role.user ? userData.username : this.props.userID ?? '',
-        category_id: categoryIdsParsed.selectedCategorary,
-        sub_category_id: categoryIdsParsed.selectedSubCategory,
+        category_id: categoryIdsParsed?.selectedCategorary,
+        // sub_category_id: categoryIdsParsed.selectedSubCategory,
       });
       const { form_data } = this.props;
       const { tabs } = form_data;
@@ -98,95 +100,96 @@ class FormContainer extends Component {
   }
 
   handleOnChange = async (val, name, type, event) => {
-    try{
-    let currentFormData = this.state.submitFormData;
-    let extradatatemp = this.state.extradata;
+    console.log('campaignAlldetailval, name, type, event', val, name, type, event)
+    try {
+      let currentFormData = this.state.submitFormData;
+      let extradatatemp = this.state.extradata;
 
-    let imageData = this.state.images;
-    let empty =
-      currentFormData && // 👈 null and undefined check
-      Object.keys(currentFormData).length === 0 &&
-      Object.getPrototypeOf(currentFormData) === Object.prototype;
-    if (empty) {
-      currentFormData = this.props.form_data.answerContent;
-    }
-    let buildFormData = JSON.parse(JSON.stringify(currentFormData));
-    if (type === "image") {
-      // buildFormData[this.state.activeFormId][name]["answer"] = "image";
-      buildFormData[this.state.activeFormId][name]["imageData"] = URL.createObjectURL( new Blob([val[0]]));
-      let formData = new FormData();
-
-      formData.append("file", val[0]);
-      const imageResponse = await this.props.uploadFile(formData);
-      buildFormData[this.state.activeFormId][name]["answer"] =  imageResponse.payload.data.data.result.file.filename;
-      // if (imageData.length > 0) {
-      //   imageData.map((item, i) => {
-      //     if (item.name === name && item.formId === this.state.activeFormId) {
-      //       imageData[i] = {
-      //         image: val,
-      //         formId: this.state.activeFormId,
-      //         name: name,
-      //         path: "",
-      //       };
-      //     } else {
-      //       imageData.push({
-      //         image: val,
-      //         formId: this.state.activeFormId,
-      //         name: name,
-      //         path: "",
-      //       });
-      //     }
-      //   });
-      // } else {
-      //   imageData.push({
-      //     image: val,
-      //     formId: this.state.activeFormId,
-      //     name: name,
-      //     path: "",
-      //   });
-      // }
-
-      // this.setState({
-      //   images: imageData,
-      // });
-    } else {
-      // if (name == 'store_name') {
-      // 	if (type && type.length > 0) {
-      // 	      let optionIndex = event.target.dataset.optionIndex ;
-      // 		  this.setState({
-      // 			seleceStoreIndex:event.target.dataset.optionIndex
-      // 		  })
-      // 		  extradatatemp = type[optionIndex];
-      // 		  Object.keys(type[optionIndex]).map((key) => {
-      // 			if (
-      // 			  key != "store_name" &&
-      // 			  key in buildFormData[this.state.activeFormId]
-      // 			) {
-      // 			  buildFormData[this.state.activeFormId][key]["answer"] =
-      // 				type[optionIndex][key];
-      // 			}
-      // 			// this.handleOnChange(type[index][key], key)
-      // 		  });
-
-      // 	  }
-      // }
-      if (name in buildFormData[this.state.activeFormId]) {
-        buildFormData[this.state.activeFormId][name]["answer"] = val;
-      } else {
-        buildFormData[this.state.activeFormId][name] = {
-          answer: val,
-        };
+      let imageData = this.state.images;
+      let empty =
+        currentFormData && // 👈 null and undefined check
+        Object.keys(currentFormData).length === 0 &&
+        Object.getPrototypeOf(currentFormData) === Object.prototype;
+      if (empty) {
+        currentFormData = this.props.form_data.answerContent;
       }
-    }
-    this.setState({
-      extraData: extradatatemp,
-    });
-    this.setState({
-      submitFormData: buildFormData,
-    });
-  }catch(e){
+      let buildFormData = JSON.parse(JSON.stringify(currentFormData));
+      if (type === "image") {
+        // buildFormData[this.state.activeFormId][name]["answer"] = "image";
+        buildFormData[this.state.activeFormId][name]["imageData"] = URL.createObjectURL(new Blob([val[0]]));
+        let formData = new FormData();
 
-  }
+        formData.append("file", val[0]);
+        const imageResponse = await this.props.uploadFile(formData);
+        buildFormData[this.state.activeFormId][name]["answer"] = imageResponse.payload.data.data.result.file.filename;
+        // if (imageData.length > 0) {
+        //   imageData.map((item, i) => {
+        //     if (item.name === name && item.formId === this.state.activeFormId) {
+        //       imageData[i] = {
+        //         image: val,
+        //         formId: this.state.activeFormId,
+        //         name: name,
+        //         path: "",
+        //       };
+        //     } else {
+        //       imageData.push({
+        //         image: val,
+        //         formId: this.state.activeFormId,
+        //         name: name,
+        //         path: "",
+        //       });
+        //     }
+        //   });
+        // } else {
+        //   imageData.push({
+        //     image: val,
+        //     formId: this.state.activeFormId,
+        //     name: name,
+        //     path: "",
+        //   });
+        // }
+
+        // this.setState({
+        //   images: imageData,
+        // });
+      } else {
+        if (name == 'store_name') {
+        	if (type && type.length > 0) {
+        	      let optionIndex = event.target.dataset.optionIndex ;
+        		  this.setState({
+        			seleceStoreIndex:event.target.dataset.optionIndex
+        		  })
+        		  extradatatemp = type[optionIndex];
+        		  Object.keys(type[optionIndex]).map((key) => {
+        			if (
+        			  key != "store_name" &&
+        			  key in buildFormData[this.state.activeFormId]
+        			) {
+        			  buildFormData[this.state.activeFormId][key]["answer"] =
+        				type[optionIndex][key];
+        			}
+        			// this.handleOnChange(type[index][key], key)
+        		  });
+
+        	  }
+        }
+        if (name in buildFormData[this.state.activeFormId]) {
+          buildFormData[this.state.activeFormId][name]["answer"] = val;
+        } else {
+          buildFormData[this.state.activeFormId][name] = {
+            answer: val,
+          };
+        }
+      }
+      this.setState({
+        extraData: extradatatemp,
+      });
+      this.setState({
+        submitFormData: buildFormData,
+      });
+    } catch (e) {
+
+    }
   };
 
   handleChange = (event, newValue) => {
@@ -196,9 +199,9 @@ class FormContainer extends Component {
   getQuestinaire(mergedData, formData) {
     let questionaire = [];
     for (let a in mergedData) {
-      let data = {...formData[a], ...mergedData[a]}
+      let data = { ...formData[a], ...mergedData[a] }
 
-      console.log("test merged",data )
+      console.log("test merged", data)
       let answerData = {
         question: data["question"],
         answer: data["answer"].toString(),
@@ -213,9 +216,9 @@ class FormContainer extends Component {
           answerData["answer"] = "None of the above";
         }
         answerData["max_marks"] = data["options"]?.length ?? 0;
-      }else if(!data.non_scoring && data?.type == "checkbox"){
-          answerData["marks"] = data?.marks;
-        answerData["max_marks"] = data?.max_marks?? 0;
+      } else if (!data.non_scoring && data?.type == "checkbox") {
+        answerData["marks"] = data?.marks;
+        answerData["max_marks"] = data?.max_marks ?? 0;
       }
       let tostr = data["answer"].toString();
       let rawMarks = tostr.toLowerCase();
@@ -229,9 +232,9 @@ class FormContainer extends Component {
         answerData["marks"] = marks;
         answerData["max_marks"] = 1;
       }
-      if (!data.non_scoring ) {
+      if (!data.non_scoring) {
 
-      
+
 
         /* Note :  Uncomment it in future project */
 
@@ -273,7 +276,7 @@ class FormContainer extends Component {
     console.log("this.props.fetchSubmitData", this.props.form_data.answerContent)
     console.log("this.props.fetchSubmitData", data)
 
-    
+
     for (let category in data) {
       let answerElement = {
         category: category,
@@ -323,7 +326,8 @@ class FormContainer extends Component {
 
         let auditAlldetail = {};
         let allStores = this.props.form_data.extraStore;
-        let allCampaign = this.props.form_data.extraCampaign;
+        let allCampaign = this?.props?.compaignList?.data ?? [];
+        // let allCampaign = this.props.form_data.extraCampaign;
         let campaignAlldetail = {};
 
         if (this.state.seleceStoreIndex) {
@@ -370,10 +374,9 @@ class FormContainer extends Component {
             campaignAlldetail = allCampaign[cIndex];
           }
         }
-
         let categoryIds = getCookie("categoryIds");
         let categoryIdsParsed = JSON.parse(categoryIds);
-		
+
 
         user = user["data"];
         let builderData = {};
@@ -389,11 +392,11 @@ class FormContainer extends Component {
           builderData["campaign_name"] = campaignAlldetail?.name ?? "";
           builderData["category_id"] =
             categoryIdsParsed?.selectedCategorary ?? "";
-          builderData["sub_category_id"] =
-            categoryIdsParsed?.selectedSubCategory;
+          // builderData["sub_category_id"] =
+          //   categoryIdsParsed?.selectedSubCategory;
         } else {
           builderData = {
-            sub_category_id: categoryIdsParsed.selectedSubCategory,
+            // sub_category_id: categoryIdsParsed.selectedSubCategory,
             loginid: user.username,
             project_code: user.project_code,
             username: user.name,
@@ -406,11 +409,11 @@ class FormContainer extends Component {
             category_id: categoryIdsParsed.selectedCategorary,
           };
         }
-        console.log("builder data",builderData )
+        console.log("builder data", builderData)
         var response = "";
         if (user["user_type"] == Role.user) {
-          response = await this.props.submitFormData(builderData);
-          if (response.payload.status === 200) {
+      //    response = await this.props.submitFormData(builderData);
+          if (response?.payload?.status === 200) {
             this.setState({
               snackBarOpen: true,
               snackbarMsg: "Form submitted successfully",
@@ -474,8 +477,8 @@ class FormContainer extends Component {
     } = this.props;
     const { tabs, formContent, campaign_id } = form_data;
     const { submitFormData } = this.state;
-console.log("submit data => ",submitFormData )
-    
+    console.log("submit data => ", submitFormData)
+
 
     if (formDataLoading) {
       return (
@@ -491,7 +494,9 @@ console.log("submit data => ",submitFormData )
         </>
       );
     }
-
+    let allStores = this.props.form_data.extraStore;
+    let allCampaign = this.props.form_data.extraCampaign;
+    console.log(' allStores',allStores,'allCampaignallCampaign', allCampaign)
     return (
       <>
         <Stack>
@@ -533,7 +538,7 @@ console.log("submit data => ",submitFormData )
             <Container>
               {activeFormId ? (
                 <Form
-                activeFormId ={activeFormId}
+                  activeFormId={activeFormId}
                   handleOnSubmit={this.handleOnSubmit}
                   handleOnPrev={this.handleOnPrev}
                   handleOnChange={this.handleOnChange}

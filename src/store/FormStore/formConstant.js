@@ -1,6 +1,6 @@
 
 let data  = JSON.parse(localStorage.getItem("user"));
-let client_code = data?.data?.client_code ? data?.data?.client_code : 'sleep' ;
+let client_code = 'samsungvm' ;
 
 
 

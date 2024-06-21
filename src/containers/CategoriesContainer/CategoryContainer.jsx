@@ -8,7 +8,6 @@ import { setCookie } from "../../helpers/cookies";
 class CategoryContainer extends Component {
   state = {
     selectedCategorary: "",
-    selectedSubCategory: "",
   };
 
   componentDidMount() {
@@ -19,11 +18,7 @@ class CategoryContainer extends Component {
     stateValues[name] = id;
     this.setState(stateValues);
     setCookie('categoryIds',JSON.stringify(stateValues))
-    if (name === "selectedCategorary") {
-      this.props.getAllSubCategory({
-        category_id: id,
-      });
-    }
+    
     this.props.setSelectedCategoriesIds(stateValues);
   };
 
@@ -41,10 +36,8 @@ class CategoryContainer extends Component {
         <Category
           data={{
             getAllCategory: this.props.storeAllCategory,
-            getAllSubCategory: this.props.storeAllSubCategory,
             selectedCategorary: this.state.selectedCategorary,
             handleOnChane: this.handleCategoryChange,
-            selectedSubCategory: this.state.selectedSubCategory,
             onSubmit: this.onSubmit,
           }}
         />

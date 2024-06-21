@@ -45,7 +45,6 @@ export const getOptions = async (payload) => {
 		let categoryIdsParsed =JSON.parse(categoryIds);
    let params= {
       category_id : categoryIdsParsed.selectedCategorary,
-      sub_category_id :categoryIdsParsed.selectedSubCategory
     }
   
   if (payload && payload.host) {

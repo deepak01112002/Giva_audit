@@ -1,7 +1,9 @@
 
 
 let data  = JSON.parse(localStorage.getItem("user"));
-let client_code = data?.data?.client_code ? data?.data?.client_code : 'sleep' ;
+//let client_code = data?.data?.client_code ? data?.data?.client_code : 'sleep' ;
+
+let client_code = 'samsungvm';
 
 // export const FETCH_USER = '/titan/fetchUsers'
 export const FETCH_USER =`/${client_code}/fetchUsers`

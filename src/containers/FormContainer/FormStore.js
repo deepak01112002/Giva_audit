@@ -8,10 +8,12 @@ import {
 } from "../../store/FormStore/formSlice";
 import {
   fetchSubmitData,
+  getCompaign,
   setFormCreds,
 } from "../../store/InternalAdminStore/InternalAdminSlice";
 
 const mapStateToProps = (state) => {
+  console.log('state statestate', state)
   return {
     form_data: state.formData.form_data,
     formDataLoading: state.formData.form_data_loading,
@@ -27,6 +29,7 @@ const mapStateToProps = (state) => {
     fileUploadLoading: state.formData.file_upload_loading,
     extraValues: state.formData.extraValues,
     selectedCategoriesIds: state.formData.selectedCategoriesIds,
+    compaignList: state.internalAdmin.compaignList,
   };
 };
 
@@ -39,6 +42,7 @@ const mapDispatchToProps = (dispatch) =>
       setFormCreds: setFormCreds,
       updateFormData: updateFormData,
       uploadFile: uploadFile,
+      getCompaign : getCompaign, 
     },
     dispatch
   );
