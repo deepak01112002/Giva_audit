@@ -412,7 +412,7 @@ class FormContainer extends Component {
         console.log("builder data", builderData)
         var response = "";
         if (user["user_type"] == Role.user) {
-      //    response = await this.props.submitFormData(builderData);
+         response = await this.props.submitFormData(builderData);
           if (response?.payload?.status === 200) {
             this.setState({
               snackBarOpen: true,
