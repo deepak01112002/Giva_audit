@@ -38,7 +38,7 @@ class FormContainer extends Component {
     await this.getFormDataApiCall();
     await this.handleInitialSubmitFormData();
     this.props.getCompaign();
-    console.log('this?.props?.compaignList?.data ?? []', this?.props?.compaignList?.data ?? []);
+
   }
 
   async getFormDataApiCall() {
@@ -100,7 +100,7 @@ class FormContainer extends Component {
   }
 
   handleOnChange = async (val, name, type, event) => {
-    console.log('campaignAlldetailval, name, type, event', val, name, type, event)
+
     try {
       let currentFormData = this.state.submitFormData;
       let extradatatemp = this.state.extradata;
@@ -201,7 +201,7 @@ class FormContainer extends Component {
     for (let a in mergedData) {
       let data = { ...formData[a], ...mergedData[a] }
 
-      console.log("test merged", data)
+
       let answerData = {
         question: data["question"],
         answer: data["answer"].toString(),
@@ -273,9 +273,7 @@ class FormContainer extends Component {
 
   getAnswerSheet = (data) => {
     let answerSheet = [];
-    console.log("this.props.fetchSubmitData", this.props.form_data.answerContent)
-    console.log("this.props.fetchSubmitData", data)
-
+ 
 
     for (let category in data) {
       let answerElement = {
@@ -348,8 +346,9 @@ class FormContainer extends Component {
             campaignAlldetail = allCampaign[cIndex];
           }
         } else {
+ 
           let index = allStores.findIndex(
-            (item) => item.name.trim().toLowerCase() == audit_detail.store_name.answer.trim().toLowerCase()
+            (item) => item.store_name?.trim()?.toLowerCase() == audit_detail.store_name.answer?.trim()?.toLowerCase()
           );
 
           let cIndex = allCampaign.findIndex(
@@ -387,7 +386,7 @@ class FormContainer extends Component {
           builderData["campaign_id"] = this.props?.form_data?.campaign_id;
           builderData["store_code"] = auditAlldetail.store_code ?? "";
           builderData["region"] = auditAlldetail?.region ?? "";
-          builderData["store_name"] = auditAlldetail?.name ?? "";
+          builderData["store_name"] = auditAlldetail?.store_name ?? "";
           builderData["campaign_id"] = campaignAlldetail?._id ?? "";
           builderData["campaign_name"] = campaignAlldetail?.name ?? "";
           builderData["category_id"] =
@@ -402,14 +401,14 @@ class FormContainer extends Component {
             username: user.name,
             module_code: this.props.module_code,
             multitab_data: this.getAnswerSheet(ourData),
-            store_name: auditAlldetail?.name ?? "",
+            store_name: auditAlldetail?.store_name ?? "",
             region: auditAlldetail?.region ?? "",
             campaign_id: campaignAlldetail?._id ?? "",
             campaign_name: campaignAlldetail?.name ?? "",
             category_id: categoryIdsParsed.selectedCategorary,
           };
         }
-        console.log("builder data", builderData)
+
         var response = "";
         if (user["user_type"] == Role.user) {
          response = await this.props.submitFormData(builderData);
@@ -477,8 +476,7 @@ class FormContainer extends Component {
     } = this.props;
     const { tabs, formContent, campaign_id } = form_data;
     const { submitFormData } = this.state;
-    console.log("submit data => ", submitFormData)
-
+  
 
     if (formDataLoading) {
       return (
@@ -494,9 +492,7 @@ class FormContainer extends Component {
         </>
       );
     }
-    let allStores = this.props.form_data.extraStore;
-    let allCampaign = this.props.form_data.extraCampaign;
-    console.log(' allStores',allStores,'allCampaignallCampaign', allCampaign)
+ 
     return (
       <>
         <Stack>

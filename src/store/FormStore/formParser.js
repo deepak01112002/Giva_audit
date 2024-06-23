@@ -95,7 +95,7 @@ const fetchOptions = async (opt, url) => {
         return wt;
       });
 
-      if (res?.api == "/api/gmr/getStores") {
+      if (res?.api == "/api/samsungvm/getStores") {
         return { retData, extraStore: res?.res.data?.data, extraCampaign: [] };
       } else {
         return { retData, extraCampaign: res?.res?.data?.data, extraStore: [] };
