@@ -1,4 +1,4 @@
-# test-forms
+# forms-samsung
 
 
 
@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.com/ankit.kushwaha/test-forms.git
+git remote add origin https://gitlab.com/ankit.kushwaha/forms-samsung.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.com/ankit.kushwaha/test-forms/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.com/ankit.kushwaha/forms-samsung/-/settings/integrations)
 
 ## Collaborate with your team
 
