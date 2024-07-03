@@ -86,7 +86,7 @@ const fetchOptions = async (opt, url) => {
         let wt = {
           props: {
             value:  item.store_name ?? item.name,
-            innerHTML: item.store_code? `${item.store_name} (${item.store_code})`: item.store_name ?? item.name,
+            innerHTML:item.store_name ?? item.name,
           },
           isClosing: true,
           extraData: item,

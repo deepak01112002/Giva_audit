@@ -13,32 +13,38 @@ const SelectBuilder = (attributes) => {
 	}
 	let drop = (attributes?.attributes?.contentvalue ?? []).map((e) => e.props.innerHTML);
 	let extraData = (attributes?.attributes?.contentvalue ?? []).map((e) => e.extraData);
-
+	let onlyLabel = []
 	let storeCode = (attributes?.attributes?.contentvalue ?? []).map((e) => {
-		let concatenatedValue = e?.extraData?.store_name + ' - ' + e?.extraData?.store_code;
+		onlyLabel.push(e?.extraData?.store_name + ' - ' + e?.extraData?.store_code);
+		let concatenatedValue = e?.extraData?.store_name;
 		return concatenatedValue;
 	});
 
+
+
 	const defaultProps = {
 		options: storeCode,
-		getOptionLabel: (option) => option,
+		getOptionLabel: (option) => {
+			let res = attributes?.attributes?.contentvalue.find((e) => e?.extraData?.store_name == option)
+			return res?.extraData?.store_name + ' - ' + res?.extraData?.store_code;
+		},
 	};
-
 	return (
 		<>
 			<InputLabel id={attributes.attributes.props.name}>{attributes.label}</InputLabel>
-			{/* {attributes.label === 'Store Name' ? (
+			{attributes.label === 'Store Name' ? (
 				<Autocomplete
 					{...defaultProps}
 					id='auto-select'
 					autoSelect
 					value={value}
+					// value={valueAutofill}
 					renderInput={(params) => <TextField {...params} label={attributes.label} variant='standard' />}
 					onChange={(event, newValue) => {
-						attributes.handleOnChange(newValue, attributes.attributes.props.name, extraData,event);
+						attributes.handleOnChange(newValue, attributes.attributes.props.name, extraData, event);
 					}}
 				/>
-			) : ( */}
+			) : (
 				<Select
 					id={attributes.attributes.props.name}
 					placeholder={attributes.label}
@@ -50,7 +56,7 @@ const SelectBuilder = (attributes) => {
 					data={drop}
 					sx={{ marginTop: '10px' }}
 				/>
-			{/* )} */}
+			)}
 		</>
 	);
 };
