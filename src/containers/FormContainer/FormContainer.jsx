@@ -37,7 +37,6 @@ class FormContainer extends Component {
   async componentDidMount() {
     await this.getFormDataApiCall();
     await this.handleInitialSubmitFormData();
-    this.props.getCompaign();
 
   }
 
@@ -99,7 +98,7 @@ class FormContainer extends Component {
     }
   }
 
-  handleOnChange = async (val, name, type, event) => {
+  handleOnChange = async (val, name, type, event) =>  {
 
     try {
       let currentFormData = this.state.submitFormData;
@@ -155,9 +154,9 @@ class FormContainer extends Component {
       } else {
         if (name == 'store_name') {
         	if (type && type.length > 0) {
-        	      let optionIndex = event.target.dataset.optionIndex ;
+        	      let optionIndex = event?.target?.dataset?.optionIndex ;
         		  this.setState({
-        			seleceStoreIndex:event.target.dataset.optionIndex
+        			seleceStoreIndex: event?.target?.dataset?.optionIndex
         		  })
         		  extradatatemp = type[optionIndex];
         		  Object.keys(type[optionIndex]).map((key) => {
@@ -318,26 +317,25 @@ class FormContainer extends Component {
         let submitFormData = JSON.parse(
           JSON.stringify(this.props.form_data.answerContent)
         );
-        const dynamicKey = Object.keys(submitFormData)[0];
-
-        let audit_detail = ourData[dynamicKey];
+        
+        let firstPositionForm = this.props.form_data.tabs[0].id
+        let audit_detail = ourData[firstPositionForm];
 
         let auditAlldetail = {};
         let allStores = this.props.form_data.extraStore;
-        let allCampaign = this?.props?.compaignList?.data ?? [];
-        // let allCampaign = this.props.form_data.extraCampaign;
+        // let allCampaign = this?.props?.compaignList?.data ?? [];
+        let allCampaign = this.props.form_data.extraCampaign;
         let campaignAlldetail = {};
 
         if (this.state.seleceStoreIndex) {
           // let index = this.state.seleceStoreIndex;
-
+          
           let cIndex = allCampaign.findIndex(
-            (item) => item.name == audit_detail.campaign_name.answer
+            (item) => item.name == audit_detail?.campaign_name.answer
           );
           let index = allStores.findIndex(
-            (item) => item.name == audit_detail.store_name.answer
+            (item) => item.store_name == audit_detail?.store_name?.answer
           );
-
           if (index != -1) {
             auditAlldetail = allStores[index];
           }
