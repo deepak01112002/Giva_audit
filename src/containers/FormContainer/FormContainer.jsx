@@ -211,14 +211,16 @@ class FormContainer extends Component {
         if (!data["answer"].includes("None of the above")) {
           answerData["marks"] = data["answer"].length ?? 0;
         } else {
-          answerData["marks"] = 0;
+          // answerData["marks"] = 0;
           answerData["answer"] = "None of the above";
         }
-        answerData["max_marks"] = data["options"]?.length ?? 0;
-      } else if (!data.non_scoring && data?.type == "checkbox") {
-        answerData["marks"] = data?.marks;
-        answerData["max_marks"] = data?.max_marks ?? 0;
+        // answerData["max_marks"] = data["options"]?.length ?? 0;
+      } else if (data.non_scoring === true && data?.type == "checkbox") {
+        answerData["marks"] = !data.non_scoring?.marks ?? 0;
+        answerData["max_marks"] = !data.non_scoring?.max_marks ?? 0;
       }
+
+
       let tostr = data["answer"].toString();
       let rawMarks = tostr.toLowerCase();
       if (
