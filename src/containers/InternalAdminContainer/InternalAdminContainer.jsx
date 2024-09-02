@@ -126,6 +126,7 @@ export default class InternalAdminContainer extends Component {
   render() {
     const { navigate, usersDataList } = this.props;
     const user = isAuth();
+    
 
     return (
       <>
