@@ -14,6 +14,7 @@ export default function Form({
   handleOnPrev,
   activeFormId
 }) {
+  
   return (
     <>
     <form key={activeFormId} onSubmit={handleOnSubmit.bind(this)}>
