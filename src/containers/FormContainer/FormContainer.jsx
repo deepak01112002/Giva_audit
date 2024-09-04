@@ -228,6 +228,7 @@ class FormContainer extends Component {
     let questionaire = [];
     for (let a in mergedData) {
       let data = { ...formData[a], ...mergedData[a] }
+console.log('djjeiudh',data);
 
 
       let answerData = {
@@ -244,24 +245,25 @@ class FormContainer extends Component {
           answerData["answer"] = "None of the above";
         }
         // answerData["max_marks"] = data["options"]?.length ?? 0;
-      } else if (data.non_scoring === true && data?.type == "checkbox") {
-        answerData["marks"] = !data.non_scoring?.marks ?? 0;
-        answerData["max_marks"] = !data.non_scoring?.max_marks ?? 0;
+      }
+       else if (data.non_scoring === true && data?.type === "checkbox" && data?.type === "dropdown") {
+        answerData["marks"] = null;
+        answerData["max_marks"] = null;
       }
 
 
-      let tostr = data["answer"].toString();
-      let rawMarks = tostr.toLowerCase();
-      if (
-        rawMarks == "yes" ||
-        rawMarks == "no" ||
-        rawMarks == "N/A" ||
-        rawMarks == "NA"
-      ) {
-        let marks = rawMarks == "yes" ? 1 : 0;
-        answerData["marks"] = marks;
-        answerData["max_marks"] = 1;
-      }
+      // let tostr = data["answer"].toString();
+      // let rawMarks = tostr.toLowerCase();
+      // if (
+      //   rawMarks == "yes" ||
+      //   rawMarks == "no" ||
+      //   rawMarks == "N/A" ||
+      //   rawMarks == "NA"
+      // ) {
+      //   let marks = rawMarks == "yes" ? 1 : 0;
+      //   answerData["marks"] = marks;
+      //   answerData["max_marks"] = 1;
+      // }
       if (!data.non_scoring) {
 
 
