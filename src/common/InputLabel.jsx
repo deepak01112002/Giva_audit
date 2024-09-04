@@ -4,7 +4,13 @@ import { InputLabel as MInputLabel } from "@mui/material"
 const InputLabel = (props) => {
     return (
         <>
-            <MInputLabel {...props}/>
+            <MInputLabel
+             {...props}
+             sx={{
+                textOverflow:"none !important",
+                whiteSpace:"unset !important"
+             }}
+             />
         </>
     )
 }
