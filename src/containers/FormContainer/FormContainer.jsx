@@ -26,6 +26,12 @@ class FormContainer extends Component {
       images: [],
       extradata: {},
       seleceStoreIndex: false,
+      storeName:'',
+      StoreCode:'',
+      regionform:'',
+      city:'',
+      state:'',
+      address:'' 
     };
     this.handleOnChange = this.handleOnChange.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -99,10 +105,33 @@ class FormContainer extends Component {
   }
 
   handleOnChange = async (val, name, type, event) =>  {
+    if(name==='store_code'){
+
+      this.setState({StoreCode:val})
+    }
+    if(name=== 'store_name'){
+      this.setState({storeName:val})
+
+    }
+    if(name==='region'){
+      this.setState({regionform:val})
+    }
+    if(name==='address'){
+      this.setState({address:val})
+    }
+    if(name==='state'){
+      this.setState({state:val})
+    }
+    if(name==='city'){
+      this.setState({city:val})
+    }
+    
+    
 
     try {
       let currentFormData = this.state.submitFormData;
       let extradatatemp = this.state.extradata;
+      
 
       let imageData = this.state.images;
       let empty =
@@ -211,14 +240,16 @@ class FormContainer extends Component {
         if (!data["answer"].includes("None of the above")) {
           answerData["marks"] = data["answer"].length ?? 0;
         } else {
-          answerData["marks"] = 0;
+          // answerData["marks"] = 0;
           answerData["answer"] = "None of the above";
         }
-        answerData["max_marks"] = data["options"]?.length ?? 0;
-      } else if (!data.non_scoring && data?.type == "checkbox") {
-        answerData["marks"] = data?.marks;
-        answerData["max_marks"] = data?.max_marks ?? 0;
+        // answerData["max_marks"] = data["options"]?.length ?? 0;
+      } else if (data.non_scoring === true && data?.type == "checkbox") {
+        answerData["marks"] = !data.non_scoring?.marks ?? 0;
+        answerData["max_marks"] = !data.non_scoring?.max_marks ?? 0;
       }
+
+
       let tostr = data["answer"].toString();
       let rawMarks = tostr.toLowerCase();
       if (
@@ -377,20 +408,34 @@ class FormContainer extends Component {
 
         user = user["data"];
         let builderData = {};
-        if (user["user_type"] != Role.user) {
-          builderData["updated_by"] = user["username"];
-          builderData["form_id"] = this.props.formID;
-          builderData["multitab_data"] = this.getAnswerSheet(ourData);
-          builderData["campaign_id"] = this.props?.form_data?.campaign_id;
-          builderData["store_code"] = auditAlldetail.store_code ?? "";
-          builderData["region"] = auditAlldetail?.region ?? "";
-          builderData["store_name"] = auditAlldetail?.store_name ?? "";
-          builderData["campaign_id"] = campaignAlldetail?._id ?? "";
-          builderData["campaign_name"] = campaignAlldetail?.name ?? "";
-          builderData["category_id"] =
-            categoryIdsParsed?.selectedCategorary ?? "";
+        if (user["user_type"] !== Role.user) {
+          // builderData["updated_by"] = user["username"];
+          // builderData["form_id"] = this.props.formID;
+          // builderData["multitab_data"] = this.getAnswerSheet(ourData);
+          // builderData["campaign_id"] = this.props?.form_data?.campaign_id;
+          // builderData["store_code"] = this.state.StoreCode??this.state.submitFormData[this.state.activeFormId]?.store_code?.answer;;
+          // builderData["region"] = this.state.regionform ??  this.state.submitFormData[this.state.activeFormId]?.region?.answer;
+          // builderData["store_name"] = this.state.storeName??  this.state.submitFormData[this.state.activeFormId]?.store_name?.answer;
+          // builderData["campaign_id"] = campaignAlldetail?._id ?? "";
+          // builderData["campaign_name"] = campaignAlldetail?.name ?? "";
+          // builderData["category_id"] =
+          //   categoryIdsParsed?.selectedCategorary ?? "";
           // builderData["sub_category_id"] =
           //   categoryIdsParsed?.selectedSubCategory;
+          builderData = {
+            // sub_category_id: categoryIdsParsed.selectedSubCategory,
+            updated_by: user.username,
+            form_id: this.props.formID,
+            username: user.name,
+            // module_code: this.props.module_code,
+            multitab_data: this.getAnswerSheet(ourData),
+            store_code: this.state.StoreCode??this.state.submitFormData[this.state.activeFormId]?.store_code?.answer,
+            region : this.state.regionform ??  this.state.submitFormData[this.state.activeFormId]?.region?.answer,
+            store_name :this.state.storeName??  this.state.submitFormData[this.state.activeFormId]?.store_name?.answer,
+            campaign_id: campaignAlldetail?._id ?? "",
+            campaign_name: campaignAlldetail?.name ?? "",
+            category_id: categoryIdsParsed.selectedCategorary,
+          };
         } else {
           builderData = {
             // sub_category_id: categoryIdsParsed.selectedSubCategory,
@@ -399,11 +444,9 @@ class FormContainer extends Component {
             username: user.name,
             module_code: this.props.module_code,
             multitab_data: this.getAnswerSheet(ourData),
-            store_name: auditAlldetail?.store_name ?? "",
-            store_code: auditAlldetail?.store_code ?? "",
-            city: auditAlldetail?.city ?? "",
-            state: auditAlldetail?.state ?? "",
-            region: auditAlldetail?.region ?? "",
+            store_name: this.state.storeName?? "",
+            store_code: this.state.StoreCode?? "",
+            region: this.state.regionform   ?? "",
             campaign_id: campaignAlldetail?._id ?? "",
             campaign_name: campaignAlldetail?.name ?? "",
             category_id: categoryIdsParsed.selectedCategorary,
@@ -411,7 +454,8 @@ class FormContainer extends Component {
         }
 
         var response = "";
-        if (user["user_type"] == Role.user) {
+        
+        if (user["user_type"] === Role.user) {
          response = await this.props.submitFormData(builderData);
           if (response?.payload?.status === 200) {
             this.setState({
@@ -432,6 +476,7 @@ class FormContainer extends Component {
             });
           }
         } else {
+          
           response = await this.props.updateFormData(builderData);
           if (response.payload.status === 200) {
             this.setState({
@@ -468,6 +513,8 @@ class FormContainer extends Component {
   };
 
   render() {
+    
+    
     const { activeFormId, activeFormIndex } = this.state;
     const {
       formDataLoading,
@@ -495,6 +542,8 @@ class FormContainer extends Component {
     }
  
     return (
+  
+      
       <>
         <Stack>
           <ResponsiveAppBar />

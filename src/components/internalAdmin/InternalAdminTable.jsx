@@ -29,6 +29,7 @@ export default function InternalAdminTable({
   handleCampaignChange,
   handleOnDeleteClick,
 }) {
+  
   const columns = [
     {
       field: "Campaign",

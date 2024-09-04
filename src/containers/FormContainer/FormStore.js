@@ -12,7 +12,6 @@ import {
 } from "../../store/InternalAdminStore/InternalAdminSlice";
 
 const mapStateToProps = (state) => {
-  console.log('state statestate', state)
   return {
     form_data: state.formData.form_data,
     formDataLoading: state.formData.form_data_loading,
