@@ -482,7 +482,7 @@ const ResultCopy = ({ data, mWidth }) => (
                               background: j % 2 === 0 ? "#f2f2f2" : "white",
                             }}
                           >
-                            {isImage(item2?.answer??'')?<img height="100px" style={{objectFit: 'contain'}} src={item2?.answer} /> : isURL(item2?.answer??'')?<a href={item2?.answer}>{item2?.answer}</a>: item2?.answer??'-'}
+                            {isImage(item2?.answer??'')?<img height="175px" style={{objectFit: 'contain'}} src={item2?.answer} /> : isURL(item2?.answer??'')?<a href={item2?.answer}>{item2?.answer}</a>: item2?.answer??'-'}
                           </td>
                           <td
                             style={{
@@ -532,8 +532,8 @@ const styles = StyleSheet.create({
     // backgroundColor: "red"
   },
   logo: {
-    height: "100px",
-    width: "250px",
+    height: "200px",
+    width: "350px",
   },
   table_div: {
     padding: "20px",
