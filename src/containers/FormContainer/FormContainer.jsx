@@ -105,7 +105,7 @@ class FormContainer extends Component {
   }
 
   handleOnChange = async (val, name, type, event) =>  {
-    console.log('uhh', name , 'type', type, 'val', val, 'event', event);
+
     
     if(name==='store_code'){
 
@@ -227,7 +227,6 @@ class FormContainer extends Component {
   };
 
   getQuestinaire(mergedData, formData) {
-    console.log('djjeiudh',formData);
     let questionaire = [];
     for (let a in mergedData) {
       let data = { ...formData[a], ...mergedData[a] }
