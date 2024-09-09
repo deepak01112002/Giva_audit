@@ -228,6 +228,7 @@ class FormContainer extends Component {
     let questionaire = [];
     for (let a in mergedData) {
       let data = { ...formData[a], ...mergedData[a] }
+console.log('djjeiudh',data);
 
 
       let answerData = {
@@ -245,11 +246,14 @@ class FormContainer extends Component {
         }
         // answerData["max_marks"] = data["options"]?.length ?? 0;
       }
-       else if (data.non_scoring === true && data?.type == "checkbox" && data?.type == "dropdown") {
-        answerData["marks"] = !data.non_scoring?.marks ?? 0;
-        answerData["max_marks"] = !data.non_scoring?.max_marks ?? 0;
+       else if (data.non_scoring === true && data?.type == "dropdown") {
+        delete answerData["marks"] 
+        delete answerData["max_marks"]
       }
-      else if ( data?.type == "image") {
+      else if ( data?.type == "image" ) {
+        delete answerData["marks"];
+        delete answerData["max_marks"];
+      } else if ( data?.type == "edittext"  ) {
         delete answerData["marks"];
         delete answerData["max_marks"];
       }
@@ -257,7 +261,7 @@ class FormContainer extends Component {
 
       let tostr = data["answer"].toString();
       let rawMarks = tostr.toLowerCase();
-      if (data.non_scoring === false   && data?.type != "image"
+      if (data.non_scoring === false   && data?.type != "image" && data?.type != "edittext"
         // rawMarks == "yes" ||
         // rawMarks == "no" ||
         // rawMarks == "N/A" ||
@@ -299,8 +303,9 @@ class FormContainer extends Component {
         }
       }
       questionaire.push(answerData);
+      console.log("answerData",answerData);
     }
-  
+    console.log(" questionaire",questionaire);
     const sortedArray = questionaire.sort(
       (a, b) => a.question_no - b.question_no
     );
