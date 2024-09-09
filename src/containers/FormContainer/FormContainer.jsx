@@ -105,8 +105,6 @@ class FormContainer extends Component {
   }
 
   handleOnChange = async (val, name, type, event) =>  {
-
-    
     if(name==='store_code'){
 
       this.setState({StoreCode:val})
@@ -144,7 +142,7 @@ class FormContainer extends Component {
         currentFormData = this.props.form_data.answerContent;
       }
       let buildFormData = JSON.parse(JSON.stringify(currentFormData));
-      if (type === "image" ) {
+      if (type === "image") {
         // buildFormData[this.state.activeFormId][name]["answer"] = "image";
         buildFormData[this.state.activeFormId][name]["imageData"] = URL.createObjectURL(new Blob([val[0]]));
         let formData = new FormData();
@@ -247,15 +245,19 @@ class FormContainer extends Component {
         }
         // answerData["max_marks"] = data["options"]?.length ?? 0;
       }
-       else if (data.non_scoring === true && data?.type == "edittext" && data?.type == 'dropdown' && data?.answer!=="Samsung Retail Audit SES-E Q3 -2024") {
+       else if (data.non_scoring === true && data?.type == "checkbox" && data?.type == "dropdown") {
         answerData["marks"] = !data.non_scoring?.marks ?? 0;
         answerData["max_marks"] = !data.non_scoring?.max_marks ?? 0;
+      }
+      else if ( data?.type == "image") {
+        delete answerData["marks"];
+        delete answerData["max_marks"];
       }
 
 
       let tostr = data["answer"].toString();
       let rawMarks = tostr.toLowerCase();
-      if (data.non_scoring === false 
+      if (data.non_scoring === false   && data?.type != "image"
         // rawMarks == "yes" ||
         // rawMarks == "no" ||
         // rawMarks == "N/A" ||
@@ -298,6 +300,7 @@ class FormContainer extends Component {
       }
       questionaire.push(answerData);
     }
+  
     const sortedArray = questionaire.sort(
       (a, b) => a.question_no - b.question_no
     );
