@@ -190,11 +190,7 @@ const ResultCopy = ({ data, mWidth }) => (
         alt="Sleep Logo"
     />
 ) : (
-    <img
-        src="/titan_logo.png"
-        style={styles.logo}
-        alt="Titan Logo"
-    />
+   null
 )}
 
 
