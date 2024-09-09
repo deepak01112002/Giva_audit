@@ -451,7 +451,7 @@ const ResultCopy = ({ data, mWidth }) => (
                     ),
                   }}
                 >
-                  <p>{item.category ?? "-"}</p>
+                  <p>{item?.label ?? "-"}</p>
                 </div>
                 <table class="table">
                   <thead>
