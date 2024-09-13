@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { deleteAuditApi, fetchPdfDataApi, fetchUsersApi, getCompaignListApi } from "./InternalAdminApis";
+import {approveSamsungApi, deleteAuditApi, fetchPdfDataApi, fetchUsersApi, getCompaignListApi } from "./InternalAdminApis";
 import {
   fetchedUserDataParser,
   parseSubmittedData,
@@ -35,6 +35,23 @@ export const delete_audit = createAsyncThunk(
       const response = await deleteAuditApi(payload);
       // const data = parseSubmittedData(response.data);
       alert(" Audit Deleted", response.status)
+      // console.log(' delete_audit response', response)
+      // return data;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+);
+
+// Approve api/samsung/approve /
+export const approve_samsung = createAsyncThunk(
+  "approve_samsung",
+  async (payload) => {
+    // console.log('deleteAuditLoading payload', payload)
+    try {
+      const response = await approveSamsungApi(payload);
+      // const data = parseSubmittedData(response.data);
+      alert(" Audit Approve", response.status)
       // console.log(' delete_audit response', response)
       // return data;
     } catch (error) {

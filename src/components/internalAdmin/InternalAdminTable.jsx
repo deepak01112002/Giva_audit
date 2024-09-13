@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "../../common/Box";
 import CTable from "../../common/CTable";
 import Stack from "../../common/Stack";
@@ -11,8 +11,10 @@ import Text from "../../common/Text";
 import AppStyle from "../../utils/colors";
 import MDatePicker from "../../common/DatePicker";
 import Role from "../../utils/roles";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { FormControl, InputLabel, MenuItem, Container } from "@mui/material";
+import Select from "@mui/material/Select";
+import SearchIcon from "@mui/icons-material/Search";
+
+import { FormControl, IconButton, InputBase, InputLabel, MenuItem, Paper } from "@mui/material";
 
 export default function InternalAdminTable({
   navigate,
@@ -28,7 +30,27 @@ export default function InternalAdminTable({
   compaignList,
   handleCampaignChange,
   handleOnDeleteClick,
+  handleApproveOnClick,
+  
 }) {
+  const [inputText, setInputText] = useState("");
+  let inputSearchHandler = (e) => {
+    var lowerCase = e.toLowerCase();
+    setInputText(lowerCase);
+  };
+  const filteredData = tableData?.filter((el) => {
+    if (inputText === "") {
+      return el;
+    } else {
+      const inputLowerCase = inputText.toLowerCase();
+      return (
+        el?.store_code?.toLowerCase().includes(inputLowerCase) ||
+        el?.Campaign?.toLowerCase().includes(inputLowerCase) ||
+        el?.Store?.toLowerCase().includes(inputLowerCase)||
+        el?.Region?.toLowerCase().includes(inputLowerCase)
+      );
+    }
+  });
   
   const columns = [
     {
@@ -43,14 +65,14 @@ export default function InternalAdminTable({
       field: "Store",
       headerName: "Store Name",
     },
-    {
-      field: "City",
-      headerName: "City",
-    },
-    {
-      field: "State",
-      headerName: "State",
-    },
+    // {
+    //   field: "City",
+    //   headerName: "City",
+    // },
+    // {
+    //   field: "State",
+    //   headerName: "State",
+    // },
     {
       field: "Region",
       headerName: "Region",
@@ -112,6 +134,17 @@ export default function InternalAdminTable({
                           }}
                         />
                       </Box>
+                      <Box sx={{ width: "50%" }}>
+                        <Button    sx={{ cursor: "pointer" }}
+                          onClick={() => {
+                            handleApproveOnClick(d.formId);
+                          }}>
+                            Approve
+
+                        </Button>
+                        
+                        
+                      </Box>
                     </>
                   ) : null}
                 </Stack>
@@ -168,6 +201,28 @@ export default function InternalAdminTable({
         sx={{ paddingTop: "10px", paddingBottom: "10px" }}
       >
         <Box flex={2} sx={{ width: "20%" }}>
+        <Paper
+                sx={{
+                  marginTop:'15px',
+                  p: "2.5px 0",
+                  display: "flex",
+                  alignItems: "center",
+                  width: "200px",
+                  height: "45px",
+                }}
+              >
+                <IconButton type="submit" sx={{ p: "5px" }} aria-label="search">
+                  <SearchIcon />
+                </IconButton>
+                <InputBase
+                  sx={{ ml: 1, flex: 1 }}
+                  placeholder="Search"
+                  onChange={(e) => inputSearchHandler(e.target.value)}
+                  inputProps={{ "aria-label": "search" }}
+                />
+              </Paper>
+        </Box>
+        <Box flex={2} sx={{ width: "20%" }}>
           <MDatePicker
             // value={selectedDates?.sdate ?? new Date()}
             onChange={(date) => {
@@ -208,6 +263,69 @@ export default function InternalAdminTable({
             </Select>
           </FormControl>
         </Box>
+        <Box flex={2}>
+          <FormControl sx={{ m: 1, minWidth: "100%", width: 50 }}>
+            <InputLabel id="demo-select-small-label">Region</InputLabel>
+            <Select
+              sx={{ marginRight: 0 }}
+              size="big"
+              label="Compaign"
+              labelId="demo-select-small-label"
+              placeholder="Select"
+              onChange={(item) => {
+                handleCampaignChange(item.target.value);
+              }}
+            >
+              {compaignList?.length > 0
+                ? compaignList.map((item, i) => {
+                    return <MenuItem value={item._id}>{item.name}</MenuItem>;
+                  })
+                : null}
+            </Select>
+          </FormControl>
+        </Box>
+        <Box flex={2}>
+          <FormControl sx={{ m: 1, minWidth: "100%", width: 50 }}>
+            <InputLabel id="demo-select-small-label">City</InputLabel>
+            <Select
+              sx={{ marginRight: 0 }}
+              size="big"
+              label="Compaign"
+              labelId="demo-select-small-label"
+              placeholder="Select"
+              onChange={(item) => {
+                handleCampaignChange(item.target.value);
+              }}
+            >
+              {compaignList?.length > 0
+                ? compaignList.map((item, i) => {
+                    return <MenuItem value={item._id}>{item.name}</MenuItem>;
+                  })
+                : null}
+            </Select>
+          </FormControl>
+        </Box>
+        <Box flex={2}>
+          <FormControl sx={{ m: 1, minWidth: "100%", width: 50 }}>
+            <InputLabel id="demo-select-small-label">State</InputLabel>
+            <Select
+              sx={{ marginRight: 0 }}
+              size="big"
+              label="Compaign"
+              labelId="demo-select-small-label"
+              placeholder="Select"
+              onChange={(item) => {
+                handleCampaignChange(item.target.value);
+              }}
+            >
+              {compaignList?.length > 0
+                ? compaignList.map((item, i) => {
+                    return <MenuItem value={item._id}>{item.name}</MenuItem>;
+                  })
+                : null}
+            </Select>
+          </FormControl>
+        </Box>
         <Box
           sx={{
             alignItems: "center",
@@ -221,7 +339,7 @@ export default function InternalAdminTable({
           </Button>
         </Box>
       </Stack>
-      <CTable isLoading={userDataLoading} columns={columns} data={tableData} />
+      <CTable isLoading={userDataLoading} columns={columns} data={filteredData} />
     </div>
   );
 }

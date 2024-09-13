@@ -21,6 +21,9 @@ export const SUBMIT_AUDIT_DATA = `/${client_code}/submitTabData`
 // delete audit endpoint
 export const DELETE_AUDIT = `/${client_code}/deleteAudit/`
 
+//approve samsung endpoint 
+export const APPROVE_SAMSUNG= `/${client_code}/`
+
 //export const GET_COMPAIGNS = '/titan/getCampaigns'
 export const GET_COMPAIGNS = `/${client_code}/getCampaigns`
 

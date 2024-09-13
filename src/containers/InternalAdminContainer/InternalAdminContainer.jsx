@@ -44,6 +44,14 @@ export default class InternalAdminContainer extends Component {
     };
   };
 
+  handleApproveOnClick = async (payload) => {
+    // console.log('handleOnDeleteClick payload',  this.props)
+    if (window.confirm('Are you sure you want to Approve this audit?')) {
+      await this.props.approve_samsung(payload)
+      this.props.fetchUsers({ project_code: "audit" });
+    };
+  };
+
 
 
   onEditClick = async (payload) => {
@@ -146,6 +154,7 @@ export default class InternalAdminContainer extends Component {
           userDataLoading={this.props.userDataLoading}
           selectedDates={this.state.selectedDates}
           handleCsvClick={this.handleCsvClick}
+          handleApproveOnClick={this.handleApproveOnClick}
         />
       </>
     );
