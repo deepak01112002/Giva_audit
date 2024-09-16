@@ -22,9 +22,19 @@ export const SUBMIT_AUDIT_DATA = `/${client_code}/submitTabData`
 export const DELETE_AUDIT = `/${client_code}/deleteAudit/`
 
 //approve samsung endpoint 
-export const APPROVE_SAMSUNG= `/${client_code}/`
+export const APPROVE_SAMSUNG= `/${client_code}/approveAudit/`
 
 //export const GET_COMPAIGNS = '/titan/getCampaigns'
 export const GET_COMPAIGNS = `/${client_code}/getCampaigns`
+
+
+//export const GET_STATES = '/samsungvm/getStates'
+export const GET_STATES = `/${client_code}/getStates`
+
+//export const GET_REGIONS = '/samsungvm/getRegions'
+export const GET_REGIONS = `/${client_code}/getRegions`
+
+//export const GET_CITIES = '/samsungvm/getCities'
+export const GET_CITIES = `/${client_code}/getCities`
 
 

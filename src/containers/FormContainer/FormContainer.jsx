@@ -228,7 +228,6 @@ class FormContainer extends Component {
     let questionaire = [];
     for (let a in mergedData) {
       let data = { ...formData[a], ...mergedData[a] }
-console.log('djjeiudh',data);
 
 
       let answerData = {
@@ -443,6 +442,8 @@ console.log('djjeiudh',data);
             store_code: this.state.StoreCode??this.state.submitFormData[this.state.activeFormId]?.store_code?.answer,
             region : this.state.regionform ??  this.state.submitFormData[this.state.activeFormId]?.region?.answer,
             store_name :this.state.storeName??  this.state.submitFormData[this.state.activeFormId]?.store_name?.answer,
+            city:this.state.city??this.state.submitFormData[this.state.activeFormId]?.city?.answer,
+            state:this.state.state??this.state.submitFormData[this.state.activeFormId]?.state?.answer,
             campaign_id: campaignAlldetail?._id ?? "",
             campaign_name: campaignAlldetail?.name ?? "",
             category_id: categoryIdsParsed.selectedCategorary,
@@ -458,6 +459,8 @@ console.log('djjeiudh',data);
             store_name: this.state.storeName?? "",
             store_code: this.state.StoreCode?? "",
             region: this.state.regionform   ?? "",
+            city:this.state.city??"",
+            state:this.state.state??"",
             campaign_id: campaignAlldetail?._id ?? "",
             campaign_name: campaignAlldetail?.name ?? "",
             category_id: categoryIdsParsed.selectedCategorary,

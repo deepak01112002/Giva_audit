@@ -31,8 +31,15 @@ export default function InternalAdminTable({
   handleCampaignChange,
   handleOnDeleteClick,
   handleApproveOnClick,
+  regionList,
+  citiesList,
+  statesList,
+  handleRegionChange,
+  handleStatesChange,
+  handleCitiesChange
   
 }) {
+  
   const [inputText, setInputText] = useState("");
   let inputSearchHandler = (e) => {
     var lowerCase = e.toLowerCase();
@@ -65,14 +72,14 @@ export default function InternalAdminTable({
       field: "Store",
       headerName: "Store Name",
     },
-    // {
-    //   field: "City",
-    //   headerName: "City",
-    // },
-    // {
-    //   field: "State",
-    //   headerName: "State",
-    // },
+    {
+      field: "City",
+      headerName: "City",
+    },
+    {
+      field: "State",
+      headerName: "State",
+    },
     {
       field: "Region",
       headerName: "Region",
@@ -273,12 +280,12 @@ export default function InternalAdminTable({
               labelId="demo-select-small-label"
               placeholder="Select"
               onChange={(item) => {
-                handleCampaignChange(item.target.value);
+                handleRegionChange(item.target.value);
               }}
             >
-              {compaignList?.length > 0
-                ? compaignList.map((item, i) => {
-                    return <MenuItem value={item._id}>{item.name}</MenuItem>;
+              {regionList?.length > 0
+                ? regionList.map((item, i) => {
+                    return <MenuItem value={item}>{item}</MenuItem>;
                   })
                 : null}
             </Select>
@@ -294,12 +301,12 @@ export default function InternalAdminTable({
               labelId="demo-select-small-label"
               placeholder="Select"
               onChange={(item) => {
-                handleCampaignChange(item.target.value);
+                handleCitiesChange(item.target.value);
               }}
             >
-              {compaignList?.length > 0
-                ? compaignList.map((item, i) => {
-                    return <MenuItem value={item._id}>{item.name}</MenuItem>;
+              {citiesList?.length > 0
+                ? citiesList.map((item, i) => {
+                    return <MenuItem value={item}>{item}</MenuItem>;
                   })
                 : null}
             </Select>
@@ -315,12 +322,12 @@ export default function InternalAdminTable({
               labelId="demo-select-small-label"
               placeholder="Select"
               onChange={(item) => {
-                handleCampaignChange(item.target.value);
+                handleStatesChange(item.target.value);
               }}
             >
-              {compaignList?.length > 0
-                ? compaignList.map((item, i) => {
-                    return <MenuItem value={item._id}>{item.name}</MenuItem>;
+              {statesList?.length > 0
+                ? statesList.map((item, i) => {
+                    return <MenuItem value={item}>{item}</MenuItem>;
                   })
                 : null}
             </Select>

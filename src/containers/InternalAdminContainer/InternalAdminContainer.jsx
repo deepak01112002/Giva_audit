@@ -12,6 +12,9 @@ export default class InternalAdminContainer extends Component {
         sdate: "",
         edate: "",
         campaign_id: "",
+        region:"",
+        city:"",
+        states :"",
       },
       csvData: "",
     };
@@ -20,6 +23,9 @@ export default class InternalAdminContainer extends Component {
   componentDidMount() {
     this.props.fetchUsers({ project_code: "gmr" });
     this.props.getCompaign();
+    this.props.getRegions();
+    this.props.getStates();
+    this.props.getCities();
   }
 
   handleOnViewClick = async (payload) => {
@@ -95,6 +101,28 @@ export default class InternalAdminContainer extends Component {
       selectedDates: dates,
     });
   };
+  handleRegionChange = (value) => {
+    let dates = this.state.selectedDates;
+    dates.region = value;
+    this.setState({
+      selectedDates: dates,
+    });
+  };
+  handleCitiesChange = (value) => {
+    let dates = this.state.selectedDates;
+    dates.city = value;
+    this.setState({
+      selectedDates: dates,
+    });
+  };
+  handleStatesChange = (value) => {
+    let dates = this.state.selectedDates;
+    dates.states = value;
+    this.setState({
+      selectedDates: dates,
+    });
+  };
+
 
   downloadFile = ({ data, fileName, fileType }) => {
     const blob = new Blob([data], { type: fileType });
@@ -134,6 +162,8 @@ export default class InternalAdminContainer extends Component {
   render() {
     const { navigate, usersDataList } = this.props;
     const user = isAuth();
+    console.log('jieuf',this?.props?.regionsList?.data );
+    
     
 
     return (
@@ -141,7 +171,13 @@ export default class InternalAdminContainer extends Component {
         <ResponsiveAppBar />
         <InternalAdminTable
           handleCampaignChange={this.handleCampaignChange}
+          handleRegionChange={this.handleRegionChange}
+          handleStatesChange={this.handleStatesChange}
+          handleCitiesChange={this.handleCitiesChange}
           compaignList={this?.props?.compaignList?.data ?? []}
+          regionList={this?.props?.regionsList?.data ?? []}
+          statesList={this?.props?.statesList?.data ?? []}
+          citiesList={this?.props?.citiesList?.data ?? []}
           tableData={usersDataList}
           navigate={navigate}
           onEditClick={this.onEditClick}
