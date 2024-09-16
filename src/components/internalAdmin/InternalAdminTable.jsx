@@ -141,14 +141,14 @@ export default function InternalAdminTable({
                           }}
                         />
                       </Box>
-                      <Box sx={{ width: "50%" }}>
-                        <Button    sx={{ cursor: "pointer" }}
+                  <Box sx={{ width: "50%" }}>
+                  {d?.audit_status !==  "APPROVED" &&     <Button    sx={{ cursor: "pointer" }}
                           onClick={() => {
                             handleApproveOnClick(d.formId);
                           }}>
                             Approve
 
-                        </Button>
+                        </Button>}
                         
                         
                       </Box>
