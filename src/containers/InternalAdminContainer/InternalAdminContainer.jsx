@@ -12,6 +12,9 @@ export default class InternalAdminContainer extends Component {
         sdate: "",
         edate: "",
         campaign_id: "",
+        region:"",
+        city:"",
+        state :"",
       },
       csvData: "",
     };
@@ -20,6 +23,9 @@ export default class InternalAdminContainer extends Component {
   componentDidMount() {
     this.props.fetchUsers({ project_code: "gmr" });
     this.props.getCompaign();
+    this.props.getRegions();
+    this.props.getStates();
+    this.props.getCities();
   }
 
   handleOnViewClick = async (payload) => {
@@ -40,6 +46,14 @@ export default class InternalAdminContainer extends Component {
     // console.log('handleOnDeleteClick payload',  this.props)
     if (window.confirm('Are you sure you want to Delete this audit?')) {
       await this.props.delete_audit(payload)
+      this.props.fetchUsers({ project_code: "audit" });
+    };
+  };
+
+  handleApproveOnClick = async (payload) => {
+    // console.log('handleOnDeleteClick payload',  this.props)
+    if (window.confirm('Are you sure you want to Approve this audit?')) {
+      await this.props.approve_samsung(payload)
       this.props.fetchUsers({ project_code: "audit" });
     };
   };
@@ -87,6 +101,28 @@ export default class InternalAdminContainer extends Component {
       selectedDates: dates,
     });
   };
+  handleRegionChange = (value) => {
+    let dates = this.state.selectedDates;
+    dates.region = value;
+    this.setState({
+      selectedDates: dates,
+    });
+  };
+  handleCitiesChange = (value) => {
+    let dates = this.state.selectedDates;
+    dates.city = value;
+    this.setState({
+      selectedDates: dates,
+    });
+  };
+  handleStatesChange = (value) => {
+    let dates = this.state.selectedDates;
+    dates.state = value;
+    this.setState({
+      selectedDates: dates,
+    });
+  };
+
 
   downloadFile = ({ data, fileName, fileType }) => {
     const blob = new Blob([data], { type: fileType });
@@ -126,6 +162,8 @@ export default class InternalAdminContainer extends Component {
   render() {
     const { navigate, usersDataList } = this.props;
     const user = isAuth();
+    console.log('jieuf',this?.props?.regionsList?.data );
+    
     
 
     return (
@@ -133,7 +171,13 @@ export default class InternalAdminContainer extends Component {
         <ResponsiveAppBar />
         <InternalAdminTable
           handleCampaignChange={this.handleCampaignChange}
+          handleRegionChange={this.handleRegionChange}
+          handleStatesChange={this.handleStatesChange}
+          handleCitiesChange={this.handleCitiesChange}
           compaignList={this?.props?.compaignList?.data ?? []}
+          regionList={this?.props?.regionsList?.data ?? []}
+          statesList={this?.props?.statesList?.data ?? []}
+          citiesList={this?.props?.citiesList?.data ?? []}
           tableData={usersDataList}
           navigate={navigate}
           onEditClick={this.onEditClick}
@@ -146,6 +190,7 @@ export default class InternalAdminContainer extends Component {
           userDataLoading={this.props.userDataLoading}
           selectedDates={this.state.selectedDates}
           handleCsvClick={this.handleCsvClick}
+          handleApproveOnClick={this.handleApproveOnClick}
         />
       </>
     );

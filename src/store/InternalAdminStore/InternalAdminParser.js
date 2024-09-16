@@ -22,6 +22,7 @@ export const fetchedUserDataParser = (res) => {
       Campaign: _get(e?.audit_details, "campaign_name", ""),
       City: _get(e?.audit_details, "city", ""),
       State: _get(e?.audit_details, "state"),
+      audit_status:_get(e?.audit_details, "audit_status"),
       Region: _get(e, "Region"),
       Store: _get(e, "Store Name", ""),
       store_code: _get(e, "Store Code", ""),
