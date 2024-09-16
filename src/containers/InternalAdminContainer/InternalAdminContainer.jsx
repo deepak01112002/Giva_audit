@@ -14,7 +14,7 @@ export default class InternalAdminContainer extends Component {
         campaign_id: "",
         region:"",
         city:"",
-        states :"",
+        state :"",
       },
       csvData: "",
     };
@@ -117,7 +117,7 @@ export default class InternalAdminContainer extends Component {
   };
   handleStatesChange = (value) => {
     let dates = this.state.selectedDates;
-    dates.states = value;
+    dates.state = value;
     this.setState({
       selectedDates: dates,
     });

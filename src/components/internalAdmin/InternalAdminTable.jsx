@@ -33,9 +33,9 @@ export default function InternalAdminTable({
   handleApproveOnClick,
   regionList,
   citiesList,
-  statesList,
+  // statesList,
   handleRegionChange,
-  handleStatesChange,
+  // handleStatesChange,
   handleCitiesChange
   
 }) {
@@ -312,7 +312,7 @@ export default function InternalAdminTable({
             </Select>
           </FormControl>
         </Box>
-        <Box flex={2}>
+        {/* <Box flex={2}>
           <FormControl sx={{ m: 1, minWidth: "100%", width: 50 }}>
             <InputLabel id="demo-select-small-label">State</InputLabel>
             <Select
@@ -332,7 +332,7 @@ export default function InternalAdminTable({
                 : null}
             </Select>
           </FormControl>
-        </Box>
+        </Box> */}
         <Box
           sx={{
             alignItems: "center",
