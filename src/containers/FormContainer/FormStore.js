@@ -12,6 +12,8 @@ import {
 } from "../../store/InternalAdminStore/InternalAdminSlice";
 
 const mapStateToProps = (state) => {
+  console.log('dhuehfue',state.formData.selectedCampaignName);
+  
   return {
     form_data: state.formData.form_data,
     formDataLoading: state.formData.form_data_loading,
@@ -27,7 +29,10 @@ const mapStateToProps = (state) => {
     fileUploadLoading: state.formData.file_upload_loading,
     extraValues: state.formData.extraValues,
     selectedCategoriesIds: state.formData.selectedCategoriesIds,
-    selectedCampaignIds: state.formData.selectedCampaignIds
+    selectedCampaignIds: state.formData.selectedCampaignIds,
+    selectedCampaignName: state.formData.selectedCampaignName,
+
+
   };
 };
 

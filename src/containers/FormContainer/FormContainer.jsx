@@ -421,6 +421,13 @@ class FormContainer extends Component {
         let categoryIds = getCookie("categoryIds");
         let categoryIdsParsed = JSON.parse(categoryIds);
 
+        let campaignIds = getCookie("campaingIds");
+        let campaignIdsParsed = JSON.parse(campaignIds);
+
+        let campaingName = getCookie("campaingName");
+        let campaingNameParsed = JSON.parse(campaingName);
+        
+
 
         user = user["data"];
         let builderData = {};
@@ -450,9 +457,10 @@ class FormContainer extends Component {
             store_name :this.state.storeName?.length > 0 ? this.state.storeName : this.state.submitFormData[this.state.activeFormId]?.store_name?.answer,
             city:this.state.city?.length > 0 ? this.state.city : this.state.submitFormData[this.state.activeFormId]?.city?.answer,
             state:this.state.state.length > 0 ? this.state.state : this.state.submitFormData[this.state.activeFormId]?.state?.answer,
-            campaign_id: campaignAlldetail?._id ?? "",
-            campaign_name: campaignAlldetail?.name ?? "",
+            // campaign_id: campaignAlldetail?._id ?? "",
+            campaign_name: campaingNameParsed,
             category_id: categoryIdsParsed.selectedCategorary,
+            campaign_id: campaignIdsParsed.selectedCampaign
           };
         } else {
           builderData = {
@@ -467,9 +475,11 @@ class FormContainer extends Component {
             region: this.state.regionform   ?? "",
             city:this.state.city??"",
             state:this.state.state??"",
-            campaign_id: campaignAlldetail?._id ?? "",
-            campaign_name: campaignAlldetail?.name ?? "",
+            // campaign_id: campaignAlldetail?._id ?? "",
+            campaign_name: campaingNameParsed,
             category_id: categoryIdsParsed.selectedCategorary,
+            campaign_id: campaignIdsParsed.selectedCampaign
+
           };
         }
 

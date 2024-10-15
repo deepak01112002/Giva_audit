@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import Box from '../common/Box';
 import SelectCategory from '../common/SelectCategory';
 import Button from '../common/Button';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { setCookie } from '../helpers/cookies';
 export default function Category(props) {
-  const { getAllCategory,getAllCampaign, selectedCategorary, handleOnChane, selectedSubCategory, onSubmit,selectedCampaign,handleCampaingChange } = props.data;
+  const { getAllCategory,getAllCampaign, selectedCategorary, handleOnChane, selectedSubCategory, onSubmit,selectedCampaign,handleCampaingChange,setSelectedCampaignName } = props.data;
 
 
 
@@ -21,8 +23,34 @@ export default function Category(props) {
           options={getAllCategory}
         />
 
+        
+<FormControl sx={{ m: 1, minWidth: "33%",  }}>
+            <InputLabel id="demo-select-small-label">Campaing</InputLabel>
+            <Select
+              sx={{ marginRight: 0 }}
+              size="small"
+              label="Compaign"
+              labelId="demo-select-small-label"
+              placeholder="Select"
+              onChange={(e) => {
+                handleCampaingChange(e.target.value, "selectedCampaign")
+              }}
+            >
+              {getAllCampaign?.length > 0
+                ? getAllCampaign.map((item, i) => {
+    setCookie('campaingName',JSON.stringify(item.name))
 
-        <SelectCategory
+    setSelectedCampaignName(item.name);
+                  
+                    return <MenuItem value={item._id}>{item.name}</MenuItem>;
+                  })
+                : null}
+            </Select>
+          </FormControl>
+
+
+
+        {/* <SelectCategory
           label={'Campaign'}
           value={selectedCampaign}
           dataKey={'name'}
@@ -30,7 +58,7 @@ export default function Category(props) {
             handleCampaingChange(e.target.value, "selectedCampaign")
           }}
           options={getAllCampaign}
-        />
+        /> */}
         {/* <SelectCategory
           label={'Sub category'}
           value={selectedSubCategory}

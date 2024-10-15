@@ -112,7 +112,11 @@ const initialState = {
   },
   selectedCampaignIds : {
 
+  },
+  selectedCampaignName : {
+
   }
+
 };
 
 export const formSlice = createSlice({
@@ -127,6 +131,12 @@ export const formSlice = createSlice({
     },
     setSelectedCampaignIds : (state, action) => {
       state.selectedCampaignIds = action.payload
+    },
+    setSelectedCampaignName:(state,action) => {
+      console.log('fjeufhe',action);
+      
+      state.selectedCampaignName = action.payload
+
     }
 
   },
@@ -211,5 +221,5 @@ export const formSlice = createSlice({
   },
 });
 
-export const { insertExtraVa, setSelectedCategoriesIds,setSelectedCampaignIds } = formSlice.actions
+export const { insertExtraVa, setSelectedCategoriesIds,setSelectedCampaignIds, setSelectedCampaignName } = formSlice.actions
 export default formSlice.reducer;

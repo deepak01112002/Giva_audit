@@ -1,6 +1,6 @@
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { connect } from "react-redux";
-import { getAllCategory, getAllSubCategory,  setSelectedCampaignIds,  setSelectedCategoriesIds } from "../../store/FormStore/formSlice";
+import { getAllCategory, getAllSubCategory,  setSelectedCampaignIds,  setSelectedCampaignName,  setSelectedCategoriesIds } from "../../store/FormStore/formSlice";
 import { getCompaign } from "../../store/InternalAdminStore/InternalAdminSlice";
 
 
@@ -18,7 +18,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ getAllCategory2: getAllCategory, getAllSubCategory: getAllSubCategory, setSelectedCategoriesIds : setSelectedCategoriesIds , getCompaign : getCompaign,setSelectedCampaignIds:setSelectedCampaignIds
+  bindActionCreators({ getAllCategory2: getAllCategory, getAllSubCategory: getAllSubCategory, setSelectedCategoriesIds : setSelectedCategoriesIds , getCompaign : getCompaign,setSelectedCampaignIds:setSelectedCampaignIds,setSelectedCampaignName:setSelectedCampaignName
   }, dispatch);
 
 const CategoryStore = (Container) =>

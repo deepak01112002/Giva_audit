@@ -54,7 +54,8 @@ class CategoryContainer extends Component {
             handleOnChane: this.handleCategoryChange,
             handleCampaingChange:this.handleCampaingChange,
             onSubmit: this.onSubmit,
-            getAllCampaign:this.props.compaignList?.data
+            getAllCampaign:this.props.compaignList?.data,
+            setSelectedCampaignName:this.props.setSelectedCampaignName
           }}
         />
       </div>
