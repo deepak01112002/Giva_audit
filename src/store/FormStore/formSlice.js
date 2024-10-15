@@ -109,6 +109,9 @@ const initialState = {
   category_loading: false,
   selectedCategoriesIds : {
 
+  },
+  selectedCampaignIds : {
+
   }
 };
 
@@ -121,6 +124,9 @@ export const formSlice = createSlice({
     },
     setSelectedCategoriesIds : (state, action) => {
       state.selectedCategoriesIds = action.payload
+    },
+    setSelectedCampaignIds : (state, action) => {
+      state.selectedCampaignIds = action.payload
     }
 
   },
@@ -205,5 +211,5 @@ export const formSlice = createSlice({
   },
 });
 
-export const { insertExtraVa, setSelectedCategoriesIds } = formSlice.actions
+export const { insertExtraVa, setSelectedCategoriesIds,setSelectedCampaignIds } = formSlice.actions
 export default formSlice.reducer;

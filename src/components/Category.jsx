@@ -3,7 +3,10 @@ import Box from '../common/Box';
 import SelectCategory from '../common/SelectCategory';
 import Button from '../common/Button';
 export default function Category(props) {
-  const { getAllCategory, selectedCategorary, handleOnChane, selectedSubCategory, onSubmit } = props.data;
+  const { getAllCategory,getAllCampaign, selectedCategorary, handleOnChane, selectedSubCategory, onSubmit,selectedCampaign,handleCampaingChange } = props.data;
+
+
+
 
   return (
     <div>
@@ -16,6 +19,17 @@ export default function Category(props) {
             handleOnChane(e.target.value, "selectedCategorary")
           }}
           options={getAllCategory}
+        />
+
+
+        <SelectCategory
+          label={'Campaign'}
+          value={selectedCampaign}
+          dataKey={'name'}
+          onChange={(e) => {
+            handleCampaingChange(e.target.value, "selectedCampaign")
+          }}
+          options={getAllCampaign}
         />
         {/* <SelectCategory
           label={'Sub category'}

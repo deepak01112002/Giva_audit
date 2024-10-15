@@ -27,6 +27,7 @@ const mapStateToProps = (state) => {
     fileUploadLoading: state.formData.file_upload_loading,
     extraValues: state.formData.extraValues,
     selectedCategoriesIds: state.formData.selectedCategoriesIds,
+    selectedCampaignIds: state.formData.selectedCampaignIds
   };
 };
 
