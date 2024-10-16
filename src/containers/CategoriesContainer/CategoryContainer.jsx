@@ -14,13 +14,16 @@ class CategoryContainer extends Component {
   componentDidMount() {
     this.props.getAllCategory2();
   }
-  handleCampaingChange = (id, name) => {
+  handleCampaingChange = (index,campaign) => {
+    const {name,_id} =this.props.compaignList?.data[index]
+ 
+    
     let stateValues = this.state;
-    stateValues[name] = id;
+    stateValues[campaign] = { name: name, id: _id };
     this.setState(stateValues);
-    setCookie('campaingIds',JSON.stringify(stateValues))
+    setCookie('campaingIds',JSON.stringify({ campaign_name: name, campaign_id: _id }))
    
-    this.props.setSelectedCampaignIds(stateValues);
+    this.props.setSelectedCampaignIds({ campaign_name: name, campaign_id: _id });
   };
   handleCategoryChange = (id, name) => {   
     let stateValues = this.state;

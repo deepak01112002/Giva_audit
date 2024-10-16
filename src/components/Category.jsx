@@ -3,7 +3,6 @@ import Box from '../common/Box';
 import SelectCategory from '../common/SelectCategory';
 import Button from '../common/Button';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { setCookie } from '../helpers/cookies';
 export default function Category(props) {
   const { getAllCategory,getAllCampaign, selectedCategorary, handleOnChane, selectedSubCategory, onSubmit,selectedCampaign,handleCampaingChange,setSelectedCampaignName } = props.data;
 
@@ -25,50 +24,27 @@ export default function Category(props) {
 
         
 <FormControl sx={{ m: 1, minWidth: "33%",  }}>
-            <InputLabel id="demo-select-small-label">Campaing</InputLabel>
+            <InputLabel id="demo-select-small-label">Campaign</InputLabel>
             <Select
               sx={{ marginRight: 0 }}
               size="small"
               label="Compaign"
               labelId="demo-select-small-label"
               placeholder="Select"
+              value={selectedCampaign.id}
               onChange={(e) => {
-                handleCampaingChange(e.target.value, "selectedCampaign")
+                handleCampaingChange(e.target.value,"selectedCampaign")
               }}
             >
               {getAllCampaign?.length > 0
-                ? getAllCampaign.map((item, i) => {
-    setCookie('campaingName',JSON.stringify(item.name))
+                ? getAllCampaign.map((item, i) => {           
+                    return <MenuItem value={i}>{item.name}</MenuItem>
 
-    setSelectedCampaignName(item.name);
-                  
-                    return <MenuItem value={item._id}>{item.name}</MenuItem>;
                   })
                 : null}
             </Select>
           </FormControl>
 
-
-
-        {/* <SelectCategory
-          label={'Campaign'}
-          value={selectedCampaign}
-          dataKey={'name'}
-          onChange={(e) => {
-            handleCampaingChange(e.target.value, "selectedCampaign")
-          }}
-          options={getAllCampaign}
-        /> */}
-        {/* <SelectCategory
-          label={'Sub category'}
-          value={selectedSubCategory}
-          dataKey={'category'}
-          onChange={(e) => {
-            handleOnChane(e.target.value, "selectedSubCategory")
-
-          }}
-          options={selectedCategorary ? getAllSubCategory : []}
-        /> */}
         <Button onClick={onSubmit} disabled={selectedCategorary ? false : true} sx={{ width: "500px", marginTop: "50px" }} size="large" variant="contained">Continue</Button>
 
       </Box>
