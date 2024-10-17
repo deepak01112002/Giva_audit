@@ -51,15 +51,19 @@ class FormContainer extends Component {
     const userData = user["data"];
     let categoryIds = getCookie("categoryIds");
     // let campaignIds = getCookie("campaingIds");
+    let campaignIds = getCookie("campaingIds");
  
 
     
     let categoryIdsParsed = JSON.parse(categoryIds);
     // let campaignIdsParsed = JSON.parse(campaignIds);
+    let campaignIdsParsed = JSON.parse(campaignIds);
+
     if (userData) {
       await this.props.getFormData({
         // username: userData['user_type'] == Role.user ? userData.username : this.props.userID ?? '',
         category_id: categoryIdsParsed?.selectedCategorary,
+        ...campaignIdsParsed
         // campaign_id: campaignIdsParsed?.selectedCampaign,
         // sub_category_id: categoryIdsParsed.selectedSubCategory,
       });
