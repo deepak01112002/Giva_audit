@@ -29,6 +29,7 @@ export const fetchedUserDataParser = (res) => {
       audit_date: _get(e?.audit_details, "audit_date", ""),
       category_id: _get(e?.audit_details, "category_id", ""),
       sub_category_id: _get(e?.audit_details, "sub_category_id", ""),
+      campaign_id:_get(e?.audit_details,"campaign_id","")
 
 
     };
