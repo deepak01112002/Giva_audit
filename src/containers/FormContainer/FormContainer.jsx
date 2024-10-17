@@ -50,11 +50,17 @@ class FormContainer extends Component {
     const user = await isAuth();
     const userData = user["data"];
     let categoryIds = getCookie("categoryIds");
+    let campaignIds = getCookie("campaingIds");
+ 
+
+    
     let categoryIdsParsed = JSON.parse(categoryIds);
+    let campaignIdsParsed = JSON.parse(campaignIds);
     if (userData) {
       await this.props.getFormData({
         // username: userData['user_type'] == Role.user ? userData.username : this.props.userID ?? '',
         category_id: categoryIdsParsed?.selectedCategorary,
+        campaign_id: campaignIdsParsed?.selectedCampaign,
         // sub_category_id: categoryIdsParsed.selectedSubCategory,
       });
       const { form_data } = this.props;
@@ -415,6 +421,9 @@ class FormContainer extends Component {
         let categoryIds = getCookie("categoryIds");
         let categoryIdsParsed = JSON.parse(categoryIds);
 
+        let campaignIds = getCookie("campaingIds");
+        let campaignIdsParsed = JSON.parse(campaignIds);
+
 
         user = user["data"];
         let builderData = {};
@@ -444,9 +453,9 @@ class FormContainer extends Component {
             store_name :this.state.storeName?.length > 0 ? this.state.storeName : this.state.submitFormData[this.state.activeFormId]?.store_name?.answer,
             city:this.state.city?.length > 0 ? this.state.city : this.state.submitFormData[this.state.activeFormId]?.city?.answer,
             state:this.state.state.length > 0 ? this.state.state : this.state.submitFormData[this.state.activeFormId]?.state?.answer,
-            campaign_id: campaignAlldetail?._id ?? "",
-            campaign_name: campaignAlldetail?.name ?? "",
             category_id: categoryIdsParsed.selectedCategorary,
+            // campaign_id: campaignIdsParsed.selectedCampaign,
+            ...campaignIdsParsed
           };
         } else {
           builderData = {
@@ -461,9 +470,12 @@ class FormContainer extends Component {
             region: this.state.regionform   ?? "",
             city:this.state.city??"",
             state:this.state.state??"",
-            campaign_id: campaignAlldetail?._id ?? "",
-            campaign_name: campaignAlldetail?.name ?? "",
+            // campaign_id: campaignAlldetail?._id ?? "",
+            // campaign_name: campaingNameParsed,
             category_id: categoryIdsParsed.selectedCategorary,
+            ...campaignIdsParsed
+
+
           };
         }
 
