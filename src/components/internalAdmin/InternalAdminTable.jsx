@@ -115,10 +115,13 @@ export default function InternalAdminTable({
                             cursor: "pointer",
                           }}
                           onClick={() => {
+
                             onEditClick({
                               formID: d.formId,
                               userID: d.username,
                               selectedCategorary: d.category_id,
+                              campaign_id : d.campaign_id,
+                              name:d.Campaign
                             });
                           }}
                         />

@@ -68,7 +68,11 @@ export default class InternalAdminContainer extends Component {
     setCookie('categoryIds', JSON.stringify({
       selectedCategorary: payload.selectedCategorary,
       selectedSubCategory: payload.selectedSubCategory,
+
     }))
+    setCookie('campaingIds',JSON.stringify({ campaign_name: payload.name, campaign_id: payload.campaign_id}))
+   
+    this.props.setSelectedCampaignIds({ campaign_name: payload.name, campaign_id: payload.campaign_id });
 
     this.props.setSelectedCategoriesIds({
       selectedCategorary: payload.selectedCategorary,
@@ -162,7 +166,7 @@ export default class InternalAdminContainer extends Component {
   render() {
     const { navigate, usersDataList } = this.props;
     const user = isAuth();
-    console.log('jieuf',this?.props?.regionsList?.data );
+ 
     
     
 

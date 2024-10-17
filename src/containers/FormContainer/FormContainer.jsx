@@ -51,12 +51,13 @@ class FormContainer extends Component {
     const userData = user["data"];
     
     let categoryIds = getCookie("categoryIds");
-    // let campaignIds = getCookie("campaingIds");
+    let campaignIds = getCookie("campaingIds");
     // let campaignIds = getCookie("campaingIds");
  
 
     
     let categoryIdsParsed = JSON.parse(categoryIds);
+    let campaignIdsParsed = JSON.parse(campaignIds);
     // let campaignIdsParsed = JSON.parse(campaignIds);
     // let campaignIdsParsed = JSON.parse(campaignIds);
 
@@ -64,8 +65,7 @@ class FormContainer extends Component {
       await this.props.getFormData({
         // username: userData['user_type'] == Role.user ? userData.username : this.props.userID ?? '',
         category_id: categoryIdsParsed?.selectedCategorary,
-        // ...campaignIdsParsed
-        // campaign_id: campaignIdsParsed?.selectedCampaign,
+        campaign_id: campaignIdsParsed?.campaign_id,
         // sub_category_id: categoryIdsParsed.selectedSubCategory,
       });
       const { form_data } = this.props;
@@ -83,7 +83,7 @@ class FormContainer extends Component {
           username: this.props.userID,
         });
       }
-      if (tabs.length > 0 && this.state.activeFormId == "") {
+      if (tabs?.length > 0 && this.state.activeFormId == "") {
         this.setState({
           activeFormId: tabs[0].id,
           submitFormData:
@@ -460,7 +460,10 @@ class FormContainer extends Component {
             state:this.state.state.length > 0 ? this.state.state : this.state.submitFormData[this.state.activeFormId]?.state?.answer,
             category_id: categoryIdsParsed.selectedCategorary,
             // campaign_id: campaignIdsParsed.selectedCampaign,
-            ...campaignIdsParsed
+            campaign_id: campaignIdsParsed?.campaign_id,
+            campaign_name: campaignIdsParsed?.campaign_name,
+
+
           };
         } else {
           builderData = {
@@ -478,7 +481,8 @@ class FormContainer extends Component {
             // campaign_id: campaignAlldetail?._id ?? "",
             // campaign_name: campaingNameParsed,
             category_id: categoryIdsParsed.selectedCategorary,
-            ...campaignIdsParsed
+            campaign_id: campaignIdsParsed?.campaign_id,
+            campaign_name: campaignIdsParsed?.campaign_name,
 
 
           };
