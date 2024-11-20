@@ -22,7 +22,7 @@ export default defineConfig({
     target: 'esnext',
   },
   build: {
-    outDir: '../build',
+    outDir: './build',
     emptyOutDir: true,
   },
 });
