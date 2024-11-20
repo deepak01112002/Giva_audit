@@ -108,7 +108,7 @@ export default function InternalAdminTable({
             }}
           >
             {/* View Icon */}
-            <Tooltip title="View Details" arrow>
+      
               <IconButton
                 size="small"
                 sx={{ color: '#1976d2', '&:hover': { color: '#1565c0' } }}
@@ -121,12 +121,12 @@ export default function InternalAdminTable({
               >
                 <RemoveRedEyeIcon />
               </IconButton>
-            </Tooltip>
+         
       
             {role === Role.internalAdmin && (
               <>
                 {/* Edit Icon */}
-                <Tooltip title="Edit" arrow>
+               
                   <IconButton
                     size="small"
                     sx={{ color: '#43a047', '&:hover': { color: '#388e3c' } }}
@@ -142,10 +142,10 @@ export default function InternalAdminTable({
                   >
                     <EditIcon />
                   </IconButton>
-                </Tooltip>
+          
       
                 {/* Delete Icon */}
-                <Tooltip title="Delete" arrow>
+               
                   <IconButton
                     size="small"
                     sx={{ color: '#e53935', '&:hover': { color: '#c62828' } }}
@@ -155,10 +155,9 @@ export default function InternalAdminTable({
                   >
                     <DeleteIcon />
                   </IconButton>
-                </Tooltip>
-      
+              
                 {/* Download Icon */}
-                <Tooltip title="Download" arrow>
+               
                   <IconButton
                     size="small"
                     sx={{ color: '#ffb300', '&:hover': { color: '#ffa000' } }}
@@ -171,11 +170,11 @@ export default function InternalAdminTable({
                   >
                     <DownloadIcon />
                   </IconButton>
-                </Tooltip>
+          
       
                 {/* Approve Button */}
                 {d?.audit_status !== 'APPROVED' && (
-                  <Tooltip title="Approve" arrow>
+                  
                     <Button
                       size="small"
                       variant="contained"
@@ -193,7 +192,7 @@ export default function InternalAdminTable({
                     >
                       Approve
                     </Button>
-                  </Tooltip>
+             
                 )}
               </>
             )}
