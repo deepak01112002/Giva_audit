@@ -21,4 +21,8 @@ export default defineConfig({
     exclude: ["node_modules"],
     target: 'esnext',
   },
+  build: {
+    outDir: '../build',
+    emptyOutDir: true,
+  },
 });
