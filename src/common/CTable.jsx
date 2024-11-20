@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useState } from 'react';
 import {
   Table as MTable,
   TableContainer,
@@ -7,23 +7,22 @@ import {
   TableCell,
   TableRow,
   TablePagination,
-} from "@mui/material";
-import { makeStyles, withStyles } from "@mui/styles";
-import TextField from "./TextField";
-import { styled } from "@mui/material/styles";
-import Box from "./Box";
-import TableLoadingSkeleton from "./TableLoadingSkeleton";
+} from '@mui/material';
+import { makeStyles, withStyles } from '@mui/styles';
+import TextField from './TextField';
+import { styled } from '@mui/material/styles';
+import Box from './Box';
+import TableLoadingSkeleton from './TableLoadingSkeleton';
 
 const StyledTableCell = withStyles({
   root: {
-    borderBottom: "none !important",
-    padding: "0px 0px !important",
+    borderBottom: 'none !important',
+    padding: '0px 0px !important',
   },
 })(TableCell);
 
-
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
+  '&:nth-of-type(odd)': {
     // backgroundColor: "#EAECF0",
     backgroundColor: theme.palette.action.hover,
   },
@@ -32,32 +31,30 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const useStyles = makeStyles((theme) => ({
   root: {},
   headRow: {
-    background: "#EDF7FF",
-    borderRadius: "50%",
+    background: '#EDF7FF',
+    borderRadius: '50%',
   },
   headTableCell: {
-    color: "#475467",
+    color: '#475467',
     // fontFamily: "sans-serif",
     // fontFamily: theme.typography.fontFamily,
 
-    fontSize: "16px",
-    fontWeight: "600",
-    padding: "20px",
-    border: "1px solid #EAECF0",
-    whiteSpace: "nowrap",
-    textAlign:"start",
-    background:"#FFFFFF"
-    
+    fontSize: '16px',
+    fontWeight: '600',
+    padding: '20px',
+    border: '1px solid #EAECF0',
+    whiteSpace: 'nowrap',
+    textAlign: 'start',
+    background: '#FFFFFF',
   },
   bodyTableCell: {
-    color: "#1D2939",
+    color: '#1D2939',
     // fontFamily: "sans-serif",
     // fontFamily: theme.typography.fontFamily,
 
-    fontSize: "16px",
-    textAlign:"start",
-    marginLeft:"-10px"
-
+    fontSize: '16px',
+    textAlign: 'start',
+    marginLeft: '-10px',
   },
 }));
 
@@ -81,13 +78,9 @@ const CTable = (props) => {
   let rows = data[page] || [];
   if (data.constructor === Array) {
     rows = data;
-    
+
     count = count || data.length || 0;
-
   }
-
-
-
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -100,13 +93,12 @@ const CTable = (props) => {
     onPageChange(1, parseInt(event.target.value));
   };
 
-  
   if (localPagination) {
     rows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }
 
   const renderRow = (col, row, colIndex, rowIndex) => {
-    let value = "";
+    let value = '';
     if (col.field && (row[col.field] || row[col.field] === 0)) {
       value = row[col.field];
     }
@@ -118,9 +110,9 @@ const CTable = (props) => {
       <TableCell
         key={`index${rowIndex}${colIndex} ` + Math.random()}
         sx={{
-          verticalAlign: "initial",
-          border: "1px solid #EAECF0",
-          paddingLeft: "1.875rem",
+          verticalAlign: 'initial',
+          border: '1px solid #EAECF0',
+          paddingLeft: '1.875rem',
           // textAlign:"center"
         }}
       >
@@ -128,12 +120,12 @@ const CTable = (props) => {
           <div style={col.style}>
             <TextField
               defaultValue={value}
-              onChange={e => col.onChange(e.target.value, rowIndex)}
+              onChange={(e) => col.onChange(e.target.value, rowIndex)}
             />
           </div>
         ) : (
           <div className={classes.bodyTableCell} style={col.style}>
-            {value || "-"}
+            {value || '-'}
           </div>
         )}
       </TableCell>
@@ -144,7 +136,7 @@ const CTable = (props) => {
     <>
       <TableContainer sx={sx}>
         <MTable>
-          <TableHead >
+          <TableHead>
             <TableRow>
               {columns.length
                 ? columns.map((col) => (
@@ -158,32 +150,33 @@ const CTable = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-          { props.isLoading ? <TableLoadingSkeleton rows={props.columns} /> 
-          :   <>
-            
-             {rows.length
-              ? rows.map((row, rowIndex) => (
-                  <StyledTableRow key={rowIndex + Math.random()}>
-                    {columns.length
-                      ? columns.map((col, colIndex) =>
-                          renderRow(col, row, colIndex, rowIndex)
-                        )
-                      : null}
-                  </StyledTableRow>
-                ))
-              : null}
-              
-              </>}
+            {props.isLoading ? (
+              <TableLoadingSkeleton rows={props.columns} />
+            ) : (
+              <>
+                {rows.length
+                  ? rows.map((row, rowIndex) => (
+                      <StyledTableRow key={rowIndex + Math.random()}>
+                        {columns.length
+                          ? columns.map((col, colIndex) =>
+                              renderRow(col, row, colIndex, rowIndex)
+                            )
+                          : null}
+                      </StyledTableRow>
+                    ))
+                  : null}
+              </>
+            )}
           </TableBody>
         </MTable>
       </TableContainer>
-      { data.length === 0 ? 
-                    <Box sx={{  textAlign:"center" }}>
-            
-                      <p>Data Not Found </p> 
-                      
-                    </Box>
-                    : "" }
+      {data.length === 0 && !props.isLoading ? (
+        <Box sx={{ textAlign: 'center' }}>
+          <p>Data Not Found </p>
+        </Box>
+      ) : (
+        ''
+      )}
 
       {pagination ? (
         <TablePagination
@@ -200,4 +193,4 @@ const CTable = (props) => {
   );
 };
 
-export default memo(CTable)
+export default memo(CTable);
