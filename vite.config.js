@@ -19,5 +19,7 @@ export default defineConfig({
     loader: "jsx",
     include: ["src/**/*.js", "src/**/*.jsx"],
     exclude: ["node_modules"],
+    target: 'esnext',
+    platform: 'linux',
   },
 });

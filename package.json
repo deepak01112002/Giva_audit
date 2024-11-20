@@ -53,5 +53,8 @@
     "postcss": "^8.4.35",
     "vite": "^5.2.12",
     "vite-jsconfig-paths": "^2.0.1"
-  }
+  },
+  "resolutions": {
+  "rollup": "npm:@rollup/wasm-node"
+}
 }
