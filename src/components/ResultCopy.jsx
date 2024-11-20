@@ -5,8 +5,6 @@ import {
   Document,
   StyleSheet,
   Text,
-  Image,
-  Font,
 } from "@react-pdf/renderer";
 import { getColorByScore } from "../utils/colors";
 let data  = JSON.parse(localStorage.getItem("user"));
@@ -14,84 +12,6 @@ let client_code = data?.data?.client_code ? data?.data?.client_code : 'sleep' ;
 
 
 
-const audit_details = [
-  {
-    key: "Client",
-    value: "Bummidi bangaru jwellers",
-  },
-  {
-    key: "Store code",
-    value: "600006",
-  },
-  {
-    key: "Store",
-    value: "Flagship store - Anna salai",
-  },
-  {
-    key: "store type",
-    value: "",
-  },
-  {
-    key: "Audit type",
-    value: "Walk in",
-  },
-  {
-    key: "Address",
-    value:
-      "ANNA SALAI Rani Seethai Hall Parallel to Gemini Flyover 603,Anna Salai  Chennai, Tamilnadu - 600006, Chennai",
-  },
-  {
-    key: "Audit date",
-    value: "7th May 2022",
-  },
-  {
-    key: "Overall experience",
-    value: "82%",
-  },
-];
-
-const data3 = [
-  {
-    section: "Parking Area ",
-    Score: 25,
-  },
-  {
-    section: "Entrance ",
-    Score: 45,
-  },
-  {
-    section: "Store Ambiance",
-    Score: 55,
-  },
-  {
-    section: "Staff Knowledge",
-    Score: 65,
-  },
-  {
-    section: "Brand Advocacy",
-    Score: 75,
-  },
-  {
-    section: "Product Presentation",
-    Score: 25,
-  },
-  {
-    section: "Collection Presentation",
-    Score: 15,
-  },
-  {
-    section: "Closing",
-    Score: 95,
-  },
-  {
-    section: "Handling Customer Enquiries",
-    Score: 25,
-  },
-  {
-    section: "Consumer Experience",
-    Score: 25,
-  },
-];
 
 const data4 = [
   {

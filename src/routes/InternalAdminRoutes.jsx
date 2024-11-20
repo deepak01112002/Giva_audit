@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import AdminView from "../pages/admin/layout/AdminView";
 import Result from "../pages/admin/Result";

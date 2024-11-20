@@ -1,5 +1,4 @@
 
-let data  = JSON.parse(localStorage.getItem("user"));
 let client_code = 'samsungvm' ;
 
 

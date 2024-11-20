@@ -1,7 +1,6 @@
-import React from "react";
 import StoreContainer from "../../containers/Store";
 
-const Store = (props) => {
+const Store = () => {
   return <StoreContainer />
 };
 

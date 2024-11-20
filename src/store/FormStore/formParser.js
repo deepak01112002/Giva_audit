@@ -1,6 +1,5 @@
 import _ from "lodash";
 import { getOptions } from "./formApi";
-import { insertExtraVal } from "./formSlice";
 
 const getTag = (dataType) => {
   let tag = "input";

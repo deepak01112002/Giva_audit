@@ -1,10 +1,5 @@
 import React from "react";
-import { DropzoneArea } from "material-ui-dropzone";
-import { DropzoneDialog } from "material-ui-dropzone";
-import Button from "../../common/Button";
 import Box from "../../common/Box";
-import Text from "../../common/Text";
-import { imgBaseUrl } from "../../helpers/constants";
 
 export default function MDropzoneDialog({
   handleOnChange,
@@ -74,10 +69,6 @@ export default function MDropzoneDialog({
       >
         <input onChange={onChange} type="file" />
       </Box>
-
-      {/* <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
-        Add Image
-      </Button> */}
     </div>
   );
 }

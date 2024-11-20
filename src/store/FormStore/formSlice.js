@@ -126,100 +126,102 @@ export const formSlice = createSlice({
     insertExtraVal: (state, action) => {
       state.extraValues = action.payload;
     },
-    setSelectedCategoriesIds : (state, action) => {
-      state.selectedCategoriesIds = action.payload
+    setSelectedCategoriesIds: (state, action) => {
+      state.selectedCategoriesIds = action.payload;
     },
-    setSelectedCampaignIds : (state, action) => {
-      state.selectedCampaignIds = action.payload
+    setSelectedCampaignIds: (state, action) => {
+      state.selectedCampaignIds = action.payload;
     },
-    setSelectedCampaignName:(state,action) => {
-      console.log('fjeufhe',action);
-      
-      state.selectedCampaignName = action.payload
-
-    }
-
+    setSelectedCampaignName: (state, action) => {
+      state.selectedCampaignName = action.payload;
+    },
   },
-  extraReducers: {
-    // Get new list
-    [getFormData.pending]: (state, action) => {
-      state.form_data_loading = true;
-    },
-    [getFormData.fulfilled]: (state, action) => {
-      const data = action.payload;
-      state.form_data = data;
-      state.form_data_loading = false;
-    },
-    [getFormData.rejected]: (state, action) => {
-      state.form_data_loading = false;
-    },
-    [submitFormData.pending]: (state, action) => {
-      state.submit_form_data_isLoading = true;
-    },
-    [submitFormData.fulfilled]: (state, action) => {
-      state.submit_form_data_response = action.payload;
-      state.submit_form_data_isLoading = false;
-    },
-    [submitFormData.rejected]: (state, action) => {
-      state.submit_form_data_isLoading = false;
-    },
-    [getStoreData.pending]: (state, action) => {
-      state.storeDataLoading = true;
-    },
-    [getStoreData.fulfilled]: (state, action) => {
-      state.storeData = action.payload;
-      state.storeDataLoading = false;
-    },
-    [getStoreData.rejected]: (state, action) => {
-      state.storeDataLoading = false;
-    },
-    [updateFormData.pending]: (state, action) => {
-      state.update_form_data_isLoading = true;
-    },
-    [updateFormData.fulfilled]: (state, action) => {
-      state.update_form_data_response = action.payload;
-      state.update_form_data_isLoading = false;
-    },
-    [updateFormData.rejected]: (state, action) => {
-      state.update_form_data_isLoading = false;
-    },
-    [setStoreCreds.fulfilled]: (state, action) => {
-      state.storeCreds = action.payload;
-    },
-    [uploadFile.pending]: (state, action) => {
-      state.file_upload_loading = true;
-    },
-    [uploadFile.fulfilled]: (state, action) => {
-      state.uploaded_file_data = action.payload;
-      state.file_upload_loading = false;
-    },
-    [uploadFile.rejected]: (state, action) => {
-      state.file_upload_loading = false;
-    },
-
-    [getAllSubCategory.pending]: (state, action) => {
-      state.sub_category_loading = true;
-    },
-    [getAllSubCategory.fulfilled]: (state, action) => {
-      const data = action.payload;
-      state.sub_category_data = data;
-      state.sub_category_loading = false;
-    },
-    [getAllSubCategory.rejected]: (state, action) => {
-      state.sub_category_loading = false;
-    },
-    [getAllCategory.pending]: (state, action) => {
-      state.category_loading = true;
-    },
-    [getAllCategory.fulfilled]: (state, action) => {
-      state.category_data = action.payload;
-      state.category_loading = false;
-    },
-    [getAllCategory.rejected]: (state, action) => {
-      state.category_loading = false;
-    },
+  extraReducers: (builder) => {
+    builder
+      // Get new list
+      .addCase(getFormData.pending, (state) => {
+        state.form_data_loading = true;
+      })
+      .addCase(getFormData.fulfilled, (state, action) => {
+        state.form_data = action.payload;
+        state.form_data_loading = false;
+      })
+      .addCase(getFormData.rejected, (state) => {
+        state.form_data_loading = false;
+      })
+      // Submit form data
+      .addCase(submitFormData.pending, (state) => {
+        state.submit_form_data_isLoading = true;
+      })
+      .addCase(submitFormData.fulfilled, (state, action) => {
+        state.submit_form_data_response = action.payload;
+        state.submit_form_data_isLoading = false;
+      })
+      .addCase(submitFormData.rejected, (state) => {
+        state.submit_form_data_isLoading = false;
+      })
+      // Get store data
+      .addCase(getStoreData.pending, (state) => {
+        state.storeDataLoading = true;
+      })
+      .addCase(getStoreData.fulfilled, (state, action) => {
+        state.storeData = action.payload;
+        state.storeDataLoading = false;
+      })
+      .addCase(getStoreData.rejected, (state) => {
+        state.storeDataLoading = false;
+      })
+      // Update form data
+      .addCase(updateFormData.pending, (state) => {
+        state.update_form_data_isLoading = true;
+      })
+      .addCase(updateFormData.fulfilled, (state, action) => {
+        state.update_form_data_response = action.payload;
+        state.update_form_data_isLoading = false;
+      })
+      .addCase(updateFormData.rejected, (state) => {
+        state.update_form_data_isLoading = false;
+      })
+      // Upload file
+      .addCase(uploadFile.pending, (state) => {
+        state.file_upload_loading = true;
+      })
+      .addCase(uploadFile.fulfilled, (state, action) => {
+        state.uploaded_file_data = action.payload;
+        state.file_upload_loading = false;
+      })
+      .addCase(uploadFile.rejected, (state) => {
+        state.file_upload_loading = false;
+      })
+      // Get subcategory
+      .addCase(getAllSubCategory.pending, (state) => {
+        state.sub_category_loading = true;
+      })
+      .addCase(getAllSubCategory.fulfilled, (state, action) => {
+        state.sub_category_data = action.payload;
+        state.sub_category_loading = false;
+      })
+      .addCase(getAllSubCategory.rejected, (state) => {
+        state.sub_category_loading = false;
+      })
+      // Get category
+      .addCase(getAllCategory.pending, (state) => {
+        state.category_loading = true;
+      })
+      .addCase(getAllCategory.fulfilled, (state, action) => {
+        state.category_data = action.payload;
+        state.category_loading = false;
+      })
+      .addCase(getAllCategory.rejected, (state) => {
+        state.category_loading = false;
+      })
+      // Set store credentials
+      .addCase(setStoreCreds.fulfilled, (state, action) => {
+        state.storeCreds = action.payload;
+      });
   },
 });
+
 
 export const { insertExtraVa, setSelectedCategoriesIds,setSelectedCampaignIds, setSelectedCampaignName } = formSlice.actions
 export default formSlice.reducer;

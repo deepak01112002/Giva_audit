@@ -10,7 +10,6 @@ import {
   GET_ALL_SUB_CATEGORY_DATA,
   GET_FORM_DATA,
   GET_STORE_DATA,
-  SUBMIT_FORM_DATA_API,
   UPLOAD_FILE_API,
 } from "./formConstant";
 
