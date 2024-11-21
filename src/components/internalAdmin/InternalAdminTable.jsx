@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import Box from '../../common/Box';
 import CTable from '../../common/CTable';
 import Stack from '../../common/Stack';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -13,6 +12,7 @@ import MDatePicker from '../../common/DatePicker';
 import Role from '../../utils/roles';
 import Select from '@mui/material/Select';
 import SearchIcon from '@mui/icons-material/Search';
+import Link from '@mui/material/Link';
 
 import {
   FormControl,
@@ -107,21 +107,6 @@ export default function InternalAdminTable({
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
             }}
           >
-            {/* View Icon */}
-      
-              <IconButton
-                size="small"
-                sx={{ color: '#1976d2', '&:hover': { color: '#1565c0' } }}
-                onClick={() => {
-                  handleOnViewClick({
-                    formID: d.formId,
-                    userID: d.username,
-                  });
-                }}
-              >
-                <RemoveRedEyeIcon />
-              </IconButton>
-         
       
             {role === Role.internalAdmin && (
               <>

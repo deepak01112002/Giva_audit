@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Page,
   View,
@@ -6,7 +5,7 @@ import {
   StyleSheet,
   Text,
 } from "@react-pdf/renderer";
-import { getColorByScore } from "../utils/colors";
+import { getAttributeByScore } from "../utils/colors";
 let data  = JSON.parse(localStorage.getItem("user"));
 let client_code = data?.data?.client_code ? data?.data?.client_code : 'sleep' ;
 
@@ -136,19 +135,13 @@ const ResultCopy = ({ data, mWidth }) => (
                 Audit Details
               </p>
             </div>
-            <table class="table">
-              {/* <thead>
-                <tr>
-                  <th>Question</th>
-                  <th>Answer </th>
-                  <th>Marks</th>
-                  <th>Max Marks</th>
-                </tr>
-              </thead> */}
+            <table className="table">
               <tbody>
                 {data.audit_details && data.audit_details.length > 0
                   ? data?.audit_details.map((item, i) => (
-                      <tr style={{}}>
+                      <tr 
+                      key={i}
+                      >
                         <td
                           style={{
                             textAlign: "end",
@@ -221,17 +214,17 @@ const ResultCopy = ({ data, mWidth }) => (
                       height: "30px",
                       borderRadius: "20px",
                     }}
-                    class="progress"
+                    className="progress"
                   >
                     <div
-                      class="progress-bar"
+                      className="progress-bar"
                       role="progressbar"
                       aria-valuenow="70"
                       aria-valuemin="0"
                       aria-valuemax="100"
                       style={{
                         width: `${data.overall_percentage}%`,
-                        background: getColorByScore(data.overall_percentage),
+                        background: getAttributeByScore(data.overall_percentage),
                       }}
                     >
                       <span
@@ -240,20 +233,20 @@ const ResultCopy = ({ data, mWidth }) => (
                           fontWeight: "bold",
                           marginTop: "1px",
                         }}
-                        class=""
                       >{`${Math.round(data.overall_percentage) ?? 0}%`}</span>
                     </div>
                   </div>
                   <span style={{ fontWeight: "bold" }}>Average</span>
                 </div>
                 <div style={{ width: "40%", display: "flex" }}>
-                  <table class="table">
+                  <table className="table">
                     <tbody>
                       {data4.map((item, i) => (
                         <tr
                           style={{
-                            background: getColorByScore(item.score),
+                            background: getAttributeByScore(item.score),
                           }}
+                          key={i}
                         >
                           <td>{item.label}</td>
                           <td>{item.description}</td>
@@ -277,7 +270,7 @@ const ResultCopy = ({ data, mWidth }) => (
             <div style={{ background: "#e6e7e8", padding: "5px" }}>
               <p>Audit Summary</p>
             </div>
-            <table class="table ">
+            <table className="table ">
               <thead>
                 <tr>
                   <th>#</th>
@@ -289,7 +282,9 @@ const ResultCopy = ({ data, mWidth }) => (
                 {data.category_percentages &&
                 data.category_percentages.length > 0
                   ? data.category_percentages.map((item, i) => (
-                      <tr>
+                      <tr
+                      key={i}
+                      >
                         <td style={{ width: "10%" }}>{i + 1}</td>
                         <td style={{ width: "30%" }}>{item.category_name}</td>
                         <td style={{ display: "flex", alignItems: "center" }}>
@@ -309,7 +304,7 @@ const ResultCopy = ({ data, mWidth }) => (
                               borderRadius: "20px",
                               // marginTop: '2px'
                             }}
-                            class="progress"
+                            className="progress"
                           >
                             <div
                               class="progress-bar"
@@ -319,7 +314,7 @@ const ResultCopy = ({ data, mWidth }) => (
                               aria-valuemax="100"
                               style={{
                                 width: `${item.category_percentage}%`,
-                                background: getColorByScore(
+                                background: getAttributeByScore(
                                   item.category_percentage
                                 ),
                               }}
@@ -341,14 +336,16 @@ const ResultCopy = ({ data, mWidth }) => (
 
         {data?.categories_result?.map((item, i) => (
           <>
-            <div style={styles.table_div}>
+            <div style={styles.table_div} 
+            key={i}
+            >
               <div
                 style={{
                   // display: "flex",
                   width: mWidth,
                   borderWidth: "1px",
                   borderStyle: "solid",
-                  borderColor: getColorByScore(
+                  borderColor: getAttributeByScore(
                     (item.marks_scored / item.category_marks) * 100
                   ),
                 }}
@@ -357,7 +354,7 @@ const ResultCopy = ({ data, mWidth }) => (
                 <div style={styles.table_div1}></div>
                 <div
                   style={{
-                    background: getColorByScore(
+                    background: getAttributeByScore(
                       (item.marks_scored / item.category_marks) * 100,
                       "background"
                     ),
@@ -366,14 +363,14 @@ const ResultCopy = ({ data, mWidth }) => (
                     fontWeight: "bold",
                     paddingLeft: "9px",
                     paddingTop: "10px",
-                    color: getColorByScore(
+                    color: getAttributeByScore(
                       (item.marks_scored / item.category_marks) * 100
                     ),
                   }}
                 >
                   <p>{item?.label ?? "-"}</p>
                 </div>
-                <table class="table">
+                <table className="table">
                   <thead>
                     <tr>
                       <th>Question</th>
@@ -481,6 +478,7 @@ const styles = StyleSheet.create({
   ppt4: {},
   table_head: {
     marginLeft: "20px !important",
+    border: "1px solid black",
   },
   table_div1: {
     width: "100%",
@@ -494,10 +492,6 @@ const styles = StyleSheet.create({
   table3: {
     border: "1px solid black",
     width: "100%",
-  },
-
-  table_head: {
-    border: "1px solid black",
   },
   table_data: {
     border: "1px solid black",

@@ -4,12 +4,12 @@ const AppStyle = {
   muted: "#f0f0f0",
 };
 
-export const getColorByScore = (score, type = "color") => {
+export const getAttributeByScore = (score, type = "color") => {
   //Excellent
   let color = "#1CBD5C";
   //Good
 
-  if (type !== "background") {
+  if (type === "color") {
     if (score <= 65) {
       color = "#FF5B5B";
       //Average
@@ -21,6 +21,21 @@ export const getColorByScore = (score, type = "color") => {
       //bad:
     } else if (score > 84 && score <= 89) {
       color = "#AED676";
+    }
+  } else if (type === 'text') {
+    if (score <= 65) {
+      color = "Bad";
+      //Average
+    } else if (score > 65 && score <= 74) {
+      color = "Poor";
+      //Poor:
+    } else if (score > 74 && score <= 84) {
+      color = "Average";
+      //bad:
+    } else if (score > 84 && score <= 89) {
+      color = "Good";
+    } else {
+      color = 'Excellent';
     }
   } else {
     if (score <= 65) {

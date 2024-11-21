@@ -9,6 +9,7 @@ import {
 import { isAuth } from "../helpers/cookies.js";
 import PublicRoutes from "./PublicRoutes.jsx";
 import AdminRoutes from "./AdminRoutes.jsx";
+import Result from "../pages/admin/Result";
 import InternalAdminRoutes from "./InternalAdminRoutes.jsx";
 import Role from "../utils/roles.js"
 
@@ -29,6 +30,7 @@ function Index() {
           ) : (
             <Route path="/*" element={<PublicRoutes />} />
           )}
+           <Route exact path="/pdf" element={<Result />} />
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </Router>
