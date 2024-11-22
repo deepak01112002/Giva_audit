@@ -12,7 +12,8 @@ import MDatePicker from '../../common/DatePicker';
 import Role from '../../utils/roles';
 import Select from '@mui/material/Select';
 import SearchIcon from '@mui/icons-material/Search';
-import Link from '@mui/material/Link';
+
+import RemoveRedEyeIcon  from '@mui/icons-material/RemoveRedEye';
 
 import {
   FormControl,
@@ -109,7 +110,22 @@ export default function InternalAdminTable({
           >
       
             {role === Role.internalAdmin && (
+
+
               <>
+
+<IconButton
+                size="small"
+                sx={{ color: '#1976d2', '&:hover': { color: '#1565c0' } }}
+                onClick={() => {
+                  handleOnViewClick({
+                    formID: d.formId,
+                    userID: d.username,
+                  });
+                }}
+              >
+                <RemoveRedEyeIcon />
+              </IconButton>
                 {/* Edit Icon */}
                
                   <IconButton
