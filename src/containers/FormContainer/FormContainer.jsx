@@ -338,16 +338,16 @@ class FormContainer extends Component {
 
   handleOnSubmit = async (e) => {
     e.preventDefault();
-
     const { tabs } = this.props.form_data;
 
     //TO CHECK BEFORE DEPLOY
-    if (tabs.length - 1 > this.state.activeFormIndex) {
+    // if (tabs.length - 1 > this.state.activeFormIndex) {
+
       this.setState({
         activeFormId: tabs[this.state.activeFormIndex + 1]?.id,
         activeFormIndex: this.state.activeFormIndex + 1,
       });
-    } else {
+    // } else {
       this.setState({
         formDataSubmitting: true,
       });
@@ -493,16 +493,18 @@ class FormContainer extends Component {
         if (user["user_type"] === Role.user) {
          response = await this.props.submitFormData(builderData);
           if (response?.payload?.status === 200) {
-            this.setState({
-              snackBarOpen: true,
-              snackbarMsg: "Form submitted successfully",
-            });
-            setTimeout(() => {
+            // this.setState({
+            //   snackBarOpen: true,
+            //   snackbarMsg: "Form submitted successfully",
+            // });
+      
+          setTimeout(() => {
               this.setState({
                 formDataSubmitting: false,
               });
-              this.props.navigate("/store");
+              if(!tabs.length - 1 > this.state.activeFormIndex) {  this.props.navigate("/store");}
             }, 3000);
+          
           } else {
             this.setState({
               formDataSubmitting: false,
@@ -518,12 +520,12 @@ class FormContainer extends Component {
               snackBarOpen: true,
               snackbarMsg: "Form submitted successfully",
             });
-            setTimeout(() => {
+             setTimeout(() => {
               this.setState({
                 formDataSubmitting: false,
               });
               this.props.navigate("/admin");
-            }, 3000);
+            }, 3000)
           } else {
             this.setState({
               formDataSubmitting: false,
@@ -533,7 +535,7 @@ class FormContainer extends Component {
           }
         }
       }
-    }
+    // }
 
     return false;
   };
