@@ -16,6 +16,7 @@ const mapStateToProps = (state) => {
   
   return {
     form_data: state.formData.form_data,
+    tabSubmitdata: state.formData.tabSubmitdata,
     formDataLoading: state.formData.form_data_loading,
     fetchSubmitDataLoading: state.internalAdmin.submitDataLoading,
     fetchSubmitData: state.internalAdmin.submitData,
@@ -33,6 +34,7 @@ const mapStateToProps = (state) => {
     selectedCampaignName: state.formData.selectedCampaignName,
 
 
+
   };
 };
 
@@ -45,6 +47,7 @@ const mapDispatchToProps = (dispatch) =>
       setFormCreds: setFormCreds,
       updateFormData: updateFormData,
       uploadFile: uploadFile,
+      fetchSubmittedData: fetchSubmitData,
       // getCompaign : getCompaign, 
     },
     dispatch
