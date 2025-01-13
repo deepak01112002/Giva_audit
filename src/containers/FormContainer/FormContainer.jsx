@@ -31,7 +31,8 @@ class FormContainer extends Component {
       regionform:'',
       city:'',
       state:'',
-      address:'' 
+      address:'' ,
+      _id: null,
     };
     this.handleOnChange = this.handleOnChange.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -67,6 +68,10 @@ class FormContainer extends Component {
         campaign_id: campaignIdsParsed?.campaign_id,
         // sub_category_id: categoryIdsParsed.selectedSubCategory,
       });
+      // await this.props.fetchSubmittedData({
+      //   category_id: categoryIdsParsed?.selectedCategorary,
+      //   username: this.props.userID,
+      // });
       const { form_data } = this.props;
       const { tabs } = form_data;
 
@@ -449,6 +454,7 @@ class FormContainer extends Component {
           // builderData["sub_category_id"] =
           //   categoryIdsParsed?.selectedSubCategory;
           builderData = {
+
             // sub_category_id: categoryIdsParsed.selectedSubCategory,
             updated_by: user.username,
             form_id: this.props.formID,
@@ -464,9 +470,13 @@ class FormContainer extends Component {
             // campaign_id: campaignIdsParsed.selectedCampaign,
             campaign_id: campaignIdsParsed?.campaign_id,
             campaign_name: campaignIdsParsed?.campaign_name,
-
-
+            all_tabs_submitted: tabs.length - 1 > this.state.activeFormIndex ? false : true,
+            last_tab_submitted: this.state.activeFormId,
           };
+          // _id exist then update
+          if (this.state._id) {
+            builderData["_id"] = this.state._id;
+          }
         } else {
           builderData = {
             // sub_category_id: categoryIdsParsed.selectedSubCategory,
@@ -485,9 +495,12 @@ class FormContainer extends Component {
             category_id: categoryIdsParsed.selectedCategorary,
             campaign_id: campaignIdsParsed?.campaign_id,
             campaign_name: campaignIdsParsed?.campaign_name,
-
-
+            all_tabs_submitted: tabs.length - 1 > this.state.activeFormIndex ? false : true,
+            last_tab_submitted: this.state.activeFormId,
           };
+          if (this.state._id) {
+            builderData["_id"] = this.state._id;
+          }
         }
 
         var response = "";
@@ -499,6 +512,17 @@ class FormContainer extends Component {
             //   snackBarOpen: true,
             //   snackbarMsg: "Form submitted successfully",
             // });
+
+            console.log("response",response);
+            // only for first time
+            if(response?.payload?.data?.data?._id){
+              this.setState({ 
+                _id: response?.payload?.data?.data?._id
+              })
+            }
+          
+              
+
       
           setTimeout(() => {
               this.setState({

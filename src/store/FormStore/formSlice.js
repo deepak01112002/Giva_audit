@@ -7,6 +7,7 @@ import {
   submitFormDataApi,
   updateAuditData,
   uploadFileApi,
+  fetchSubmittedDataApi
 } from "./formApi";
 import { parseData, parseStoreData } from "./formParser";
 
@@ -14,6 +15,16 @@ import { parseData, parseStoreData } from "./formParser";
 export const getFormData = createAsyncThunk("getFormData", async (payload) => {
   try {
     const response = await getFormDataApi(payload);
+    const data = await parseData(response);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+export const fetchSubmittedData = createAsyncThunk("fetchSubmittedData", async (payload) => {
+  try {
+    const response = await fetchSubmittedDataApi(payload);
     const data = await parseData(response);
     return data;
   } catch (error) {
@@ -94,6 +105,9 @@ const initialState = {
   storeData:{},
   form_data_loading: false,
 
+  tabSubmitdata: {},
+  tabSubmitdata_loading: false,
+
   submit_form_data_isLoading: false,
   submit_form_data_response: {},
 
@@ -150,6 +164,20 @@ export const formSlice = createSlice({
       .addCase(getFormData.rejected, (state) => {
         state.form_data_loading = false;
       })
+      // Get fetchSubmittedData 
+      .addCase(fetchSubmittedData.pending, (state) => {
+        state.tabSubmitdata = true;
+      }
+      )
+      .addCase(fetchSubmittedData.fulfilled, (state, action) => {
+        state.tabSubmitdata = action.payload;
+        state.tabSubmitdata_loading = false;
+      }
+      )
+      .addCase(fetchSubmittedData.rejected, (state) => {
+        state.tabSubmitdata_loading = false;
+      }
+      )
       // Submit form data
       .addCase(submitFormData.pending, (state) => {
         state.submit_form_data_isLoading = true;

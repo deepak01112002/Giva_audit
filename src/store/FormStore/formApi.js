@@ -11,11 +11,16 @@ import {
   GET_FORM_DATA,
   GET_STORE_DATA,
   UPLOAD_FILE_API,
+  FETCH_SUBMITTED_DATA,
 } from "./formConstant";
 
 export const getFormDataApi = async (params) => {
   return axios.get(GET_FORM_DATA, { params });
 };
+
+export const fetchSubmittedDataApi = async (params) => {
+  return axios.get(FETCH_SUBMITTED_DATA, { params });
+}
 
 export const getStoreDataApi = async () => {
   return axios.get(GET_STORE_DATA);

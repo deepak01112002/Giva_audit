@@ -10,5 +10,7 @@ export const GET_ALL_CATEGORY_DATA = `/${client_code}/getAllCategories`
 export const GET_ALL_SUB_CATEGORY_DATA = `/${client_code}/getAllSubCategories`
 
 export const SUBMIT_FORM_DATA_API = `/${client_code}/submitTabData`
+
+export const FETCH_SUBMITTED_DATA = `/${client_code}/fetchSubmittedData`
 export const UPLOAD_FILE_API = '/docs/upload'
 
