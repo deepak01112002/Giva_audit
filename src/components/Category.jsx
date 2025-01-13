@@ -85,6 +85,7 @@ export default function Category(props) {
           autoSelect
           options={storeData}
           value={selectedStore} 
+          disabled
           getOptionLabel={(option) => option.store_name || ''} // Display 'store_name' property
           onChange={(_, value) => handleStoreSelection(value)}
           sx={{ minWidth: '33%', margin: '0rem 1rem ' }}

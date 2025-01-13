@@ -25,7 +25,7 @@ export const getFormData = createAsyncThunk("getFormData", async (payload) => {
 export const fetchSubmittedData = createAsyncThunk("fetchSubmittedData", async (payload) => {
   try {
     const response = await fetchSubmittedDataApi(payload);
-    const data = await parseData(response);
+    const data = response.data.data;
     return data;
   } catch (error) {
     throw new Error(error);
@@ -170,6 +170,7 @@ export const formSlice = createSlice({
       }
       )
       .addCase(fetchSubmittedData.fulfilled, (state, action) => {
+        console.log(action.payload)
         state.tabSubmitdata = action.payload;
         state.tabSubmitdata_loading = false;
       }

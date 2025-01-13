@@ -1,6 +1,7 @@
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { connect } from "react-redux";
 import {
+  fetchSubmittedData,
   getFormData,
   submitFormData,
   updateFormData,
@@ -32,9 +33,6 @@ const mapStateToProps = (state) => {
     selectedCategoriesIds: state.formData.selectedCategoriesIds,
     selectedCampaignIds: state.formData.selectedCampaignIds,
     selectedCampaignName: state.formData.selectedCampaignName,
-
-
-
   };
 };
 
@@ -43,11 +41,11 @@ const mapDispatchToProps = (dispatch) =>
     {
       getFormData: getFormData,
       submitFormData: submitFormData,
-      getSubmitData: fetchSubmitData,
+      // getSubmitData: fetchSubmitData,
       setFormCreds: setFormCreds,
       updateFormData: updateFormData,
       uploadFile: uploadFile,
-      fetchSubmittedData: fetchSubmitData,
+      fetchSubmittedData: fetchSubmittedData,
       // getCompaign : getCompaign, 
     },
     dispatch

@@ -7,6 +7,8 @@ let client_code = 'samsungvm';
 // export const FETCH_USER = '/titan/fetchUsers'
 export const FETCH_USER =`/${client_code}/fetchUsers`
 
+export const FETCH_SUBMITTED_DATA =`/${client_code}/fetchSubmittedData`
+
 // export const FETCH_PDF_DATA = '/titan/generatepdf'
 export const FETCH_PDF_DATA = `/${client_code}/generatepdf`
 

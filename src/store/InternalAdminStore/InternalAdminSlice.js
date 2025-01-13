@@ -4,6 +4,7 @@
     fetchedUserDataParser,
     parseSubmittedData,
   } from "./InternalAdminParser";
+import { fetchSubmittedDataApi } from "store/FormStore/formApi";
 
   // get api configuration
   export const fetchUsers = createAsyncThunk("fetchUsers", async (payload) => {
@@ -64,7 +65,7 @@
     "fetchSubmitData",
     async (payload) => {
       try {
-        const response = await fetchPdfDataApi(payload);
+        const response = await fetchSubmittedDataApi(payload);
         const data = parseSubmittedData(response.data);
         return data;
       } catch (error) {

@@ -1,37 +1,32 @@
 import React from "react";
 import InputLabel from "./InputLabel";
+import TextField from "./TextField";
 import Input from "./Input";
 import Box from "./Box";
 import MDatePicker from "./DatePicker";
 import MDropzoneDialog from "../components/internalAdmin/MDropzoneDialog";
-import Select from "./Select";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
 import dayjs from "dayjs";
 
 const InputBuilder = (attributes) => {
+  let isDisabled = attributes.label==='Store Code' || attributes.label==='Store Name'
   let value = "";
-  let imageValue = "";
-
+  let imageValue = ""
   if (Object.keys(attributes?.inputValue).length > 0) {
-    if (attributes?.attributes?.props?.name in attributes?.inputValue) {
-      value =
-        attributes?.inputValue[attributes?.attributes?.props?.name]["answer"] ??
-        "";
-      imageValue =
-        attributes?.inputValue[attributes?.attributes?.props?.name][
-          "imageData"
-        ] ?? "";
+
+    if(attributes?.attributes?.props?.name in attributes?.inputValue){
+    value =
+      attributes?.inputValue[attributes?.attributes?.props?.name]["answer"] ??
+      "";
+      imageValue = attributes?.inputValue[attributes?.attributes?.props?.name]["imageData"] ??
+      "";
     }
   }
-
-  if (attributes.attributes.props.type === "date") {
+  if (attributes.attributes.props.type == "date") {
     if (Object.keys(attributes?.inputValue).length > 0) {
-      if (attributes?.attributes?.props?.name in attributes?.inputValue) {
-        value = new Date(
-          attributes?.inputValue[attributes.attributes.props.name]["answer"] ??
-            ""
-        );
+      if(attributes?.attributes?.props?.name in attributes?.inputValue){
+      value = new Date(
+        attributes?.inputValue[attributes.attributes.props.name]["answer"] ?? ""
+      );
       }
     }
     try {
@@ -42,7 +37,6 @@ const InputBuilder = (attributes) => {
   }
 
   let tag;
-
   switch (attributes.attributes.props.type) {
     case "date":
       tag = (
@@ -52,7 +46,7 @@ const InputBuilder = (attributes) => {
             value={dayjs(value)}
             onChange={(e) => {
               attributes.handleOnChange(
-                e.toISOString().split("T")[0],
+                e.toISOString().split('T')[0],
                 attributes.attributes.props.name
               );
             }}
@@ -60,81 +54,32 @@ const InputBuilder = (attributes) => {
         </Box>
       );
       break;
-
     case "text":
-      if (attributes.label === "Store Name") {
-        let drop = (attributes?.attributes?.contentvalue ?? []).map(
-          (e) => e.props.innerHTML
-        );
-        let extraData = (attributes?.attributes?.contentvalue ?? []).map(
-          (e) => e.extraData
-        );
-        let onlyLabel = [];
-        let storeCode = (attributes?.attributes?.contentvalue ?? []).map(
-          (e) => {
-            onlyLabel.push(
-              e?.extraData?.store_name + " - " + e?.extraData?.store_code
-            );
-            return e?.extraData?.store_name;
+      tag = (
+        <Input
+          label={attributes.label}
+          value={value}
+          required={attributes.attributes.props.required}
+          type={attributes.attributes.props.link ? "url" : "text"}
+          // type="url"
+          onChange={(e) =>
+            attributes.handleOnChange(
+              e.target.value,
+              attributes.attributes.props.name
+            )
           }
-        );
-
-        const defaultProps = {
-          options: storeCode,
-          getOptionLabel: (option) => {
-            let res = attributes?.attributes?.contentvalue.find(
-              (e) => e?.extraData?.store_name === option
-            );
-            return (
-              res?.extraData?.store_name + " - " + res?.extraData?.store_code
-            );
-          },
-        };
-
-        tag = (
-          <Autocomplete
-            {...defaultProps}
-            id="auto-select"
-            autoSelect
-            value={value}
-            renderInput={(params) => (
-              <TextField {...params} label={attributes.label} variant="standard" />
-            )}
-            onChange={(event, newValue) => {
-              attributes.handleOnChange(
-                newValue,
-                attributes.attributes.props.name,
-                extraData,
-                event
-              );
-            }}
-          />
-        );
-      } else {
-        tag = (
-          <Input
-            label={attributes.label}
-            value={value}
-            required={attributes.attributes.props.required}
-            type={attributes.attributes.props.link ? "url" : "text"}
-            onChange={(e) =>
-              attributes.handleOnChange(
-                e.target.value,
-                attributes.attributes.props.name
-              )
-            }
-            disabled={attributes?.auto_fill ?? false}
-            sx={{ marginTop: "10px", width: "100%" }}
-          />
-        );
-      }
+          disabled = {isDisabled ??  attributes?.auto_fill??false}
+          sx={{ marginTop: "10px", width: "100%" }}
+        />
+      );
       break;
 
+    // Type-File :-
     case "file":
       tag = (
         <Box sx={{ marginTop: "10px" }}>
           <MDropzoneDialog
-            imageValue={imageValue}
+          imageValue = {imageValue}
             value={value}
             handleOnChange={(val) => {
               try {
@@ -143,27 +88,28 @@ const InputBuilder = (attributes) => {
                   attributes.attributes.props.name,
                   "image"
                 );
-              } catch (e) {}
+              } catch (e) {
+              }
             }}
           />
         </Box>
       );
       break;
-
     default:
       tag = (
         <Input
           label={attributes.label}
           value={value}
           required={attributes.attributes.props.required}
+          disabled = {isDisabled ??  attributes?.auto_fill??false}
+
           type={attributes.attributes.props.link ? "url" : "text"}
-          onChange={(e) =>
+           onChange={(e) =>
             attributes.handleOnChange(
               e.target.value,
               attributes.attributes.props.name
             )
           }
-          disabled={attributes?.auto_fill ?? false}
           sx={{ marginTop: "10px", width: "100%" }}
         />
       );
@@ -176,6 +122,7 @@ const InputBuilder = (attributes) => {
           {attributes.label}
         </InputLabel>
         {tag}
+
       </Box>
     </>
   );
