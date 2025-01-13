@@ -9,10 +9,12 @@ class CategoryContainer extends Component {
   state = {
     selectedCategorary: "",
     selectedCampaign:"",
+    selectedStore:null,
   };
 
   componentDidMount() {
     this.props.getAllCategory2();
+    this.props.getStoreData();
   }
   handleCampaingChange = (index,campaign) => {
     const {name,_id} =this.props.compaignList?.data[index]
@@ -24,6 +26,9 @@ class CategoryContainer extends Component {
     setCookie('campaingIds',JSON.stringify({ campaign_name: name, campaign_id: _id }))
    
     this.props.setSelectedCampaignIds({ campaign_name: name, campaign_id: _id });
+  };
+  handleStoreSelection = (store) => {
+    this.setState({selectedStore:store})
   };
   handleCategoryChange = (id, name) => {   
     let stateValues = this.state;
@@ -37,14 +42,14 @@ class CategoryContainer extends Component {
   };
 
   onSubmit = () => {
-    this.props.navigate(`/dashboard`);
+    this.props.navigate(`/dashboard`,{ state: this.state.selectedStore });
   };
   render() {
     
     if (this.props.categoryLoading) {
       return null;
     }
-
+console.log('this.props.', this.props.storeData)
     return (
       
       <div>
@@ -58,7 +63,10 @@ class CategoryContainer extends Component {
             handleCampaingChange:this.handleCampaingChange,
             onSubmit: this.onSubmit,
             getAllCampaign:this.props.compaignList?.data,
-            setSelectedCampaignName:this.props.setSelectedCampaignName
+            setSelectedCampaignName:this.props.setSelectedCampaignName,
+            storeData:this.props.storeData ?? [],
+            handleStoreSelection:this.handleStoreSelection,
+            selectedStore:this.state.selectedStore
           }}
         />
       </div>

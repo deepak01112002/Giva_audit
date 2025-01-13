@@ -91,6 +91,7 @@ export const uploadFile = createAsyncThunk("uploadFile", async (payload) => {
 
 const initialState = {
   form_data: {},
+  storeData:{},
   form_data_loading: false,
 
   submit_form_data_isLoading: false,

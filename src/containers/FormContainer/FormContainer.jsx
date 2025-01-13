@@ -43,7 +43,6 @@ class FormContainer extends Component {
   async componentDidMount() {
     await this.getFormDataApiCall();
     await this.handleInitialSubmitFormData();
-
   }
 
   async getFormDataApiCall() {
@@ -98,6 +97,7 @@ class FormContainer extends Component {
   async handleInitialSubmitFormData() {
     const { form_data } = this.props;
     const { extraStore } = form_data;
+    const { location } = this.props;
 
     if (!this.props.formID) {
       let submitFormData = JSON.parse(
@@ -108,7 +108,9 @@ class FormContainer extends Component {
       // submitFormData[dynamicKey]['city']['answer'] = extraStore[0].city;
       // submitFormData[dynamicKey]['region']['answer'] = extraStore[0].region;
       // submitFormData[dynamicKey]['state']['answer'] = extraStore[0].state;
-      // submitFormData[dynamicKey]['address']['answer'] = extraStore[0].address;
+      submitFormData[dynamicKey]['store_name']['answer'] = location.state.store_name;
+      submitFormData[dynamicKey]['store_code']['answer'] = location.state.store_code;
+
       this.setState({
         submitFormData: submitFormData,
       });
@@ -577,7 +579,6 @@ class FormContainer extends Component {
         </>
       );
     }
- 
     return (
   
       
