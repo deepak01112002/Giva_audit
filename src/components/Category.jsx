@@ -47,7 +47,7 @@ export default function Category(props) {
           options={getAllCategory}
         />
 
-        <FormControl sx={{ m: 1, minWidth: '33%' }}>
+        <FormControl sx={{ m: 1, width: '500px', }}>
           <InputLabel id="demo-select-small-label">Campaign</InputLabel>
           <Select
             sx={{ marginRight: 0 }}
@@ -74,7 +74,7 @@ export default function Category(props) {
           value={selectedStore} 
           getOptionLabel={(option) => option.store_code || ''} // Display 'store_name' property
           onChange={(_, value) => handleStoreSelection(value)}
-          sx={{ minWidth: '33%', margin: '1rem' }}
+          sx={{ width: '500px',  margin: '1rem' }}
           renderInput={(params) => (
             <TextField {...params} label="Store Code" size="small" />
           )}
@@ -88,7 +88,7 @@ export default function Category(props) {
           disabled
           getOptionLabel={(option) => option.store_name || ''} // Display 'store_name' property
           onChange={(_, value) => handleStoreSelection(value)}
-          sx={{ minWidth: '33%', margin: '0rem 1rem ' }}
+          sx={{ width: '500px', margin: '0rem 1rem ' }}
           renderInput={(params) => (
             <TextField {...params} label="Store Name" size="small" />
           )}

@@ -145,7 +145,7 @@ class FormContainer extends Component {
       const index  = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1)? 0:this.props?.tabSubmitdata?.last_tab_index + 1;
     this.setState({
         activeFormIndex: index,
-        activeFormId: tabs[index]?.id,
+        activeFormId: index<tabs.length?tabs[index]?.id : tabs[0]?.id,
       });
     }
   }
@@ -556,7 +556,7 @@ class FormContainer extends Component {
               this.setState({
                 formDataSubmitting: false,
               });
-              if(!tabs.length - 1 > this.state.activeFormIndex) {  this.props.navigate("/store");}
+              if(!(tabs.length > this.state.activeFormIndex)) {  this.props.navigate("/store");}
             }, 3000);
           
           } else {
