@@ -134,18 +134,19 @@ class FormContainer extends Component {
     if(this.props?.tabSubmitdata?.last_tab_index)this.setState({
               activeFormIndex: this.props?.tabSubmitdata?.last_tab_index + 1,
               activeFormId: tabs[this.props?.tabSubmitdata?.last_tab_index + 1].id,
+              _id : this.props?.tabSubmitdata?._id
           });
   }
 
   componentDidUpdate(prevProps) {
     const { form_data } = this.props;
     const { tabs } = form_data;
-    // Compare the previous and current props
-    if (prevProps.form_data !==this.props.form_data) {
+    if (prevProps.tabSubmitdata !==this.props.tabSubmitdata) {
       const index  = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1)? 0:this.props?.tabSubmitdata?.last_tab_index + 1;
     this.setState({
         activeFormIndex: index,
         activeFormId: index<tabs.length?tabs[index]?.id : tabs[0]?.id,
+        _id : this.props?.tabSubmitdata?._id,
       });
     }
   }
@@ -269,7 +270,6 @@ class FormContainer extends Component {
   handleChange = (event, newValue) => {
     this.setState({ activeFormId: newValue });
   };
-
   getQuestinaire(mergedData, formData) {
     let questionaire = [];
     for (let a in mergedData) {
@@ -371,6 +371,10 @@ class FormContainer extends Component {
 
   handleOnSubmit = async (e) => {
     e.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth', 
+    });
     const { tabs } = this.props.form_data;
 
     //TO CHECK BEFORE DEPLOY
@@ -594,14 +598,39 @@ class FormContainer extends Component {
     return false;
   };
   handleOnPrev = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth', // Smooth scrolling effect
+    });
     const { tabs } = this.props.form_data;
     if (this.state.activeFormIndex > 0) {
       this.setState({
         activeFormId: tabs[this.state.activeFormIndex - 1].id,
         activeFormIndex: this.state.activeFormIndex - 1,
       });
-    }
+      setTimeout(() => {
+        const updatedFormData = { ...this.state.submitFormData }; // Create a shallow copy of submitFormData
+      
+        this.props?.tabSubmitdata?.multitab_data?.[this.state.activeFormIndex]?.questionnarie?.forEach(val => {
+          if (
+            val?.label_key &&
+            updatedFormData[this.state.activeFormId]?.[val.label_key] &&
+            val.answer !== undefined
+          ) {
+            // Update the answer in the copied state
+            updatedFormData[this.state.activeFormId][val.label_key] = {
+              ...updatedFormData[this.state.activeFormId][val.label_key],
+              answer: val.answer,
+            };
+          }
+        });
+      
+        // Update the state with the modified object
+        this.setState({ submitFormData: updatedFormData });
+      }, 500);
+      
   };
+}
 
   render() {
     
@@ -630,7 +659,7 @@ class FormContainer extends Component {
         </>
       );
     }
-
+  
     return (
   
       
