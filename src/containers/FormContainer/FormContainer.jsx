@@ -18,6 +18,8 @@ class FormContainer extends Component {
     super(props);
     this.state = {
       activeFormId: "",
+      activeSubTab:"",
+      activeSubIndex:0,
       activeFormIndex: 0,
       submitFormData: {},
       snackBarOpen: false,
@@ -101,7 +103,7 @@ class FormContainer extends Component {
 
   async handleInitialSubmitFormData() {
     const { form_data } = this.props;
-      const { tabs } = form_data;
+      const { tabs,subtab } = form_data;
     const { extraStore } = form_data;
     const { location } = this.props;
 
@@ -121,9 +123,9 @@ class FormContainer extends Component {
         submitFormData: submitFormData,
         StoreCode:location.state.store_code,
         storeName:location.state.store_name,
+        activeSubTab:subtab?.[0]?.[0]
       });
     }
-     
     let categoryIds = getCookie("categoryIds");
     let campaignIds = getCookie("campaingIds");
     let categoryIdsParsed = JSON.parse(categoryIds);
@@ -140,9 +142,10 @@ class FormContainer extends Component {
 
   componentDidUpdate(prevProps) {
     const { form_data } = this.props;
-    const { tabs } = form_data;
+    const { tabs,subtab } = form_data;
     if (prevProps.tabSubmitdata !==this.props.tabSubmitdata) {
-      const index  = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1)? 0:this.props?.tabSubmitdata?.last_tab_index + 1;
+      let index  = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1)? 0:this.props?.tabSubmitdata?.last_tab_index + 1;
+      if(index>=subtab.length)index=0;
     this.setState({
         activeFormIndex: index,
         activeFormId: index<tabs.length?tabs[index]?.id : tabs[0]?.id,
@@ -270,17 +273,19 @@ class FormContainer extends Component {
   handleChange = (event, newValue) => {
     this.setState({ activeFormId: newValue });
   };
+  handleSubTabChange = (event, newValue) => {
+    this.setState({ activeSubTab: newValue });
+  };
   getQuestinaire(mergedData, formData) {
     let questionaire = [];
     for (let a in mergedData) {
       let data = { ...formData[a], ...mergedData[a] }
-
-
       let answerData = {
         question: data["question"],
         answer: data["answer"].toString(),
         label_key: a,
         question_no: data["question_no"],
+        sub_tab:data['sub_tab']
       };
       if (!data.non_scoring && Array.isArray(data["answer"])) {
         if (!data["answer"].includes("None of the above")) {
@@ -368,14 +373,21 @@ class FormContainer extends Component {
     }
     return answerSheet;
   };
-
   handleOnSubmit = async (e) => {
     e.preventDefault();
     window.scrollTo({
       top: 0,
       behavior: 'smooth', 
     });
-    const { tabs } = this.props.form_data;
+    const { tabs,subtab } = this.props.form_data;
+    if(subtab && subtab[this.state.activeFormIndex]?.length>0){
+      const index = subtab[this.state.activeFormIndex].indexOf(this.state.activeSubTab)
+      if( index!== subtab[this.state.activeFormIndex].length-1){
+       this.setState({activeSubTab:subtab[this.state.activeFormIndex][index+1]})
+       return;
+      }
+    }
+    this.setState({activeSubTab:subtab?.[this.state.activeFormIndex]?.[0]})
 
     //TO CHECK BEFORE DEPLOY
     // if (tabs.length - 1 > this.state.activeFormIndex) {
@@ -602,7 +614,14 @@ class FormContainer extends Component {
       top: 0,
       behavior: 'smooth', // Smooth scrolling effect
     });
-    const { tabs } = this.props.form_data;
+    const { tabs,subtab } = this.props.form_data;
+    if( subtab && subtab?.[this.state.activeFormIndex]?.length>0){
+      const index = subtab[this.state.activeFormIndex].indexOf(this.state.activeSubTab)
+      if( index!== 0){
+       this.setState({activeSubTab:subtab?.[this.state.activeFormIndex]?.[index-1]})
+       return;
+      }
+    }
     if (this.state.activeFormIndex > 0) {
       this.setState({
         activeFormId: tabs[this.state.activeFormIndex - 1].id,
@@ -635,16 +654,15 @@ class FormContainer extends Component {
   render() {
     
     
-    const { activeFormId, activeFormIndex } = this.state;
+    const { activeFormId, activeFormIndex,activeSubTab } = this.state;
     const {
       formDataLoading,
       form_data,
       fetchSubmitDataLoading,
       defaultFormDataLoading,
     } = this.props;
-    const { tabs, formContent, campaign_id } = form_data;
+    const { tabs, formContent, campaign_id,subtab } = form_data;
     const { submitFormData } = this.state;
-  
     if (formDataLoading) {
       return (
         <>
@@ -659,7 +677,6 @@ class FormContainer extends Component {
         </>
       );
     }
-  
     return (
   
       
@@ -699,6 +716,35 @@ class FormContainer extends Component {
                   </Tabs>
                 </Box>
               </TabContext>
+              {subtab &&  subtab[activeFormIndex]?.length>0 &&   <TabContext value={this.state.activeSubTab}>
+                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                  <Tabs
+                    value={this.state.activeSubTab}
+                    // index={this.state.activeSubTab}
+                    onChange={this.handleSubTabChange}
+                    aria-label="wrapped label tabs example"
+                    textColor="primary"
+                    indicatorColor="primary"
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    sx={{
+                      color: AppStyle.primaryBG,
+                      backgroundColor: "#F5F5F5",
+                    }}
+                  >
+                    {subtab[activeFormIndex]?.map((item, i) => {
+                      return (
+                        <Tab
+                          value={item}
+                          label={item}
+                          wrapped
+                          key={i}
+                        />
+                      );
+                    })}
+                  </Tabs>
+                </Box>
+              </TabContext>}
             </Box>
             <Container>
               {activeFormId ? (
@@ -713,6 +759,7 @@ class FormContainer extends Component {
                     this.state.activeFormIndex <
                     this.props.form_data.tabs.length - 1
                   }
+                  selectedSubTab = {this.state.activeSubTab}
                 />
               ) : null}
             </Container>

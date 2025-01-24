@@ -13,7 +13,6 @@ import {
 } from "../../store/InternalAdminStore/InternalAdminSlice";
 
 const mapStateToProps = (state) => {
-  console.log('dhuehfue',state.formData.selectedCampaignName);
   
   return {
     form_data: state.formData.form_data,

@@ -170,7 +170,6 @@ export const formSlice = createSlice({
       }
       )
       .addCase(fetchSubmittedData.fulfilled, (state, action) => {
-        console.log(action.payload)
         state.tabSubmitdata = action.payload;
         state.tabSubmitdata_loading = false;
       }

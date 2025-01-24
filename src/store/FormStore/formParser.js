@@ -183,6 +183,7 @@ const getAttributes = async (tag, data) => {
 
 export const parseData = async (res) => {
   let tabs = [];
+  let subtab = [];
   let formContent = {};
   let answerContent = {};
   if (res && res.data) {
@@ -224,6 +225,7 @@ export const parseData = async (res) => {
             answerContent[tabData["id"]][attributes.attributes.props.name] = {
               answer: attributes.answerSheet ?? "0",
               question: _.get(c, "label", `content${j}`),
+              sub_tab: c.sub_tab ?? '',
               options: attributes?.attributes?.contentvalue ?? [],
               non_scoring: non_content,
               type:_.get(c, "value"),
@@ -240,6 +242,7 @@ export const parseData = async (res) => {
               tag: tagName,
               auto_fill: auto_fill,
               question_no:j,
+              sub_tab: c.sub_tab ?? ''
             };
           })
         );
@@ -254,6 +257,9 @@ export const parseData = async (res) => {
   return {
     formContent,
     tabs,
+    subtab: multiFormData.map((val)=>(
+      val.subtab
+    )),
     answerContent,
     module_code: data["data"][0]["module_code"],
     campaign_id,
