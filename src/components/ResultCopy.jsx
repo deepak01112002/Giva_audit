@@ -6,6 +6,7 @@ import {
   Text,
 } from "@react-pdf/renderer";
 import { getAttributeByScore } from "../utils/colors";
+import { Box } from "@mui/material";
 let data  = JSON.parse(localStorage.getItem("user"));
 let client_code = data?.data?.client_code ? data?.data?.client_code : 'sleep' ;
 
@@ -84,7 +85,7 @@ function isURL(str) {
   return pattern.test(str);
 }
 
-const ResultCopy = ({ data, mWidth }) => (
+const ResultCopy = ({ data, mWidth }) =>  (
   <Document>
     <Page style={styles.page}>
       <View style={styles.section}>
@@ -395,7 +396,10 @@ const ResultCopy = ({ data, mWidth }) => (
                               background: j % 2 === 0 ? "#f2f2f2" : "white",
                             }}
                           >
-                            {isImage(item2?.answer??'')?<img height="175px" style={{objectFit: 'contain'}} src={item2?.answer} /> : isURL(item2?.answer??'')?<a href={item2?.answer}>{item2?.answer}</a>: item2?.answer??'-'}
+                            <Box sx={{width:'min-content'}}>
+                            {isImage(item2?.answer??'') && <img height="175px" style={{objectFit: 'contain'}} src={item2?.answer} /> }
+                            { isURL(item2?.answer??'') && <a style={{width:'min-content',wordBreak:'break-word'}} href={item2?.answer}>{item2?.answer}</a>}
+                            </Box>
                           </td>
                           <td
                             style={{

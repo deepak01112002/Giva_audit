@@ -138,6 +138,8 @@ export default function InternalAdminTable({
                         selectedCategorary: d.category_id,
                         campaign_id: d.campaign_id,
                         name: d.Campaign,
+                        store_code:d.store_code,
+                        store_name:d.Store
                       });
                     }}
                   >

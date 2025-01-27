@@ -84,10 +84,10 @@ class FormContainer extends Component {
         this.props.formID != "" &&
         userData["user_type"] != Role.user
       ) {
-        await this.props.getSubmitData({
-          form_id: this.props.formID,
-          username: this.props.userID,
-        });
+        // await this.props.getSubmitData({
+        //   form_id: this.props.formID,
+        //   username: this.props.userID,
+        // });
       }
       if (tabs?.length > 0 && this.state.activeFormId == "") {
         this.setState({
@@ -106,38 +106,41 @@ class FormContainer extends Component {
       const { tabs,subtab } = form_data;
     const { extraStore } = form_data;
     const { location } = this.props;
+try {
+  // if (!this.props.formID) {
+    let submitFormData = JSON.parse(
+      JSON.stringify(this.props.form_data.answerContent)
+    );
+    const dynamicKey = Object.keys(submitFormData)[0];
+    // console.error('city',form_data);
+    // submitFormData[dynamicKey]['city']['answer'] = extraStore[0].city;
+    // submitFormData[dynamicKey]['region']['answer'] = extraStore[0].region;
+    // submitFormData[dynamicKey]['state']['answer'] = extraStore[0].state;
+    submitFormData[dynamicKey]['store_name']['answer'] = location.state?.store_name;
+    submitFormData[dynamicKey]['store_code']['answer'] = location.state?.store_code;
+    this.setState({
+      submitFormData: submitFormData,
+      StoreCode:location.state.store_code,
+      storeName:location.state.store_name,
+      activeSubTab:subtab?.[0]?.[0]
+    });
+  // }
+  let categoryIds = getCookie("categoryIds");
+  let campaignIds = getCookie("campaingIds");
+  let categoryIdsParsed = JSON.parse(categoryIds);
+  let campaignIdsParsed = JSON.parse(campaignIds);
 
-    if (!this.props.formID) {
-      let submitFormData = JSON.parse(
-        JSON.stringify(this.props.form_data.answerContent)
-      );
-      const dynamicKey = Object.keys(submitFormData)[0];
-      // console.error('city',form_data);
-      // submitFormData[dynamicKey]['city']['answer'] = extraStore[0].city;
-      // submitFormData[dynamicKey]['region']['answer'] = extraStore[0].region;
-      // submitFormData[dynamicKey]['state']['answer'] = extraStore[0].state;
-      submitFormData[dynamicKey]['store_name']['answer'] = location.state?.store_name;
-      submitFormData[dynamicKey]['store_code']['answer'] = location.state?.store_code;
+  await this.props.fetchSubmittedData({category_id:categoryIdsParsed?.selectedCategorary,campaign_id:campaignIdsParsed?.campaign_id,store_code:location.state.store_code});
 
-      this.setState({
-        submitFormData: submitFormData,
-        StoreCode:location.state.store_code,
-        storeName:location.state.store_name,
-        activeSubTab:subtab?.[0]?.[0]
-      });
-    }
-    let categoryIds = getCookie("categoryIds");
-    let campaignIds = getCookie("campaingIds");
-    let categoryIdsParsed = JSON.parse(categoryIds);
-    let campaignIdsParsed = JSON.parse(campaignIds);
-
-    await this.props.fetchSubmittedData({category_id:categoryIdsParsed?.selectedCategorary,campaign_id:campaignIdsParsed?.campaign_id,store_code:location.state.store_code});
-
-    if(this.props?.tabSubmitdata?.last_tab_index)this.setState({
-              activeFormIndex: this.props?.tabSubmitdata?.last_tab_index + 1,
-              activeFormId: tabs[this.props?.tabSubmitdata?.last_tab_index + 1].id,
-              _id : this.props?.tabSubmitdata?._id
-          });
+  if(this.props?.tabSubmitdata?.last_tab_index)this.setState({
+            activeFormIndex: this.props?.tabSubmitdata?.last_tab_index + 1,
+            activeFormId: tabs[this.props?.tabSubmitdata?.last_tab_index + 1]?.id ??tabs[0]?.id ,
+            _id : this.props?.tabSubmitdata?._id
+        });
+} catch (error) {
+  console.error('errorerror', error)
+}
+    
   }
 
   componentDidUpdate(prevProps) {
@@ -677,6 +680,7 @@ class FormContainer extends Component {
         </>
       );
     }
+    console.log('submitFormData[activeFormId]', submitFormData,activeFormId)
     return (
   
       

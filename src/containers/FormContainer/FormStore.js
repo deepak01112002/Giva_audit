@@ -40,7 +40,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       getFormData: getFormData,
       submitFormData: submitFormData,
-      // getSubmitData: fetchSubmitData,
+      getSubmitData: fetchSubmitData,
       setFormCreds: setFormCreds,
       updateFormData: updateFormData,
       uploadFile: uploadFile,

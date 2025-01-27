@@ -14,7 +14,6 @@ class CategoryContainer extends Component {
 
   componentDidMount() {
     this.props.getAllCategory2();
-    this.props.getStoreData();
   }
   handleCampaingChange = (index,campaign) => {
     const {name,_id} =this.props.compaignList?.data[index]
@@ -38,6 +37,10 @@ class CategoryContainer extends Component {
     this.props.getCompaign({
       category_id: id,
     });
+    this.props.getStoreData({
+      category_id: id,
+    });
+
     this.props.setSelectedCategoriesIds(stateValues);
   };
 

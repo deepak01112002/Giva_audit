@@ -22,8 +22,8 @@ export const fetchSubmittedDataApi = async (params) => {
   return axios.get(FETCH_SUBMITTED_DATA, { params });
 }
 
-export const getStoreDataApi = async () => {
-  return axios.get(GET_STORE_DATA);
+export const getStoreDataApi = async (params) => {
+  return axios.get(GET_STORE_DATA,{params});
 };
 export const getAllCategoryApi = async () => {
   return axios.get(GET_ALL_CATEGORY_DATA);

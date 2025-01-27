@@ -32,9 +32,9 @@ export const fetchSubmittedData = createAsyncThunk("fetchSubmittedData", async (
   }
 });
 
-export const getStoreData = createAsyncThunk("getStoreData", async () => {
+export const getStoreData = createAsyncThunk("getStoreData", async (payload) => {
   try {
-    const response = await getStoreDataApi();
+    const response = await getStoreDataApi(payload);
     const data = parseStoreData(response);
     return data;
   } catch (error) {
@@ -167,15 +167,23 @@ export const formSlice = createSlice({
       // Get fetchSubmittedData 
       .addCase(fetchSubmittedData.pending, (state) => {
         state.tabSubmitdata = true;
+        // state.tabSubmitdata_loading = true;
+        state.form_data_loading = true;
+
+
       }
       )
       .addCase(fetchSubmittedData.fulfilled, (state, action) => {
         state.tabSubmitdata = action.payload;
         state.tabSubmitdata_loading = false;
+        state.form_data_loading = false;
+
       }
       )
       .addCase(fetchSubmittedData.rejected, (state) => {
         state.tabSubmitdata_loading = false;
+        state.form_data_loading = false;
+
       }
       )
       // Submit form data

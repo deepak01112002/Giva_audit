@@ -1,27 +1,27 @@
-import React, { Component } from "react";
-import ResponsiveAppBar from "../../components/Appbar";
-import InternalAdminTable from "../../components/internalAdmin/InternalAdminTable";
-import { isAuth, setCookie } from "../../helpers/cookies";
-import { axios } from "../../helpers/axios";
-import { FETCH_USER } from "../../store/InternalAdminStore/InternalAdminConstant";
+import React, { Component } from 'react';
+import ResponsiveAppBar from '../../components/Appbar';
+import InternalAdminTable from '../../components/internalAdmin/InternalAdminTable';
+import { isAuth, setCookie } from '../../helpers/cookies';
+import { axios } from '../../helpers/axios';
+import { FETCH_USER } from '../../store/InternalAdminStore/InternalAdminConstant';
 export default class InternalAdminContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedDates: {
-        sdate: "",
-        edate: "",
-        campaign_id: "",
-        region:"",
-        city:"",
-        state :"",
+        sdate: '',
+        edate: '',
+        campaign_id: '',
+        region: '',
+        city: '',
+        state: '',
       },
-      csvData: "",
+      csvData: '',
     };
   }
 
   componentDidMount() {
-    this.props.fetchUsers({ project_code: "gmr" });
+    this.props.fetchUsers({ project_code: 'gmr' });
     this.props.getCompaign();
     this.props.getRegions();
     this.props.getStates();
@@ -30,55 +30,65 @@ export default class InternalAdminContainer extends Component {
 
   handleOnViewClick = async (payload) => {
     await this.props.setFormCreds(payload);
-    this.props.navigate("/admin/result");
+    this.props.navigate('/admin/result');
     // ReactDOM.render(<Result />, document.getElementById('root'));
   };
 
   handleOnDownlodClick = async (payload) => {
     await this.props.setFormCreds(payload);
     // window.open('/admin/result?view=1', '_blank');
-    this.props.navigate("/admin/result?view=1");
+    this.props.navigate('/admin/result?view=1');
     // ReactDOM.render(<Result />, document.getElementById('root'));
   };
-
 
   handleOnDeleteClick = async (payload) => {
     // console.log('handleOnDeleteClick payload',  this.props)
     if (window.confirm('Are you sure you want to Delete this audit?')) {
-      await this.props.delete_audit(payload)
-      this.props.fetchUsers({ project_code: "audit" });
-    };
+      await this.props.delete_audit(payload);
+      this.props.fetchUsers({ project_code: 'audit' });
+    }
   };
 
   handleApproveOnClick = async (payload) => {
     // console.log('handleOnDeleteClick payload',  this.props)
     if (window.confirm('Are you sure you want to Approve this audit?')) {
-      await this.props.approve_samsung(payload)
-      this.props.fetchUsers({ project_code: "audit" });
-    };
+      await this.props.approve_samsung(payload);
+      this.props.fetchUsers({ project_code: 'audit' });
+    }
   };
-
-
 
   onEditClick = async (payload) => {
     await this.props.setFormCreds({
       formID: payload.formID,
       userID: payload.userID,
     });
-    setCookie('categoryIds', JSON.stringify({
-      selectedCategorary: payload.selectedCategorary,
-      selectedSubCategory: payload.selectedSubCategory,
+    setCookie(
+      'categoryIds',
+      JSON.stringify({
+        selectedCategorary: payload.selectedCategorary,
+        selectedSubCategory: payload.selectedSubCategory,
+      })
+    );
+    setCookie(
+      'campaingIds',
+      JSON.stringify({
+        campaign_name: payload.name,
+        campaign_id: payload.campaign_id,
+      })
+    );
 
-    }))
-    setCookie('campaingIds',JSON.stringify({ campaign_name: payload.name, campaign_id: payload.campaign_id}))
-   
-    this.props.setSelectedCampaignIds({ campaign_name: payload.name, campaign_id: payload.campaign_id });
+    this.props.setSelectedCampaignIds({
+      campaign_name: payload.name,
+      campaign_id: payload.campaign_id,
+    });
 
     this.props.setSelectedCategoriesIds({
       selectedCategorary: payload.selectedCategorary,
       selectedSubCategory: payload.selectedSubCategory,
     });
-    this.props.navigate(`/admin/dashboard`);
+    this.props.navigate(`/admin/dashboard`, {
+      state: { store_code: payload.store_code, store_name: payload.store_name },
+    });
   };
 
   handleSelectDate = (val, name) => {
@@ -94,7 +104,7 @@ export default class InternalAdminContainer extends Component {
   handleFilter = () => {
     this.props.fetchUsers({
       ...this.state.selectedDates,
-      project_code: "audit",
+      project_code: 'audit',
     });
   };
 
@@ -127,14 +137,13 @@ export default class InternalAdminContainer extends Component {
     });
   };
 
-
   downloadFile = ({ data, fileName, fileType }) => {
     const blob = new Blob([data], { type: fileType });
 
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.download = fileName;
     a.href = window.URL.createObjectURL(blob);
-    const clickEvt = new MouseEvent("click", {
+    const clickEvt = new MouseEvent('click', {
       view: window,
       bubbles: true,
       cancelable: true,
@@ -147,16 +156,16 @@ export default class InternalAdminContainer extends Component {
     let res = await axios.get(FETCH_USER, {
       params: {
         ...this.state.selectedDates,
-        project_code: "audit",
-        mode: "export",
+        project_code: 'audit',
+        mode: 'export',
       },
     });
 
     if (res.status === 200) {
       this.downloadFile({
         data: res.data,
-        fileName: "users.csv",
-        fileType: "text/csv",
+        fileName: 'users.csv',
+        fileType: 'text/csv',
       });
 
       // done();
@@ -166,9 +175,6 @@ export default class InternalAdminContainer extends Component {
   render() {
     const { navigate, usersDataList } = this.props;
     const user = isAuth();
- 
-    
-    
 
     return (
       <>
