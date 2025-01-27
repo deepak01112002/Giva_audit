@@ -1,0 +1,30 @@
+# Ignore Node Modules
+node_modules/
+
+# Ignore Build and Output Directories
+dist/
+build/
+output/
+
+# Ignore Version Control Files and Directories
+.git/
+.svn/
+.hg/
+
+# Ignore Configuration Files
+.eslintignore
+.eslintrc.json
+.prettierrc.json
+.prettierignore
+package-lock.json
+package.json
+jsconfig.json
+
+# Ignore IDE/Editor Specific Files and Directories (adjust as needed)
+.vscode/
+
+# Environment Variables
+.env.local
+.env.development
+.env.test
+.env.production
