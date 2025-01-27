@@ -12,7 +12,7 @@
         "sourceType": "module",
         "ecmaFeatures": {
             "jsx": true
-        }
+          }
     },
     "plugins": [
         "react",
@@ -21,10 +21,7 @@
     "ignorePatterns": [
         "*.test.js"
     ],
-    "rules": {
-        "react/react-in-jsx-scope": "off",
-        "react/prop-types": "off" 
-    },
+    "rules": { "react/react-in-jsx-scope": "off"},
     "settings": {
         "react": {
             "version": "detect"
