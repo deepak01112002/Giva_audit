@@ -13,7 +13,8 @@ class CategoryContainer extends Component {
   };
 
   componentDidMount() {
-    this.props.getAllCategory2();
+    this.props.getCompaign();
+    this.props.getStoreData();
   }
   handleCampaingChange = (index,campaign) => {
     const {name,_id} =this.props.compaignList?.data[index]
@@ -52,7 +53,6 @@ class CategoryContainer extends Component {
     if (this.props.categoryLoading) {
       return null;
     }
-console.log('this.props.', this.props.storeData)
     return (
       
       <div>

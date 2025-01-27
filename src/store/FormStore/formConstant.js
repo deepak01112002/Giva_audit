@@ -1,5 +1,5 @@
 
-let client_code = 'samsungvm' ;
+let client_code = 'giva' ;
 
 
 

@@ -37,7 +37,7 @@ export default function Category(props) {
           height: '90vh',
         }}
       >
-        <SelectCategory
+        {/* <SelectCategory
           label={'Category'}
           value={selectedCategorary}
           dataKey={'category'}
@@ -45,7 +45,7 @@ export default function Category(props) {
             handleOnChane(e.target.value, 'selectedCategorary');
           }}
           options={getAllCategory}
-        />
+        /> */}
 
         <FormControl sx={{ m: 1, width: '500px', }}>
           <InputLabel id="demo-select-small-label">Campaign</InputLabel>
@@ -96,7 +96,7 @@ export default function Category(props) {
 
         <Button
           onClick={onSubmit}
-          disabled={selectedCategorary ? false : true}
+          // disabled={selectedCategorary ? false : true}
           sx={{ width: '500px', marginTop: '50px' }}
           size="large"
           variant="contained"

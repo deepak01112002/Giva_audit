@@ -2,7 +2,7 @@
 
 //let client_code = data?.data?.client_code ? data?.data?.client_code : 'sleep' ;
 
-let client_code = 'samsungvm';
+let client_code = 'giva';
 
 // export const FETCH_USER = '/titan/fetchUsers'
 export const FETCH_USER =`/${client_code}/fetchUsers`

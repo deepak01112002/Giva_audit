@@ -52,13 +52,11 @@ class FormContainer extends Component {
     const user = await isAuth();
     const userData = user["data"];
     
-    let categoryIds = getCookie("categoryIds");
     let campaignIds = getCookie("campaingIds");
     // let campaignIds = getCookie("campaingIds");
  
 
     
-    let categoryIdsParsed = JSON.parse(categoryIds);
     let campaignIdsParsed = JSON.parse(campaignIds);
     // let campaignIdsParsed = JSON.parse(campaignIds);
     // let campaignIdsParsed = JSON.parse(campaignIds);
@@ -66,7 +64,6 @@ class FormContainer extends Component {
     if (userData) {
       await this.props.getFormData({
         // username: userData['user_type'] == Role.user ? userData.username : this.props.userID ?? '',
-        category_id: categoryIdsParsed?.selectedCategorary,
         campaign_id: campaignIdsParsed?.campaign_id,
         // sub_category_id: categoryIdsParsed.selectedSubCategory,
       });
@@ -125,12 +122,10 @@ try {
       activeSubTab:subtab?.[0]?.[0]
     });
   // }
-  let categoryIds = getCookie("categoryIds");
   let campaignIds = getCookie("campaingIds");
-  let categoryIdsParsed = JSON.parse(categoryIds);
   let campaignIdsParsed = JSON.parse(campaignIds);
 
-  await this.props.fetchSubmittedData({category_id:categoryIdsParsed?.selectedCategorary,campaign_id:campaignIdsParsed?.campaign_id,store_code:location.state.store_code});
+  await this.props.fetchSubmittedData({campaign_id:campaignIdsParsed?.campaign_id,store_code:location.state.store_code});
 
   if(this.props?.tabSubmitdata?.last_tab_index)this.setState({
             activeFormIndex: this.props?.tabSubmitdata?.last_tab_index + 1,
@@ -475,8 +470,6 @@ try {
             campaignAlldetail = allCampaign[cIndex];
           }
         }
-        let categoryIds = getCookie("categoryIds");
-        let categoryIdsParsed = JSON.parse(categoryIds);
 
         let campaignIds = getCookie("campaingIds");
         let campaignIdsParsed = JSON.parse(campaignIds);
@@ -511,7 +504,6 @@ try {
             store_name :this.state.storeName?.length > 0 ? this.state.storeName : this.state.submitFormData[this.state.activeFormId]?.store_name?.answer,
             city:this.state.city?.length > 0 ? this.state.city : this.state.submitFormData[this.state.activeFormId]?.city?.answer,
             state:this.state.state.length > 0 ? this.state.state : this.state.submitFormData[this.state.activeFormId]?.state?.answer,
-            category_id: categoryIdsParsed.selectedCategorary,
             // campaign_id: campaignIdsParsed.selectedCampaign,
             campaign_id: campaignIdsParsed?.campaign_id,
             campaign_name: campaignIdsParsed?.campaign_name,
@@ -538,7 +530,6 @@ try {
             state:this.state.state??"",
             // campaign_id: campaignAlldetail?._id ?? "",
             // campaign_name: campaingNameParsed,
-            category_id: categoryIdsParsed.selectedCategorary,
             campaign_id: campaignIdsParsed?.campaign_id,
             campaign_name: campaignIdsParsed?.campaign_name,
             all_tabs_submitted: tabs.length - 1 > this.state.activeFormIndex ? false : true,
