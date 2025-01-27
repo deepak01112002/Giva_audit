@@ -19,7 +19,7 @@ const PdfContainer = ({ userID, formID, fetchPdfData, pdfData, pdfDataLoading })
     if (location.pathname === '/pdf' && formIDFromURL) {
       // If the URL is '/pdf' and contains 'form_id'
       fetchPdfData({
-        username: 'samsung_vm_test', // Static username
+        username: 'giva_test', // Static username
         form_id: formIDFromURL, // Take form_id from query params
       });
     } else {
