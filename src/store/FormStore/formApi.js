@@ -45,14 +45,11 @@ export const uploadFileApi = (payload) => {
 };
 
 export const getOptions = async (payload) => {
-  let categoryIds = getCookie('categoryIds');
-		let categoryIdsParsed =JSON.parse(categoryIds);
-   let params= {
-      category_id : categoryIdsParsed.selectedCategorary,
-    }
+
+
   
   if (payload && payload.host) {
-    let res = await  axios.get("https://product.infield.co.in:8092" + payload.path,{params});
+    let res = await  axios.get("https://product.infield.co.in:8092" + payload.path);
     return {res : res, api : payload.path}
   } else {
     return;

@@ -1,4 +1,3 @@
-import React from 'react';
 import Box from '../common/Box';
 import Button from '../common/Button';
 import Stack from '../common/Stack';
@@ -19,6 +18,7 @@ export default function Form({
       <form key={activeFormId} onSubmit={handleOnSubmit.bind(this)}>
         {formContent?.map((element) => (
        (element.sub_tab === selectedSubTab || element.sub_tab === ''  ) &&   <TagFieldBuilder
+            key={element.id + element.name}
             {...element}
             handleOnChange={handleOnChange}
             inputValue={formData}

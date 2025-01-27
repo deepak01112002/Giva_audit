@@ -53,17 +53,12 @@ class FormContainer extends Component {
     const userData = user['data'];
 
     let campaignIds = getCookie('campaingIds');
-    // let campaignIds = getCookie("campaingIds");
-
     let campaignIdsParsed = JSON.parse(campaignIds);
-    // let campaignIdsParsed = JSON.parse(campaignIds);
-    // let campaignIdsParsed = JSON.parse(campaignIds);
 
     if (userData) {
       await this.props.getFormData({
-        // username: userData['user_type'] == Role.user ? userData.username : this.props.userID ?? '',
-        campaign_id: campaignIdsParsed?.campaign_id,
-        // sub_category_id: categoryIdsParsed.selectedSubCategory,
+                campaign_id: campaignIdsParsed?.campaign_id,
+        
       });
       // await this.props.fetchSubmittedData({
       //   category_id: categoryIdsParsed?.selectedCategorary,
@@ -95,29 +90,28 @@ class FormContainer extends Component {
   }
 
   async handleInitialSubmitFormData() {
-    const { form_data } = this.props;
+    const { form_data ,location } = this.props;
     const { tabs, subtab } = form_data;
-    const { location } = this.props;
+
     try {
-      // if (!this.props.formID) {
-      let submitFormData = JSON.parse(
-        JSON.stringify(this.props.form_data.answerContent)
-      );
+    
+      let submitFormData = JSON.parse(JSON.stringify(this.props.form_data.answerContent));
       const dynamicKey = Object.keys(submitFormData)[0];
-      submitFormData[dynamicKey]['store_name']['answer'] =
-        location.state?.store_name;
-      submitFormData[dynamicKey]['store_code']['answer'] =
-        location.state?.store_code;
+      let campaignIds = getCookie('campaingIds');
+      let campaignIdsParsed = JSON.parse(campaignIds);
+
+
+      submitFormData[dynamicKey]['store_name']['answer'] = location.state?.store_name;
+      submitFormData[dynamicKey]['store_code']['answer'] = location.state?.store_code;
+
       this.setState({
         submitFormData: submitFormData,
         StoreCode: location.state.store_code,
         storeName: location.state.store_name,
         activeSubTab: subtab?.[0]?.[0],
       });
-      // }
-      let campaignIds = getCookie('campaingIds');
-      let campaignIdsParsed = JSON.parse(campaignIds);
 
+    
       await this.props.fetchSubmittedData({
         campaign_id: campaignIdsParsed?.campaign_id,
         store_code: location.state.store_code,
@@ -126,9 +120,7 @@ class FormContainer extends Component {
       if (this.props?.tabSubmitdata?.last_tab_index)
         this.setState({
           activeFormIndex: this.props?.tabSubmitdata?.last_tab_index + 1,
-          activeFormId:
-            tabs[this.props?.tabSubmitdata?.last_tab_index + 1]?.id ??
-            tabs[0]?.id,
+          activeFormId:tabs[this.props?.tabSubmitdata?.last_tab_index + 1]?.id ?? tabs[0]?.id,
           _id: this.props?.tabSubmitdata?._id,
         });
     } catch (error) {
@@ -140,9 +132,7 @@ class FormContainer extends Component {
     const { form_data } = this.props;
     const { tabs, subtab } = form_data;
     if (prevProps.tabSubmitdata !== this.props.tabSubmitdata) {
-      let index = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1)
-        ? 0
-        : this.props?.tabSubmitdata?.last_tab_index + 1;
+      let index = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1) ? 0: this.props?.tabSubmitdata?.last_tab_index + 1;
       if (index >= subtab.length) index = 0;
       this.setState({
         activeFormIndex: index,
@@ -176,30 +166,27 @@ class FormContainer extends Component {
       let currentFormData = this.state.submitFormData;
       let extradatatemp = this.state.extradata;
 
-      let empty =
-        currentFormData && // 👈 null and undefined check
+      let empty = currentFormData && // 👈 null and undefined check
         Object.keys(currentFormData).length === 0 &&
         Object.getPrototypeOf(currentFormData) === Object.prototype;
+
       if (empty) {
         currentFormData = this.props.form_data.answerContent;
       }
       let buildFormData = JSON.parse(JSON.stringify(currentFormData));
       if (type === 'image') {
-        buildFormData[this.state.activeFormId][name]['imageData'] =
-          URL.createObjectURL(new Blob([val[0]]));
-        let formData = new FormData();
 
+        buildFormData[this.state.activeFormId][name]['imageData'] = URL.createObjectURL(new Blob([val[0]]));
+        let formData = new FormData();
         formData.append('file', val[0]);
         const imageResponse = await this.props.uploadFile(formData);
-        buildFormData[this.state.activeFormId][name]['answer'] =
-          imageResponse.payload.data.data.result.file.filename;
+        buildFormData[this.state.activeFormId][name]['answer'] = imageResponse.payload.data.data.result.file.filename;
+
       } else {
         if (name == 'store_name') {
           if (type && type.length > 0) {
             let optionIndex = event?.target?.dataset?.optionIndex;
-            this.setState({
-              seleceStoreIndex: event?.target?.dataset?.optionIndex,
-            });
+            this.setState({ seleceStoreIndex: event?.target?.dataset?.optionIndex, });
             extradatatemp = type[optionIndex];
             Object.keys(type[optionIndex]).map((key) => {
               if (
@@ -243,13 +230,12 @@ class FormContainer extends Component {
     let answerSheet = [];
 
     for (let category in data) {
+      
       let answerElement = {
         category: category,
-        questionnarie: getQuestinaire(
-          data[category],
-          this.props.form_data.answerContent[category]
-        ),
+        questionnarie: getQuestinaire(data[category],this.props.form_data.answerContent[category]),
       };
+
       answerSheet.push(answerElement);
     }
     return answerSheet;
@@ -261,6 +247,9 @@ class FormContainer extends Component {
     window.scrollTo({top: 0,behavior: 'smooth',});
  
     const { tabs, subtab } = this.props.form_data;
+    
+    let user = isAuth();
+
 
     if (subtab && subtab[this.state.activeFormIndex]?.length > 0) {
       const index = subtab[this.state.activeFormIndex].indexOf( this.state.activeSubTab);
@@ -270,17 +259,13 @@ class FormContainer extends Component {
       }
     }
 
-    this.setState({ activeSubTab: subtab?.[this.state.activeFormIndex]?.[0] });
-
-
     this.setState({
+      activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
       activeFormId: tabs[this.state.activeFormIndex + 1]?.id,
       activeFormIndex: this.state.activeFormIndex + 1,
       formDataSubmitting: true,
     });
 
-
-    let user = isAuth();
 
     if (user) {
       //file upload section
@@ -454,12 +439,7 @@ class FormContainer extends Component {
 
   render() {
     const { activeFormId, activeFormIndex, submitFormData } = this.state;
-    const {
-      formDataLoading,
-      form_data,
-      fetchSubmitDataLoading,
-      defaultFormDataLoading,
-    } = this.props;
+    const {   formDataLoading, form_data,fetchSubmitDataLoading, defaultFormDataLoading,} = this.props;
     const { tabs, formContent, subtab } = form_data;
 
     if (formDataLoading) {
