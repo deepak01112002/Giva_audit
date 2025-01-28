@@ -92,23 +92,23 @@ class FormContainer extends Component {
   async handleInitialSubmitFormData() {
     const { form_data ,location } = this.props;
     const { tabs, subtab } = form_data;
-
-    try {
     
+    try {
+      
       let submitFormData = JSON.parse(JSON.stringify(this.props.form_data.answerContent));
       const dynamicKey = Object.keys(submitFormData)[0];
       let campaignIds = getCookie('campaingIds');
       let campaignIdsParsed = JSON.parse(campaignIds);
-
-
-      submitFormData[dynamicKey]['store_name']['answer'] = location.state?.store_name;
-      submitFormData[dynamicKey]['store_code']['answer'] = location.state?.store_code;
-
+      console.log('location.state', submitFormData[dynamicKey].store_code,location?.state?.store_code)
+      submitFormData[dynamicKey]['store_name']['answer'] = location?.state?.store_name;
+      submitFormData[dynamicKey]['store_code'] = {}
+      submitFormData[dynamicKey]['store_code']['answer'] = location?.state?.store_code;
+      
       this.setState({
         submitFormData: submitFormData,
         StoreCode: location.state.store_code,
         storeName: location.state.store_name,
-        activeSubTab: subtab?.[0]?.[0],
+        activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
       });
 
     
@@ -128,7 +128,7 @@ class FormContainer extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps,prevState) {
     const { form_data } = this.props;
     const { tabs, subtab } = form_data;
     if (prevProps.tabSubmitdata !== this.props.tabSubmitdata) {
@@ -139,6 +139,11 @@ class FormContainer extends Component {
         activeFormId: index < tabs.length ? tabs[index]?.id : tabs[0]?.id,
         _id: this.props?.tabSubmitdata?._id,
       });
+    }
+    if(prevState.activeFormIndex !==this.state.activeFormIndex){
+      this.setState({
+        activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
+      })
     }
   }
 
@@ -366,15 +371,18 @@ class FormContainer extends Component {
       } else {
         response = await this.props.updateFormData(builderData);
         if (response.payload.status === 200) {
-          this.setState({
-            snackBarOpen: true,
-            snackbarMsg: 'Form submitted successfully',
-          });
+         
           setTimeout(() => {
             this.setState({
               formDataSubmitting: false,
             });
-            this.props.navigate('/admin');
+            if (!(tabs.length > this.state.activeFormIndex)) {
+              this.setState({
+                snackBarOpen: true,
+                snackbarMsg: 'Form submitted successfully',
+              });
+              this.props.navigate('/admin');
+            }
           }, 3000);
         } else {
           this.setState({
@@ -456,7 +464,6 @@ class FormContainer extends Component {
         </>
       );
     }
-    console.log('submitFormData[activeFormId]', submitFormData, activeFormId);
     return (
       <>
         <Stack>
