@@ -21,7 +21,7 @@ export default class InternalAdminContainer extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchUsers({ project_code: 'gmr' });
+    this.props.fetchUsers({ project_code: 'giva' });
     this.props.getCompaign();
     this.props.getRegions();
     this.props.getStates();

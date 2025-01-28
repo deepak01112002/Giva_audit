@@ -56,34 +56,16 @@ class FormContainer extends Component {
     let campaignIdsParsed = JSON.parse(campaignIds);
 
     if (userData) {
-      await this.props.getFormData({
-                campaign_id: campaignIdsParsed?.campaign_id,
-        
-      });
-      // await this.props.fetchSubmittedData({
-      //   category_id: categoryIdsParsed?.selectedCategorary,
-      //   username: this.props.userID,
-      // });
+
+      await this.props.getFormData({campaign_id: campaignIdsParsed?.campaign_id, });
+
       const { form_data } = this.props;
       const { tabs } = form_data;
 
-      if (
-        this.props.formID !== undefined &&
-        this.props.formID != '' &&
-        userData['user_type'] != Role.user
-      ) {
-        // await this.props.getSubmitData({
-        //   form_id: this.props.formID,
-        //   username: this.props.userID,
-        // });
-      }
       if (tabs?.length > 0 && this.state.activeFormId == '') {
         this.setState({
           activeFormId: tabs[0].id,
-          submitFormData:
-            this.props.formID !== undefined && this.props.formID != ''
-              ? this.props.fetchSubmitData
-              : this.props.form_data.answerContent,
+          submitFormData:this.props.formID !== undefined && this.props.formID != ''? this.props.fetchSubmitData : this.props.form_data.answerContent,
         });
       }
     }
@@ -123,6 +105,7 @@ class FormContainer extends Component {
           activeFormId:tabs[this.props?.tabSubmitdata?.last_tab_index + 1]?.id ?? tabs[0]?.id,
           _id: this.props?.tabSubmitdata?._id,
         });
+
     } catch (error) {
       console.error('errorerror', error);
     }
@@ -194,14 +177,9 @@ class FormContainer extends Component {
             this.setState({ seleceStoreIndex: event?.target?.dataset?.optionIndex, });
             extradatatemp = type[optionIndex];
             Object.keys(type[optionIndex]).map((key) => {
-              if (
-                key != 'store_name' &&
-                key in buildFormData[this.state.activeFormId]
-              ) {
-                buildFormData[this.state.activeFormId][key]['answer'] =
-                  type[optionIndex][key];
+              if ( key != 'store_name' && key in buildFormData[this.state.activeFormId]) {
+                buildFormData[this.state.activeFormId][key]['answer'] = type[optionIndex][key];
               }
-              // this.handleOnChange(type[index][key], key)
             });
           }
         }
@@ -215,8 +193,6 @@ class FormContainer extends Component {
       }
       this.setState({
         extraData: extradatatemp,
-      });
-      this.setState({
         submitFormData: buildFormData,
       });
     } catch (e) {
@@ -405,9 +381,7 @@ class FormContainer extends Component {
     });
     const { tabs, subtab } = this.props.form_data;
     if (subtab && subtab?.[this.state.activeFormIndex]?.length > 0) {
-      const index = subtab[this.state.activeFormIndex].indexOf(
-        this.state.activeSubTab
-      );
+      const index = subtab[this.state.activeFormIndex].indexOf( this.state.activeSubTab );
       if (index !== 0) {
         this.setState({
           activeSubTab: subtab?.[this.state.activeFormIndex]?.[index - 1],
@@ -468,7 +442,6 @@ class FormContainer extends Component {
       <>
         <Stack>
           <ResponsiveAppBar />
-
           <>
             <Box sx={{ width: '100%', typography: 'body1' }}>
               <TabContext value={this.state.activeFormId}>

@@ -30,7 +30,7 @@ export default function Form({
 
         <Box sx={{ width: '90%', typography: 'body1' }}>
           <Stack direction="row">
-            {formContent?.form_position != 1 ? (
+            {formContent.form_position != 1 ? (
               <Button
                 color="success"
                 sx={{ margin: '10px', marginTop: '20px' }}
