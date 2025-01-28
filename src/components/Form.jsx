@@ -16,14 +16,17 @@ export default function Form({
   return (
     <>
       <form key={activeFormId} onSubmit={handleOnSubmit.bind(this)}>
-        {formContent?.map((element) => (
-       (element.sub_tab === selectedSubTab || element.sub_tab === ''  ) &&   <TagFieldBuilder
-            key={element.id + element.name}
-            {...element}
-            handleOnChange={handleOnChange}
-            inputValue={formData}
-          />
-        ))}
+      {formContent
+    ?.filter((element) => element.sub_tab === selectedSubTab || element.sub_tab === '')
+    .map((element) => (
+      <TagFieldBuilder
+        key={element.id + element.name}
+        {...element}
+        handleOnChange={handleOnChange}
+        inputValue={formData}
+      />
+    ))}
+
 
         <Box sx={{ width: '90%', typography: 'body1' }}>
           <Stack direction="row">
