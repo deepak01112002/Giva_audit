@@ -99,13 +99,15 @@ class FormContainer extends Component {
         store_code: location.state.store_code,
       });
 
-      if (this.props?.tabSubmitdata?.last_tab_index)
+      if (this.props?.tabSubmitdata?.last_tab_index){
+        let index = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1) ? 0: this.props?.tabSubmitdata?.last_tab_index + 1;
+        if (index >= subtab.length) index = 0;
         this.setState({
-          activeFormIndex: this.props?.tabSubmitdata?.last_tab_index + 1,
+          activeFormIndex: index,
           activeFormId:tabs[this.props?.tabSubmitdata?.last_tab_index + 1]?.id ?? tabs[0]?.id,
           _id: this.props?.tabSubmitdata?._id,
         });
-
+      }
     } catch (error) {
       console.error('errorerror', error);
     }
@@ -438,6 +440,7 @@ class FormContainer extends Component {
         </>
       );
     }
+    console.log('this.state.activeFormIndex ', this.props.form_data.tabs?.length ,this.state.activeFormIndex)
     return (
       <>
         <Stack>

@@ -397,8 +397,10 @@ const ResultCopy = ({ data, mWidth }) =>  (
                             }}
                           >
                             <Box sx={{width:'min-content'}}>
-                            {isImage(item2?.answer??'') && <img height="175px" style={{objectFit: 'contain'}} src={item2?.answer} /> }
-                            { isURL(item2?.answer??'') && <a style={{width:'min-content',wordBreak:'break-word'}} href={item2?.answer}>{item2?.answer}</a>}
+                            {isImage(item2?.answer??'') ? <img height="175px" style={{objectFit: 'contain'}} src={item2?.answer} /> :
+                             isURL(item2?.answer??'') ? <a style={{width:'min-content',wordBreak:'break-word'}} href={item2?.answer}>{item2?.answer}</a>:
+                             item2?.answer??'-'
+                             }
                             </Box>
                           </td>
                           <td
