@@ -89,7 +89,6 @@ class ResultContainer extends Component {
     }
 
       // Adding the fonts
-    
     return (
       <>
         <Grid container>
