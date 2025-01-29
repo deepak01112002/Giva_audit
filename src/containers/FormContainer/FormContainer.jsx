@@ -83,8 +83,8 @@ class FormContainer extends Component {
       let campaignIdsParsed = JSON.parse(campaignIds);
       console.log('location.state', submitFormData[dynamicKey].store_code,location?.state?.store_code)
       submitFormData[dynamicKey]['store_name']['answer'] = location?.state?.store_name;
-      submitFormData[dynamicKey]['store_code'] = {}
-      submitFormData[dynamicKey]['store_code']['answer'] = location?.state?.store_code;
+      // submitFormData[dynamicKey]['store_code'] = {}
+      // submitFormData[dynamicKey]['store_code']['answer'] = location?.state?.store_code;
       
       this.setState({
         submitFormData: submitFormData,
@@ -312,13 +312,12 @@ class FormContainer extends Component {
       }
 
       // Add `_id` if it exists
-      if (_id) {
-        builderData['_id'] = _id;
-      }
+      // if (_id) {
+      //   builderData['_id'] = _id;
+      // }
 
 
       var response = '';
-
       if (user['user_type'] === Role.user) {
 
         response = await this.props.submitFormData(builderData);
