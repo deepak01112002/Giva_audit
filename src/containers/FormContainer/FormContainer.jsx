@@ -312,14 +312,14 @@ class FormContainer extends Component {
       }
 
       // Add `_id` if it exists
-      // if (_id) {
-      //   builderData['_id'] = _id;
-      // }
+      
 
 
       var response = '';
       if (user['user_type'] === Role.user) {
-
+        if (_id) {
+          builderData['_id'] = _id;
+        }
         response = await this.props.submitFormData(builderData);
 
         if (response?.payload?.status === 200) {
