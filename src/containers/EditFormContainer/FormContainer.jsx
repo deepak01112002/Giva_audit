@@ -1,0 +1,647 @@
+import { Component } from 'react';
+import Form from '../../components/Form';
+import ResponsiveAppBar from '../../components/Appbar';
+import Box from '../../common/Box';
+import Container from '@mui/material/Container';
+import { Alert, CircularProgress, Tab, Tabs, Stack } from '@mui/material';
+import { TabContext } from '@mui/lab';
+import { getCookie, isAuth } from '../../helpers/cookies';
+import withNavigate from '../../routes/withNavigate';
+import AppStyle from '../../utils/colors';
+import Role from '../../utils/roles';
+import BackdropProgress from '../../common/BackdropProgress';
+import Snackbar from '../../common/Snackbar';
+import getQuestinaire from '../../utils/helper';
+
+class FormContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeFormId: '',
+      activeSubTab: '',
+      activeSubIndex: 0,
+      activeFormIndex: 0,
+      submitFormData: {},
+      snackBarOpen: false,
+      formDataSubmitting: false,
+      snackbarMsg: 'Something went wrong',
+      images: [],
+      extradata: {},
+      seleceStoreIndex: false,
+      storeName: '',
+      StoreCode: '',
+      regionform: '',
+      city: '',
+      state: '',
+      address: '',
+      _id: null,
+    };
+    this.handleOnChange = this.handleOnChange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.getFormDataApiCall = this.getFormDataApiCall.bind(this);
+    this.handleOnSubmit = this.handleOnSubmit.bind(this);
+    this.handleOnPrev = this.handleOnPrev.bind(this);
+  }
+
+  async componentDidMount() {
+    await this.getFormDataApiCall();
+    await this.handleInitialSubmitFormData();
+  }
+
+  async getFormDataApiCall() {
+    const user = await isAuth();
+    const userData = user['data'];
+
+    let campaignIds = getCookie('campaingIds');
+    let campaignIdsParsed = JSON.parse(campaignIds);
+
+    if (userData) {
+      await this.props.getFormData({
+        campaign_id: campaignIdsParsed?.campaign_id,
+      });
+
+      const { form_data } = this.props;
+      const { tabs } = form_data;
+
+      if (tabs?.length > 0 && this.state.activeFormId == '') {
+        this.setState({
+          activeFormId: tabs[0].id,
+          submitFormData:
+            this.props.formID !== undefined && this.props.formID != ''
+              ? this.props.fetchSubmitData
+              : this.props.form_data.answerContent,
+        });
+      }
+    }
+  }
+
+  async handleInitialSubmitFormData() {
+    const { form_data, location } = this.props;
+    const { tabs, subtab } = form_data;
+
+    try {
+      let submitFormData = JSON.parse(
+        JSON.stringify(this.props.form_data.answerContent)
+      );
+      const dynamicKey = Object.keys(submitFormData)[0];
+      let campaignIds = getCookie('campaingIds');
+      let campaignIdsParsed = JSON.parse(campaignIds);
+      console.log(
+        'location.state',
+        submitFormData[dynamicKey].store_code,
+        location?.state?.store_code
+      );
+      submitFormData[dynamicKey]['store_name']['answer'] =
+        location?.state?.store_name;
+      // submitFormData[dynamicKey]['store_code'] = {}
+      // submitFormData[dynamicKey]['store_code']['answer'] = location?.state?.store_code;
+
+      this.setState({
+        submitFormData: submitFormData,
+        StoreCode: location.state.store_code,
+        storeName: location.state.store_name,
+        activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
+      });
+
+      await this.props.fetchSubmittedData({
+        campaign_id: campaignIdsParsed?.campaign_id,
+        store_code: location.state.store_code,
+      });
+
+      if (this.props?.tabSubmitdata?.last_tab_index) {
+        let index = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1)
+          ? 0
+          : this.props?.tabSubmitdata?.last_tab_index + 1;
+        if (index >= subtab.length) index = 0;
+        this.setState({
+          activeFormIndex: index,
+          activeFormId:
+            tabs[this.props?.tabSubmitdata?.last_tab_index + 1]?.id ??
+            tabs[0]?.id,
+          _id: this.props?.tabSubmitdata?._id,
+        });
+      }
+
+
+
+      const dadjfafa = { ...this.state.submitFormData };
+
+      this.props.tabSubmitdata?.multitab_data?.forEach((val, i) => {
+        if (val?.questionnarie) {
+          val.questionnarie.forEach((q) => {
+            if (q?.label_key) {
+              submitFormData[tabs[i]?.id] = {
+                ...submitFormData[tabs[i]?.id],
+                [q.label_key]: {
+                  ...submitFormData[tabs[i]?.id]?.[q.label_key],
+                  answer: q.answer,
+                },
+              };
+            }
+          });
+        }
+      });
+
+      console.log('dadjfafa', dadjfafa);
+
+
+    } catch (error) {
+      console.error('errorerror', error);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { form_data } = this.props;
+    const { tabs, subtab } = form_data;
+    console.log('this.props.tabSubmitdata', tabs);
+    if (prevProps.tabSubmitdata !== this.props.tabSubmitdata) {
+      let index = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1)
+        ? 0
+        : this.props?.tabSubmitdata?.last_tab_index + 1;
+      if (index >= subtab.length) index = 0;
+      this.setState({
+        activeFormIndex: index,
+        activeFormId: index < tabs.length ? tabs[index]?.id : tabs[0]?.id,
+        _id: this.props?.tabSubmitdata?._id,
+      });
+
+   
+
+      console.log('this.state.submitFormData', this.state.submitFormData);
+    }
+    if (prevState.activeFormIndex !== this.state.activeFormIndex) {
+      this.setState({
+        activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
+      });
+    }
+    ///
+  }
+
+  handleOnChange = async (val, name, type, event) => {
+    if (name === 'store_code') {
+      this.setState({ StoreCode: val });
+    }
+    if (name === 'store_name') {
+      this.setState({ storeName: val });
+    }
+    if (name === 'region') {
+      this.setState({ regionform: val });
+    }
+    if (name === 'address') {
+      this.setState({ address: val });
+    }
+    if (name === 'state') {
+      this.setState({ state: val });
+    }
+    if (name === 'city') {
+      this.setState({ city: val });
+    }
+
+    try {
+      let currentFormData = this.state.submitFormData;
+      let extradatatemp = this.state.extradata;
+
+      let empty =
+        currentFormData && // 👈 null and undefined check
+        Object.keys(currentFormData).length === 0 &&
+        Object.getPrototypeOf(currentFormData) === Object.prototype;
+
+      if (empty) {
+        currentFormData = this.props.form_data.answerContent;
+      }
+      let buildFormData = JSON.parse(JSON.stringify(currentFormData));
+      if (type === 'image') {
+        buildFormData[this.state.activeFormId][name]['imageData'] =
+          URL.createObjectURL(new Blob([val[0]]));
+        let formData = new FormData();
+        formData.append('file', val[0]);
+        const imageResponse = await this.props.uploadFile(formData);
+        buildFormData[this.state.activeFormId][name]['answer'] =
+          imageResponse.payload.data.data.result.file.filename;
+      } else {
+        if (name == 'store_name') {
+          if (type && type.length > 0) {
+            let optionIndex = event?.target?.dataset?.optionIndex;
+            this.setState({
+              seleceStoreIndex: event?.target?.dataset?.optionIndex,
+            });
+            extradatatemp = type[optionIndex];
+            Object.keys(type[optionIndex]).map((key) => {
+              if (
+                key != 'store_name' &&
+                key in buildFormData[this.state.activeFormId]
+              ) {
+                buildFormData[this.state.activeFormId][key]['answer'] =
+                  type[optionIndex][key];
+              }
+            });
+          }
+        }
+        if (name in buildFormData[this.state.activeFormId]) {
+          buildFormData[this.state.activeFormId][name]['answer'] = val;
+        } else {
+          buildFormData[this.state.activeFormId][name] = {
+            answer: val,
+          };
+        }
+      }
+      this.setState({
+        extraData: extradatatemp,
+        submitFormData: buildFormData,
+      });
+    } catch (e) {
+      console.error('error', e);
+    }
+  };
+
+  handleChange = (event, newValue) => {
+    this.setState({ activeFormId: newValue });
+  };
+  handleSubTabChange = (event, newValue) => {
+    this.setState({ activeSubTab: newValue });
+  };
+
+  getAnswerSheet = (data) => {
+    let answerSheet = [];
+
+    for (let category in data) {
+      let answerElement = {
+        category: category,
+        questionnarie: getQuestinaire(
+          data[category],
+          this.props.form_data.answerContent[category]
+        ),
+      };
+
+      answerSheet.push(answerElement);
+    }
+    return answerSheet;
+  };
+
+  handleOnSubmit = async (e) => {
+    // handler
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const { tabs, subtab } = this.props.form_data;
+
+    let user = isAuth();
+
+    if (subtab && subtab[this.state.activeFormIndex]?.length > 0) {
+      const index = subtab[this.state.activeFormIndex].indexOf(
+        this.state.activeSubTab
+      );
+      if (index !== subtab[this.state.activeFormIndex].length - 1) {
+        this.setState({
+          activeSubTab: subtab[this.state.activeFormIndex][index + 1],
+        });
+        return;
+      }
+    }
+
+    this.setState({
+      activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
+      activeFormId: tabs[this.state.activeFormIndex + 1]?.id,
+      activeFormIndex: this.state.activeFormIndex + 1,
+      formDataSubmitting: true,
+    });
+
+    if (user) {
+      //file upload section
+      var ourData = this.state.submitFormData;
+      let firstPositionForm = this.props.form_data.tabs[0].id;
+      let audit_detail = ourData[firstPositionForm];
+      let allStores = this.props.form_data.extraStore;
+
+      if (this.state.seleceStoreIndex) {
+        // let index = this.state.seleceStoreIndex;
+      } else {
+        let index = allStores.findIndex(
+          (item) =>
+            item.store_name?.trim()?.toLowerCase() ==
+            audit_detail.store_name.answer?.trim()?.toLowerCase()
+        );
+
+        if (index == -1) {
+          let parts = audit_detail.store_name.answer.split('-');
+          var desired_value = parts.slice(0, -1).join('-').trim();
+          index = allStores.findIndex(
+            (item) => item.store_name == desired_value
+          );
+        }
+      }
+
+      let campaignIds = getCookie('campaingIds');
+      let campaignIdsParsed = JSON.parse(campaignIds);
+
+      user = user['data'];
+      // Destructure necessary state and props
+      const {
+        StoreCode,
+        regionform,
+        storeName,
+        city,
+        state,
+        submitFormData,
+        activeFormId,
+        activeFormIndex,
+        _id,
+      } = this.state;
+      const { formID, module_code } = this.props;
+
+      // Get fallback data from `submitFormData`
+      const fallbackData = submitFormData?.[activeFormId] ?? {};
+
+      // Builder data common fields
+      let builderData = {
+        username: user.name,
+        multitab_data: this.getAnswerSheet(ourData),
+        store_code:
+          StoreCode?.length > 0
+            ? StoreCode
+            : fallbackData.store_code?.answer ?? '',
+        region:
+          regionform?.length > 0
+            ? regionform
+            : fallbackData.region?.answer ?? '',
+        store_name:
+          storeName?.length > 0
+            ? storeName
+            : fallbackData.store_name?.answer ?? '',
+        city: city?.length > 0 ? city : fallbackData.city?.answer ?? '',
+        state: state?.length > 0 ? state : fallbackData.state?.answer ?? '',
+        campaign_id: campaignIdsParsed?.campaign_id,
+        campaign_name: campaignIdsParsed?.campaign_name,
+        all_tabs_submitted: tabs.length - 1 > activeFormIndex ? false : true,
+        last_tab_submitted: activeFormId,
+        last_tab_index: activeFormIndex,
+      };
+
+      // Add user-specific fields
+      if (user['user_type'] !== Role.user) {
+        Object.assign(builderData, {
+          updated_by: user.username,
+          form_id: formID,
+        });
+      } else {
+        Object.assign(builderData, {
+          loginid: user.username,
+          project_code: user.project_code,
+          module_code,
+        });
+      }
+
+      // Add `_id` if it exists
+
+      var response = '';
+      if (user['user_type'] === Role.user) {
+        if (_id) {
+          builderData['_id'] = _id;
+        }
+        response = await this.props.submitFormData(builderData);
+
+        if (response?.payload?.status === 200) {
+          // only for first time
+          if (response?.payload?.data?.data?._id) {
+            this.setState({
+              _id: response?.payload?.data?.data?._id,
+            });
+          }
+
+          setTimeout(() => {
+            this.setState({
+              formDataSubmitting: false,
+            });
+            if (!(tabs.length > this.state.activeFormIndex)) {
+              this.props.navigate('/store');
+            }
+          }, 3000);
+        } else {
+          this.setState({
+            formDataSubmitting: false,
+            snackBarOpen: true,
+            snackbarMsg: 'Something went wrong',
+          });
+        }
+      } else {
+        response = await this.props.updateFormData(builderData);
+        if (response.payload.status === 200) {
+          setTimeout(() => {
+            this.setState({
+              formDataSubmitting: false,
+            });
+            if (!(tabs.length > this.state.activeFormIndex)) {
+              this.setState({
+                snackBarOpen: true,
+                snackbarMsg: 'Form submitted successfully',
+              });
+              this.props.navigate('/admin');
+            }
+          }, 3000);
+        } else {
+          this.setState({
+            formDataSubmitting: false,
+            snackBarOpen: true,
+            snackbarMsg: 'Something went wrong',
+          });
+        }
+      }
+    }
+    // }
+
+    return false;
+  };
+
+  handleOnPrev = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth', // Smooth scrolling effect
+    });
+    const { tabs, subtab } = this.props.form_data;
+
+    if (subtab && subtab?.[this.state.activeFormIndex]?.length > 0) {
+      const index = subtab[this.state.activeFormIndex].indexOf(
+        this.state.activeSubTab
+      );
+      if (index !== 0) {
+        this.setState({
+          activeSubTab: subtab?.[this.state.activeFormIndex]?.[index - 1],
+        });
+        return;
+      }
+    }
+
+    if (this.state.activeFormIndex > 0) {
+      this.setState({
+        activeFormId: tabs[this.state.activeFormIndex - 1].id,
+        activeFormIndex: this.state.activeFormIndex - 1,
+      });
+      setTimeout(() => {
+        const updatedFormData = { ...this.state.submitFormData }; // Create a shallow copy of submitFormData
+
+        this.props?.tabSubmitdata?.multitab_data?.[
+          this.state.activeFormIndex
+        ]?.questionnarie?.forEach((val) => { 
+          if (
+            val?.label_key &&
+            updatedFormData[this.state.activeFormId]?.[val.label_key] &&
+            val.answer !== undefined
+          ) {
+            // Update the answer in the copied state
+            updatedFormData[this.state.activeFormId][val.label_key] = {
+              ...updatedFormData[this.state.activeFormId][val.label_key],
+              answer: val.answer,
+            };
+          }
+        });
+
+        // Update the state with the modified object
+        this.setState({ submitFormData: updatedFormData });
+      }, 500);
+    }
+  };
+
+  render() {
+    const { activeFormId, activeFormIndex, submitFormData } = this.state;
+    const {
+      formDataLoading,
+      form_data,
+      fetchSubmitDataLoading,
+      defaultFormDataLoading,
+    } = this.props;
+    const { tabs, formContent, subtab } = form_data;
+
+    if (formDataLoading) {
+      return (
+        <>
+          <Stack
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ height: '100%' }}
+          >
+            <CircularProgress />
+          </Stack>
+        </>
+      );
+    }
+    console.log('this.state.activeFormIndex ', submitFormData);
+    console.log(this.state.submitFormData);
+
+    return (
+      <>
+        <Stack>
+          <ResponsiveAppBar />
+          <>
+            <Box sx={{ width: '100%', typography: 'body1' }}>
+              <TabContext value={this.state.activeFormId}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <Tabs
+                    value={this.state.activeFormId}
+                    index={this.state.activeFormIndex}
+                    onChange={this.handleChange}
+                    aria-label="wrapped label tabs example"
+                    textColor="primary"
+                    indicatorColor="primary"
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    sx={{
+                      color: AppStyle.primaryBG,
+                      backgroundColor: '#F5F5F5',
+                    }}
+                  >
+                    {tabs?.map((item, i) => {
+                      return (
+                        <Tab
+                          value={item?.id}
+                          label={item?.label}
+                          wrapped
+                          key={i}
+                          disabled={item?.id != this.state.activeFormId}
+                        />
+                      );
+                    })}
+                  </Tabs>
+                </Box>
+              </TabContext>
+              {subtab && subtab[activeFormIndex]?.length > 0 && (
+                <TabContext value={this.state.activeSubTab}>
+                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs
+                      value={this.state.activeSubTab}
+                      // index={this.state.activeSubTab}
+                      onChange={this.handleSubTabChange}
+                      aria-label="wrapped label tabs example"
+                      textColor="primary"
+                      indicatorColor="primary"
+                      variant="scrollable"
+                      scrollButtons="auto"
+                      sx={{
+                        color: AppStyle.primaryBG,
+                        backgroundColor: '#F5F5F5',
+                      }}
+                    >
+                      {subtab[activeFormIndex]?.map((item, i) => {
+                        return (
+                          <Tab value={item} label={item} wrapped key={i} />
+                        );
+                      })}
+                    </Tabs>
+                  </Box>
+                </TabContext>
+              )}
+            </Box>
+            <Container>
+              {activeFormId ? (
+                <Form
+                  activeFormId={activeFormId}
+                  handleOnSubmit={this.handleOnSubmit}
+                  handleOnPrev={this.handleOnPrev}
+                  handleOnChange={this.handleOnChange}
+                  formContent={formContent[activeFormId]}
+                  formData={submitFormData[activeFormId] ?? {}}
+                  isNextValid={
+                    this.state.activeFormIndex <
+                    this.props.form_data.tabs.length - 1
+                  }
+                  selectedSubTab={this.state.activeSubTab}
+                />
+              ) : null}
+            </Container>
+          </>
+        </Stack>
+        <BackdropProgress
+          open={
+            this.state.formDataSubmitting ||
+            fetchSubmitDataLoading ||
+            defaultFormDataLoading
+          }
+        />
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          open={this.state.snackBarOpen}
+          autoHideDuration={3000}
+          onClose={() => {
+            this.setState({
+              snackBarOpen: false,
+            });
+          }}
+        >
+          <Alert
+            onClose={() => {
+              this.setState({
+                snackBarOpen: false,
+              });
+            }}
+            severity="success"
+            sx={{ width: '100%' }}
+          >
+            {this.state.snackbarMsg}
+          </Alert>
+        </Snackbar>
+      </>
+    );
+  }
+}
+
+export default withNavigate(FormContainer);

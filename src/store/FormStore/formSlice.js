@@ -16,6 +16,7 @@ export const getFormData = createAsyncThunk("getFormData", async (payload) => {
   try {
     const response = await getFormDataApi(payload);
     const data = await parseData(response);
+    console.log(data);
     return data;
   } catch (error) {
     throw new Error(error);
@@ -26,6 +27,7 @@ export const fetchSubmittedData = createAsyncThunk("fetchSubmittedData", async (
   try {
     const response = await fetchSubmittedDataApi(payload);
     const data = response.data.data;
+    console.log(data);
     return data;
   } catch (error) {
     throw new Error(error);
