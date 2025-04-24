@@ -1,5 +1,5 @@
 import * as coreAxios from 'axios';
-import { baseURL } from './constants';
+import { baseURL , filesBaseURL } from './constants';
 // import { getCookie, signout } from "./cookies";
 
 export const axios = coreAxios.default.create({
@@ -7,7 +7,7 @@ export const axios = coreAxios.default.create({
 });
 
 export const axiosFile = coreAxios.default.create({
-  baseURL: baseURL,
+  baseURL: filesBaseURL,
   headers: {
     'content-type': 'multipart/form-data',
     // Authorization: `BEARER ${getCookie("token")}`,
