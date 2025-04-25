@@ -106,11 +106,34 @@ class FormContainer extends Component {
           activeFormIndex: index,
           activeFormId:tabs[this.props?.tabSubmitdata?.last_tab_index + 1]?.id ?? tabs[0]?.id,
           _id: this.props?.tabSubmitdata?._id,
+        },
+        () => {
+          this.prefillData(submitFormData, tabs);
         });
       }
     } catch (error) {
       console.error('errorerror', error);
     }
+  }
+
+  prefillData(submitFormData, tabs) {
+    this.props.tabSubmitdata?.multitab_data?.forEach((val, i) => {
+      if (val?.questionnarie) {
+        val.questionnarie.forEach((q) => {
+          if (q?.label_key) {
+            submitFormData[tabs[i]?.id] = {
+              ...submitFormData[tabs[i]?.id],
+              [q.label_key]: {
+                ...submitFormData[tabs[i]?.id]?.[q.label_key],
+                answer: q.answer,
+                marks:q?.marks,
+              },
+            };
+          }
+        });
+      }
+    });
+    this.setState({ submitFormData });
   }
 
   componentDidUpdate(prevProps,prevState) {
