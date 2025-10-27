@@ -7,8 +7,8 @@ import {
 } from "@react-pdf/renderer";
 import { getAttributeByScore } from "../utils/colors";
 import { Box } from "@mui/material";
-let data  = JSON.parse(localStorage.getItem("user"));
-let client_code = data?.data?.client_code ? data?.data?.client_code : 'sleep' ;
+let data = JSON.parse(localStorage.getItem("user"));
+let client_code = data?.data?.client_code ? data?.data?.client_code : 'sleep';
 
 
 
@@ -74,49 +74,66 @@ const objectMap = (data) => {
   return res;
 };
 
-const isImage = (url) => {
-  return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
-}
-function isURL(str) {
-  // Regular expression pattern for URL validation
-  // var pattern = /^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:www\.)?(?:[^\s.]+\.\S{2}|localhost[\:?\d]*)\S*$/;
-  var pattern = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+// const isImage = (url) => {
+//   return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+// }
 
+
+// function isURL(str) {
+//   // Regular expression pattern for URL validation
+//   // var pattern = /^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:www\.)?(?:[^\s.]+\.\S{2}|localhost[\:?\d]*)\S*$/;
+//   var pattern = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+
+//   return pattern.test(str);
+// }
+
+
+export const isImage = (url = "") => {
+  if (!url) return false;
+
+  if (url.startsWith("data:image")) return true;
+
+  return /\.(jpg|jpeg|png|webp|avif|gif|svg)(\?.*)?$/i.test(url);
+};
+
+export const isURL = (str = "") => {
+  const pattern =
+    /^(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/i;
   return pattern.test(str);
-}
+};
 
-const ResultCopy = ({ data, mWidth }) =>  (
+const ResultCopy = ({ data, mWidth }) => (
   <Document>
     <Page style={styles.page}>
       <View style={styles.section}>
-        <div style={{display:"flex", justifyContent:'space-between' , marginRight:'6rem'}}> 
-        <div style={styles.pdf_head}>
-          <img
-            src="/fileIconBlack.png"
-            style={{ height: "24px", width: "24px", marginTop: "6px" }}
-          />
-          <span
-            style={{ fontSize: "25px", fontWeight: "bold", marginLeft: "5px" }}
-          >
-            Audit Report
-          </span>
-          
-        </div>
-        <div>
-        {client_code === 'sleep' ? (
-    <img
-        src="/sleep_logo.png"
-        style={styles.logo}
-        alt="Sleep Logo"
-    />
-) : (
-   null
-)}
+        <div style={{ display: "flex", justifyContent: 'space-between', marginRight: '6rem' }}>
+          <div style={styles.pdf_head}>
+            <img
+              src="/fileIconBlack.png"
+              style={{ height: "24px", width: "24px", marginTop: "6px" }}
+            />
+            <span
+              style={{ fontSize: "25px", fontWeight: "bold", marginLeft: "5px" }}
+            >
+              Audit Report
+            </span>
+
+          </div>
+          <div>
+            {client_code === 'sleep' ? (
+              <img
+                src="/sleep_logo.png"
+                style={styles.logo}
+                alt="Sleep Logo"
+              />
+            ) : (
+              null
+            )}
 
 
+          </div>
         </div>
-        </div>
-      
+
         <div style={styles.table_div}>
           <div style={{ width: mWidth, border: "1px solid #427ef5" }}>
             <div style={styles.heading}>
@@ -140,33 +157,33 @@ const ResultCopy = ({ data, mWidth }) =>  (
               <tbody>
                 {data.audit_details && data.audit_details.length > 0
                   ? data?.audit_details.map((item, i) => (
-                      <tr 
+                    <tr
                       key={i}
+                    >
+                      <td
+                        style={{
+                          textAlign: "end",
+                          background: i % 2 === 0 ? "#f2f2f2" : "white",
+                          width: "200px"
+                        }}
                       >
-                        <td
-                          style={{
-                            textAlign: "end",
-                            background: i % 2 === 0 ? "#f2f2f2" : "white",
-                            width: "200px"
-                          }}
-                        >
-                          {item?.key}:
-                        </td>
-                        <td
-                          style={{
-                            fontSize: "18px",
-                            fontWeight: "bold",
-                            background: i % 2 === 0 ? "#f2f2f2" : "white",
-                          }}
-                        >
-                          {item?.value}
-                        </td>
-                      </tr>
-                    ))
+                        {item?.key}:
+                      </td>
+                      <td
+                        style={{
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          background: i % 2 === 0 ? "#f2f2f2" : "white",
+                        }}
+                      >
+                        {item?.value}
+                      </td>
+                    </tr>
+                  ))
                   : data.audit_details &&
                     Object.keys(data.audit_details).length > 0
-                  ? objectMap(data.audit_details)
-                  : null}
+                    ? objectMap(data.audit_details)
+                    : null}
               </tbody>
             </table>
           </div>
@@ -281,49 +298,49 @@ const ResultCopy = ({ data, mWidth }) =>  (
               </thead>
               <tbody>
                 {data.category_percentages &&
-                data.category_percentages.length > 0
+                  data.category_percentages.length > 0
                   ? data.category_percentages.map((item, i) => (
-                      <tr
+                    <tr
                       key={i}
-                      >
-                        <td style={{ width: "10%" }}>{i + 1}</td>
-                        <td style={{ width: "30%" }}>{item.category_name}</td>
-                        <td style={{ display: "flex", alignItems: "center" }}>
-                          <p
-                            style={{
-                              padding: 0,
-                              margin: 0,
-                              marginRight: "5px",
-                            }}
-                          >
-                            {Math.round(item.category_percentage)}%
-                          </p>
+                    >
+                      <td style={{ width: "10%" }}>{i + 1}</td>
+                      <td style={{ width: "30%" }}>{item.category_name}</td>
+                      <td style={{ display: "flex", alignItems: "center" }}>
+                        <p
+                          style={{
+                            padding: 0,
+                            margin: 0,
+                            marginRight: "5px",
+                          }}
+                        >
+                          {Math.round(item.category_percentage)}%
+                        </p>
+                        <div
+                          style={{
+                            width: "60%",
+                            // height: "30px",
+                            borderRadius: "20px",
+                            // marginTop: '2px'
+                          }}
+                          className="progress"
+                        >
                           <div
+                            class="progress-bar"
+                            role="progressbar"
+                            aria-valuenow="70"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
                             style={{
-                              width: "60%",
-                              // height: "30px",
-                              borderRadius: "20px",
-                              // marginTop: '2px'
+                              width: `${item.category_percentage}%`,
+                              background: getAttributeByScore(
+                                item.category_percentage
+                              ),
                             }}
-                            className="progress"
-                          >
-                            <div
-                              class="progress-bar"
-                              role="progressbar"
-                              aria-valuenow="70"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                              style={{
-                                width: `${item.category_percentage}%`,
-                                background: getAttributeByScore(
-                                  item.category_percentage
-                                ),
-                              }}
-                            ></div>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                          ></div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
                   : null}
               </tbody>
             </table>
@@ -337,8 +354,8 @@ const ResultCopy = ({ data, mWidth }) =>  (
 
         {data?.categories_result?.map((item, i) => (
           <>
-            <div style={styles.table_div} 
-            key={i}
+            <div style={styles.table_div}
+              key={i}
             >
               <div
                 style={{
@@ -389,19 +406,45 @@ const ResultCopy = ({ data, mWidth }) =>  (
                               background: j % 2 === 0 ? "#f2f2f2" : "white",
                             }}
                           >
-                           <Text> {item2?.question ?? "-"}</Text>
+                            <Text> {item2?.question ?? "-"}</Text>
                           </td>
                           <td
                             style={{
                               background: j % 2 === 0 ? "#f2f2f2" : "white",
                             }}
                           >
-                            <Box sx={{width:'min-content'}}>
-                            {isImage(item2?.answer??'') ? <img height="175px" style={{objectFit: 'contain'}} src={item2?.answer} /> :
-                             isURL(item2?.answer??'') ? <a style={{width:'min-content',wordBreak:'break-word'}} href={item2?.answer}>{item2?.answer}</a>:
+                            {/* <Box sx={{width:'min-content'}}>
+                            {isImage(item2?.answer??'') ? 
+                              <img height="175px" style={{objectFit: 'contain'}} src={item2?.answer} /> :
+                              isURL(item2?.answer??'') ? 
+                              <a style={{width:'min-content',wordBreak:'break-word'}} href={item2?.answer}>{item2?.answer}</a>:
                              item2?.answer??'-'
                              }
+                            </Box> */}
+
+                            <Box sx={{ width: 'min-content' }}>
+                              {isImage(item2?.answer ?? '') ? (
+                                <img
+                                  src={item2?.answer}
+                                  alt="answer"
+                                  height="175"
+                                  style={{ objectFit: 'contain', maxWidth: '175px' }}
+                                  crossOrigin="anonymous"
+                                />
+                              ) : isURL(item2?.answer ?? '') ? (
+                                <a
+                                  href={item2?.answer}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ width: 'min-content', wordBreak: 'break-word' }}
+                                >
+                                  {item2?.answer}
+                                </a>
+                              ) : (
+                                item2?.answer ?? '-'
+                              )}
                             </Box>
+
                           </td>
                           <td
                             style={{

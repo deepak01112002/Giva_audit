@@ -107,6 +107,8 @@ class ResultContainer extends Component {
             <div ref={this.reportTemplateRef}>
               <ResultCopy mWidth={this.state.mWidth} data={this.props.pdfData} />
             </div>
+
+            
             {/* <div style={{ display: "flex" }}>
               <button className="button" onClick={handleGeneratePdf}>
                 Download PDF
