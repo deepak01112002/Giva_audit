@@ -357,51 +357,55 @@ const Report = (props) => {
 							<View style={{ backgroundColor: '#e6e7e8', padding: '5px' }}>
 								<Text>Audit Summary</Text>
 							</View>
-							<View style={styles.tableHeader}>
+                            <View wrap={false} style={styles.tableHeader}>
 								<Text style={styles.tableTitle}>#</Text>
 								<Text style={styles.tableTitle}>Section</Text>
 								<Text style={styles.tableTitle}>Score</Text>
 							</View>
 							<View>
-								{data.category_percentages && data.category_percentages.length > 0
-									? data.category_percentages.map((item, i) => (
-											<View
-												style={{
-													display: 'flex',
-													flexDirection: 'row',
-													justifyContent: 'space-between',
-													alignItems: 'center',
-													backgroundColor: i % 2 == 0 ? '#f2f2f2' : 'white',
-												}}
-											>
-												<Text style={styles.questionnarieBox}>{i + 1}</Text>
-												<Text style={styles.questionnarieBox}>{item.category_name}</Text>
-												<View
-													style={{
-														...styles.questionnarieBox,
-														display: 'flex',
-														flexDirection: 'row',
-													}}
-												>
-													<Text
-														style={{
-															padding: 0,
-															margin: 0,
-															marginRight: '5px',
-														}}
-													>
-														{Math.round(item.category_percentage)}%
-													</Text>
+                                {data.category_percentages && data.category_percentages.length > 0
+                                    ? data.category_percentages.map((item, i) => (
+                                            <View
+                                                wrap={false}
+                                                minPresenceAhead={96}
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    backgroundColor: i % 2 == 0 ? '#f2f2f2' : 'white',
+                                                }}
+                                            >
+                                                <Text wrap={false} style={styles.questionnarieBox}>{i + 1}</Text>
+                                                <Text wrap={false} style={styles.questionnarieBox}>{item.category_name}</Text>
+                                                <View
+                                                    wrap={false}
+                                                    style={{
+                                                        ...styles.questionnarieBox,
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                    }}
+                                                >
+                                                    <Text
+                                                        wrap={false}
+                                                        style={{
+                                                            padding: 0,
+                                                            margin: 0,
+                                                            marginRight: '5px',
+                                                        }}
+                                                    >
+                                                        {Math.round(item.category_percentage)}%
+                                                    </Text>
 
-													<ProgressBar
-														progress={Math.round(item.category_percentage)}
-														text={false}
-														small={true}
-													/>
-												</View>
-											</View>
-									  ))
-									: null}
+                                                    <ProgressBar
+                                                        progress={Math.round(item.category_percentage)}
+                                                        text={false}
+                                                        small={true}
+                                                    />
+                                                </View>
+                                            </View>
+                                      ))
+                                    : null}
 							</View>
 						</View>
 					</View>
