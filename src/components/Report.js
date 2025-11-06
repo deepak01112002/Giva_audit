@@ -363,24 +363,31 @@ const Report = (props) => {
 								<Text style={styles.tableTitle}>Score</Text>
 							</View>
 							<View>
-								{data.category_percentages && data.category_percentages.length > 0
-									? data.category_percentages.map((item, i) => (
-											<View
-												style={{
-													display: 'flex',
-													flexDirection: 'row',
-													justifyContent: 'space-between',
-													alignItems: 'center',
-													backgroundColor: i % 2 == 0 ? '#f2f2f2' : 'white',
-												}}
-											>
+                                {data.category_percentages && data.category_percentages.length > 0
+                                    ? data.category_percentages.map((item, i) => (
+                                            <View
+                                                wrap={false}
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    backgroundColor: i % 2 == 0 ? '#f2f2f2' : 'white',
+                                                    minHeight: '28px',
+                                                    paddingTop: '2px',
+                                                    paddingBottom: '2px',
+                                                }}
+                                            >
 												<Text style={styles.questionnarieBox}>{i + 1}</Text>
 												<Text style={styles.questionnarieBox}>{item.category_name}</Text>
 												<View
 													style={{
 														...styles.questionnarieBox,
 														display: 'flex',
-														flexDirection: 'row',
+                                                        flexDirection: 'row',
+                                                        alignItems: 'center',
+                                                        paddingTop: '6px',
+                                                        paddingBottom: '6px',
 													}}
 												>
 													<Text
