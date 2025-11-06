@@ -411,12 +411,16 @@ const Report = (props) => {
                 data.category_percentages.length > 0
                   ? data.category_percentages.map((item, i) => (
                       <View
+                        wrap={false}
                         style={{
                           display: 'flex',
                           flexDirection: 'row',
                           justifyContent: 'space-between',
                           alignItems: 'center',
                           backgroundColor: i % 2 == 0 ? '#f2f2f2' : 'white',
+                          minHeight: '28px',
+                          paddingTop: '2px',
+                          paddingBottom: '2px',
                         }}
                         key={i}
                       >
@@ -429,6 +433,9 @@ const Report = (props) => {
                             ...styles.questionnarieBox,
                             display: 'flex',
                             flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingTop: '6px',
+                            paddingBottom: '6px',
                           }}
                         >
                           <Text
