@@ -22,9 +22,9 @@ export default function Form({
             (element) =>
               element.sub_tab === selectedSubTab || element.sub_tab === ''
           )
-          .map((element) => (
+          .map((element, i) => (
             <TagFieldBuilder
-              key={element.id + element.name}
+              key={element.attributes?.props?.name || i}
               {...element}
               handleOnChange={handleOnChange}
               inputValue={formData}
