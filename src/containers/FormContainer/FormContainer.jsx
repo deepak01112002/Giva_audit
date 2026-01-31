@@ -90,7 +90,7 @@ class FormContainer extends Component {
         submitFormData: submitFormData,
         StoreCode: location.state.store_code,
         storeName: location.state.store_name,
-        activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
+        activeSubTab: this.props?.tabSubmitdata?.last_sub_tab || subtab?.[this.state.activeFormIndex]?.[0],
       });
 
 
@@ -105,6 +105,7 @@ class FormContainer extends Component {
         this.setState({
           activeFormIndex: index,
           activeFormId: tabs[this.props?.tabSubmitdata?.last_tab_index + 1]?.id ?? tabs[0]?.id,
+          activeSubTab: this.props?.tabSubmitdata?.last_sub_tab || subtab?.[index]?.[0] || "",
           _id: this.props?.tabSubmitdata?._id,
         },
           () => {
@@ -151,11 +152,12 @@ class FormContainer extends Component {
     }
 
     // Handle subtab reset when activeFormIndex changes
-    if (prevState.activeFormIndex !== this.state.activeFormIndex) {
-      this.setState({
-        activeSubTab: subtab?.[this.state.activeFormIndex]?.[0] || "",
-      });
-    }
+    // Removed because it was resetting subtab even on initial restore
+    // if (prevState.activeFormIndex !== this.state.activeFormIndex) {
+    //   this.setState({
+    //     activeSubTab: subtab?.[this.state.activeFormIndex]?.[0] || "",
+    //   });
+    // }
   }
 
   handleOnChange = async (val, name, type, event) => {
@@ -233,15 +235,22 @@ class FormContainer extends Component {
   };
 
   handleChange = (event, newValue) => {
-    const { tabs } = this.props.form_data;
+    const { tabs, subtab } = this.props.form_data;
     const index = tabs.findIndex((tab) => tab.id === newValue);
     this.setState({
       activeFormId: newValue,
       activeFormIndex: index >= 0 ? index : this.state.activeFormIndex,
+      activeSubTab: subtab?.[index]?.[0] || "",
+    }, () => {
+      this.handleOnSubmit(null, false);
     });
   };
   handleSubTabChange = (event, newValue) => {
-    this.setState({ activeSubTab: newValue });
+    this.setState({
+      activeSubTab: newValue,
+    }, () => {
+      this.handleOnSubmit(null, false);
+    });
   };
 
   getAnswerSheet = (data) => {
@@ -259,29 +268,43 @@ class FormContainer extends Component {
     return answerSheet;
   };
 
-  handleOnSubmit = async (e) => {
+  handleOnSubmit = async (e, shouldIncrement = true) => {
     // handler
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth', });
+    if (e && e.preventDefault) e.preventDefault();
 
     const { tabs, subtab } = this.props.form_data;
+    const { activeFormIndex, activeSubTab } = this.state;
 
     let user = isAuth();
 
+    let nextActiveSubTab = activeSubTab;
+    let nextActiveFormId = this.state.activeFormId;
+    let nextActiveFormIndex = activeFormIndex;
+    let isLastForm = false;
 
-    if (subtab && subtab[this.state.activeFormIndex]?.length > 0) {
-      const index = subtab[this.state.activeFormIndex].indexOf(this.state.activeSubTab);
-      if (index !== subtab[this.state.activeFormIndex].length - 1) {
-        this.setState({ activeSubTab: subtab[this.state.activeFormIndex][index + 1], });
-        return;
+    if (shouldIncrement) {
+      let isLastSubTab = true;
+      if (subtab && subtab[activeFormIndex]?.length > 0) {
+        const index = subtab[activeFormIndex].indexOf(activeSubTab);
+        if (index !== subtab[activeFormIndex].length - 1) {
+          nextActiveSubTab = subtab[activeFormIndex][index + 1];
+          isLastSubTab = false;
+        }
+      }
+
+      if (isLastSubTab) {
+        const nextIndex = activeFormIndex + 1;
+        if (nextIndex < tabs.length) {
+          nextActiveFormIndex = nextIndex;
+          nextActiveFormId = tabs[nextIndex]?.id;
+          nextActiveSubTab = subtab?.[nextIndex]?.[0] || "";
+        } else {
+          isLastForm = true;
+        }
       }
     }
 
-    const nextIndex = this.state.activeFormIndex + 1;
     this.setState({
-      activeSubTab: nextIndex < tabs.length ? (subtab?.[nextIndex]?.[0] || "") : this.state.activeSubTab,
-      activeFormId: nextIndex < tabs.length ? tabs[nextIndex]?.id : this.state.activeFormId,
-      activeFormIndex: nextIndex < tabs.length ? nextIndex : this.state.activeFormIndex,
       formDataSubmitting: true,
     });
 
@@ -331,6 +354,7 @@ class FormContainer extends Component {
         all_tabs_submitted: tabs.length - 1 > activeFormIndex ? false : true,
         last_tab_submitted: activeFormId,
         last_tab_index: activeFormIndex,
+        last_sub_tab: this.state.activeSubTab,
       };
 
       // Add user-specific fields
@@ -366,14 +390,26 @@ class FormContainer extends Component {
             });
           }
 
-          setTimeout(() => {
+          if (shouldIncrement) {
+            window.scrollTo({ top: 0, behavior: 'smooth', });
+            if (isLastForm) {
+              setTimeout(() => {
+                this.setState({ formDataSubmitting: false });
+                this.props.navigate('/store');
+              }, 1500);
+            } else {
+              this.setState({
+                activeSubTab: nextActiveSubTab,
+                activeFormId: nextActiveFormId,
+                activeFormIndex: nextActiveFormIndex,
+                formDataSubmitting: false,
+              });
+            }
+          } else {
             this.setState({
               formDataSubmitting: false,
             });
-            if (!(tabs.length > this.state.activeFormIndex)) {
-              this.props.navigate('/store');
-            }
-          }, 3000);
+          }
         } else {
           this.setState({
             formDataSubmitting: false,
@@ -384,19 +420,30 @@ class FormContainer extends Component {
       } else {
         response = await this.props.updateFormData(builderData);
         if (response.payload.status === 200) {
-
-          setTimeout(() => {
+          if (shouldIncrement) {
+            window.scrollTo({ top: 0, behavior: 'smooth', });
+            if (isLastForm) {
+              setTimeout(() => {
+                this.setState({
+                  formDataSubmitting: false,
+                  snackBarOpen: true,
+                  snackbarMsg: 'Form submitted successfully',
+                });
+                this.props.navigate('/admin');
+              }, 1500);
+            } else {
+              this.setState({
+                activeSubTab: nextActiveSubTab,
+                activeFormId: nextActiveFormId,
+                activeFormIndex: nextActiveFormIndex,
+                formDataSubmitting: false,
+              });
+            }
+          } else {
             this.setState({
               formDataSubmitting: false,
             });
-            if (!(tabs.length > this.state.activeFormIndex)) {
-              this.setState({
-                snackBarOpen: true,
-                snackbarMsg: 'Form submitted successfully',
-              });
-              this.props.navigate('/admin');
-            }
-          }, 3000);
+          }
         } else {
           this.setState({
             formDataSubmitting: false,
@@ -427,9 +474,11 @@ class FormContainer extends Component {
       }
     }
     if (this.state.activeFormIndex > 0) {
+      const prevIndex = this.state.activeFormIndex - 1;
       this.setState({
-        activeFormId: tabs[this.state.activeFormIndex - 1].id,
-        activeFormIndex: this.state.activeFormIndex - 1,
+        activeFormId: tabs[prevIndex].id,
+        activeFormIndex: prevIndex,
+        activeSubTab: subtab?.[prevIndex]?.[0] || "",
       });
     }
   };
