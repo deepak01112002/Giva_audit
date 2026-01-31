@@ -139,19 +139,22 @@ class FormContainer extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { form_data } = this.props;
     const { tabs, subtab } = form_data;
-    if (prevProps.tabSubmitdata !== this.props.tabSubmitdata) {
-      let index = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1) ? 0 : this.props?.tabSubmitdata?.last_tab_index + 1;
-      if (index >= subtab.length) index = 0;
+
+    // Sync data from server when it changes
+    if (prevProps.tabSubmitdata !== this.props.tabSubmitdata && this.props.tabSubmitdata) {
+      const currentSubmitFormData = JSON.parse(JSON.stringify(this.state.submitFormData));
+      this.prefillData(currentSubmitFormData, tabs);
+
       this.setState({
-        activeFormIndex: index,
-        activeFormId: index < tabs.length ? tabs[index]?.id : tabs[0]?.id,
-        _id: this.props?.tabSubmitdata?._id,
+        _id: this.props.tabSubmitdata?._id || this.state._id
       });
     }
+
+    // Handle subtab reset when activeFormIndex changes
     if (prevState.activeFormIndex !== this.state.activeFormIndex) {
       this.setState({
-        activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
-      })
+        activeSubTab: subtab?.[this.state.activeFormIndex]?.[0] || "",
+      });
     }
   }
 
@@ -230,7 +233,12 @@ class FormContainer extends Component {
   };
 
   handleChange = (event, newValue) => {
-    this.setState({ activeFormId: newValue });
+    const { tabs } = this.props.form_data;
+    const index = tabs.findIndex((tab) => tab.id === newValue);
+    this.setState({
+      activeFormId: newValue,
+      activeFormIndex: index >= 0 ? index : this.state.activeFormIndex,
+    });
   };
   handleSubTabChange = (event, newValue) => {
     this.setState({ activeSubTab: newValue });
@@ -269,10 +277,11 @@ class FormContainer extends Component {
       }
     }
 
+    const nextIndex = this.state.activeFormIndex + 1;
     this.setState({
-      activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
-      activeFormId: tabs[this.state.activeFormIndex + 1]?.id,
-      activeFormIndex: this.state.activeFormIndex + 1,
+      activeSubTab: nextIndex < tabs.length ? (subtab?.[nextIndex]?.[0] || "") : this.state.activeSubTab,
+      activeFormId: nextIndex < tabs.length ? tabs[nextIndex]?.id : this.state.activeFormId,
+      activeFormIndex: nextIndex < tabs.length ? nextIndex : this.state.activeFormIndex,
       formDataSubmitting: true,
     });
 
@@ -422,28 +431,6 @@ class FormContainer extends Component {
         activeFormId: tabs[this.state.activeFormIndex - 1].id,
         activeFormIndex: this.state.activeFormIndex - 1,
       });
-      setTimeout(() => {
-        const updatedFormData = { ...this.state.submitFormData }; // Create a shallow copy of submitFormData
-
-        this.props?.tabSubmitdata?.multitab_data?.[
-          this.state.activeFormIndex
-        ]?.questionnarie?.forEach((val) => {
-          if (
-            val?.label_key &&
-            updatedFormData[this.state.activeFormId]?.[val.label_key] &&
-            val.answer !== undefined
-          ) {
-            // Update the answer in the copied state
-            updatedFormData[this.state.activeFormId][val.label_key] = {
-              ...updatedFormData[this.state.activeFormId][val.label_key],
-              answer: val.answer,
-            };
-          }
-        });
-
-        // Update the state with the modified object
-        this.setState({ submitFormData: updatedFormData });
-      }, 500);
     }
   };
 
@@ -490,13 +477,17 @@ class FormContainer extends Component {
                     }}
                   >
                     {tabs?.map((item, i) => {
+                      const lastSubmittedIndex = this.props.tabSubmitdata?.last_tab_index;
+                      const progressIndex = isNaN(lastSubmittedIndex + 1) ? 0 : lastSubmittedIndex + 1;
+                      const isTabDisabled = i > progressIndex;
+
                       return (
                         <Tab
                           value={item?.id}
                           label={item?.label}
                           wrapped
                           key={i}
-                          disabled={item?.id != this.state.activeFormId}
+                          disabled={isTabDisabled}
                         />
                       );
                     })}
