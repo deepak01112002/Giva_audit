@@ -55,14 +55,14 @@ export default function Category(props) {
             label="Compaign"
             labelId="demo-select-small-label"
             placeholder="Select"
-            value={selectedCampaign.id}
+            value={selectedCampaign?.id ?? ''}
             onChange={(e) => {
               handleCampaingChange(e.target.value, 'selectedCampaign');
             }}
           >
             {getAllCampaign?.length > 0
-              ? getAllCampaign.map((item, i) => {
-                  return <MenuItem value={i}>{item.name}</MenuItem>;
+              ? getAllCampaign.map((item) => {
+                  return <MenuItem key={item._id} value={item._id}>{item.name}</MenuItem>;
                 })
               : null}
           </Select>

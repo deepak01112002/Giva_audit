@@ -28,6 +28,20 @@ export default class InternalAdminContainer extends Component {
     this.props.getCities();
   }
 
+  componentDidUpdate(prevProps) {
+    // When campaign list first loads, set default to last option and apply filter
+    const campaignData = this.props.compaignList?.data ?? [];
+    const hasCampaigns = campaignData.length > 0;
+    const hadNoCampaigns = !(prevProps.compaignList?.data?.length > 0);
+    if (hasCampaigns && hadNoCampaigns) {
+      const lastCampaign = campaignData[campaignData.length - 1];
+      const newDates = { ...this.state.selectedDates, campaign_id: lastCampaign._id };
+      this.setState({ selectedDates: newDates }, () => {
+        this.handleFilter();
+      });
+    }
+  }
+
   handleOnViewClick = async (payload) => {
     await this.props.setFormCreds(payload);
     this.props.navigate('/admin/result');

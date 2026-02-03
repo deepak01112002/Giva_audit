@@ -81,23 +81,36 @@ class FormContainer extends Component {
       const dynamicKey = Object.keys(submitFormData)[0];
       let campaignIds = getCookie('campaingIds');
       let campaignIdsParsed = JSON.parse(campaignIds);
-      console.log('location.state', submitFormData[dynamicKey].store_code, location?.state?.store_code)
-      submitFormData[dynamicKey]['store_name']['answer'] = location?.state?.store_name;
-      // submitFormData[dynamicKey]['store_code'] = {}
-      // submitFormData[dynamicKey]['store_code']['answer'] = location?.state?.store_code;
+      const storeNameFromLocation = this.props.location?.state?.store_name ?? '';
+      const storeCodeFromLocation = this.props.location?.state?.store_code ?? '';
+
+      // Find Store Name field key from form content (API may use 'store_name' or 'Store Name' etc.)
+      const formFields = form_data?.formContent?.[dynamicKey] ?? [];
+      const storeNameField = formFields.find((f) => f.label === 'Store Name');
+      const storeNameKey = storeNameField?.attributes?.props?.name ?? 'store_name';
+      const storeCodeField = formFields.find((f) => f.label === 'Store Code');
+      const storeCodeKey = storeCodeField?.attributes?.props?.name ?? 'store_code';
+
+      if (submitFormData[dynamicKey]?.[storeNameKey] && storeNameFromLocation) {
+        submitFormData[dynamicKey][storeNameKey].answer = storeNameFromLocation;
+      }
+      if (submitFormData[dynamicKey]?.[storeCodeKey] && storeCodeFromLocation) {
+        submitFormData[dynamicKey][storeCodeKey].answer = storeCodeFromLocation;
+      }
 
       this.setState({
         submitFormData: submitFormData,
-        StoreCode: location.state.store_code,
-        storeName: location.state.store_name,
+        StoreCode: storeCodeFromLocation,
+        storeName: storeNameFromLocation,
         activeSubTab: this.props?.tabSubmitdata?.last_sub_tab || subtab?.[this.state.activeFormIndex]?.[0],
       });
 
-
-      await this.props.fetchSubmittedData({
-        campaign_id: campaignIdsParsed?.campaign_id,
-        store_code: location.state.store_code,
-      });
+      if (storeCodeFromLocation) {
+        await this.props.fetchSubmittedData({
+          campaign_id: campaignIdsParsed?.campaign_id,
+          store_code: storeCodeFromLocation,
+        });
+      }
 
       if (this.props?.tabSubmitdata?.last_tab_index) {
         let index = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1) ? 0 : this.props?.tabSubmitdata?.last_tab_index + 1;
@@ -122,11 +135,18 @@ class FormContainer extends Component {
       if (val?.questionnarie) {
         val.questionnarie.forEach((q) => {
           if (q?.label_key) {
+            const existingAnswer = submitFormData[tabs[i]?.id]?.[q.label_key]?.answer;
+            const normalizedKey = (q.label_key ?? '').toLowerCase().replace(/\s+/g, '_');
+            const isStoreField = normalizedKey === 'store_name' || normalizedKey === 'store_code';
+            // Preserve prefilled store_name/store_code from location.state when API value is empty
+            const answer = isStoreField && (existingAnswer?.trim?.() ?? '') !== '' && !(q.answer?.trim?.() ?? '')
+              ? existingAnswer
+              : q.answer;
             submitFormData[tabs[i]?.id] = {
               ...submitFormData[tabs[i]?.id],
               [q.label_key]: {
                 ...submitFormData[tabs[i]?.id]?.[q.label_key],
-                answer: q.answer,
+                answer,
                 marks: q?.marks,
               },
             };
