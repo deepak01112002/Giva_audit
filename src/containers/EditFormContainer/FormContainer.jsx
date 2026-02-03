@@ -61,11 +61,12 @@ class FormContainer extends Component {
       });
 
       const { form_data } = this.props;
-      const { tabs } = form_data;
+      const { tabs, subtab } = form_data;
 
       if (tabs?.length > 0 && this.state.activeFormId == '') {
         this.setState({
           activeFormId: tabs[0].id,
+          activeSubTab: subtab?.[0]?.[0] || '',
           submitFormData:
             this.props.formID !== undefined && this.props.formID != ''
               ? this.props.fetchSubmitData
@@ -78,6 +79,8 @@ class FormContainer extends Component {
   async handleInitialSubmitFormData() {
     const { form_data, location } = this.props;
     const { tabs, subtab } = form_data;
+    const storeCodeFromLocation = location?.state?.store_code ?? '';
+    const storeNameFromLocation = location?.state?.store_name ?? '';
 
     try {
       let submitFormData = JSON.parse(
@@ -86,38 +89,43 @@ class FormContainer extends Component {
       const dynamicKey = Object.keys(submitFormData)[0];
       let campaignIds = getCookie('campaingIds');
       let campaignIdsParsed = JSON.parse(campaignIds);
-      console.log(
-        'location.state',
-        submitFormData[dynamicKey].store_code,
-        location?.state?.store_code
-      );
-      submitFormData[dynamicKey]['store_name']['answer'] =
-        location?.state?.store_name;
-      // submitFormData[dynamicKey]['store_code'] = {}
-      // submitFormData[dynamicKey]['store_code']['answer'] = location?.state?.store_code;
+
+      if (submitFormData[dynamicKey]?.store_name) {
+        submitFormData[dynamicKey].store_name.answer = storeNameFromLocation;
+      }
+
+      const tabSubtabList = subtab?.[this.state.activeFormIndex];
+      const lastSubTab = this.props?.tabSubmitdata?.last_sub_tab;
+      const validSubTab = tabSubtabList?.includes(lastSubTab) ? lastSubTab : null;
+      const initialActiveSubTab = validSubTab || tabSubtabList?.[0] || '';
 
       this.setState({
         submitFormData: submitFormData,
-        StoreCode: location.state.store_code,
-        storeName: location.state.store_name,
-        activeSubTab: this.props?.tabSubmitdata?.last_sub_tab || subtab?.[this.state.activeFormIndex]?.[0] || "",
+        StoreCode: storeCodeFromLocation,
+        storeName: storeNameFromLocation,
+        activeSubTab: initialActiveSubTab,
       });
 
-      await this.props.fetchSubmittedData({
-        campaign_id: campaignIdsParsed?.campaign_id,
-        store_code: location.state.store_code,
-      });
+      if (storeCodeFromLocation) {
+        await this.props.fetchSubmittedData({
+          campaign_id: campaignIdsParsed?.campaign_id,
+          store_code: storeCodeFromLocation,
+        });
+      }
 
-      if (this.props?.tabSubmitdata?.last_tab_index) {
+      if (this.props?.tabSubmitdata?.last_tab_index !== undefined) {
         let index = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1)
           ? 0
           : this.props?.tabSubmitdata?.last_tab_index + 1;
-        if (index >= subtab.length) index = 0;
+        if (index >= subtab?.length) index = 0;
+        const tabIndex = Math.min(index, (tabs?.length ?? 1) - 1);
+        const tabSubtabList = subtab?.[tabIndex];
+        const lastSubTab = this.props?.tabSubmitdata?.last_sub_tab;
+        const validSubTab = tabSubtabList?.includes(lastSubTab) ? lastSubTab : null;
         this.setState({
-          activeFormIndex: index,
-          activeFormId:
-            tabs[this.props?.tabSubmitdata?.last_tab_index + 1]?.id ??
-            tabs[0]?.id,
+          activeFormIndex: tabIndex,
+          activeFormId: tabs[tabIndex]?.id ?? tabs[0]?.id,
+          activeSubTab: validSubTab || tabSubtabList?.[0] || '',
           _id: this.props?.tabSubmitdata?._id,
         });
       }
@@ -154,27 +162,30 @@ class FormContainer extends Component {
     const { form_data } = this.props;
     const { tabs, subtab } = form_data;
     console.log('this.props.tabSubmitdata', tabs);
-    if (prevProps.tabSubmitdata !== this.props.tabSubmitdata) {
+    if (prevProps.tabSubmitdata !== this.props.tabSubmitdata && this.props.tabSubmitdata) {
       let index = isNaN(this.props?.tabSubmitdata?.last_tab_index + 1)
         ? 0
         : this.props?.tabSubmitdata?.last_tab_index + 1;
-      if (index >= subtab.length) index = 0;
+      if (index >= (subtab?.length ?? 0)) index = 0;
+      const tabIndex = Math.min(index, (tabs?.length ?? 1) - 1);
+      const tabSubtabList = subtab?.[tabIndex];
+      const lastSubTab = this.props.tabSubmitdata?.last_sub_tab;
+      const validSubTab = tabSubtabList?.includes(lastSubTab) ? lastSubTab : null;
       this.setState({
-        activeFormIndex: index,
-        activeFormId: index < tabs.length ? tabs[index]?.id : tabs[0]?.id,
+        activeFormIndex: tabIndex,
+        activeFormId: tabIndex < tabs?.length ? tabs[tabIndex]?.id : tabs?.[0]?.id,
+        activeSubTab: validSubTab || tabSubtabList?.[0] || '',
         _id: this.props?.tabSubmitdata?._id,
       });
-
-
-
-      console.log('this.state.submitFormData', this.state.submitFormData);
     }
-    // Handle subtab reset when activeFormIndex changes
-    // if (prevState.activeFormIndex !== this.state.activeFormIndex) {
-    //   this.setState({
-    //     activeSubTab: subtab?.[this.state.activeFormIndex]?.[0],
-    //   });
-    // }
+    // When activeFormIndex changes (e.g. user clicks another tab), sync activeSubTab to that tab's first sub-tab
+    if (prevState.activeFormIndex !== this.state.activeFormIndex && subtab?.[this.state.activeFormIndex]?.length > 0) {
+      const currentSubTab = this.state.activeSubTab;
+      const validForTab = subtab[this.state.activeFormIndex].includes(currentSubTab);
+      if (!validForTab) {
+        this.setState({ activeSubTab: subtab[this.state.activeFormIndex][0] });
+      }
+    }
     ///
   }
 
@@ -603,13 +614,17 @@ class FormContainer extends Component {
                     }}
                   >
                     {tabs?.map((item, i) => {
+                      const lastSubmittedIndex = this.props.tabSubmitdata?.last_tab_index;
+                      const progressIndex = isNaN(lastSubmittedIndex + 1) ? 0 : lastSubmittedIndex + 1;
+                      const isTabDisabled = i > progressIndex;
+
                       return (
                         <Tab
                           value={item?.id}
                           label={item?.label}
                           wrapped
                           key={i}
-                          disabled={item?.id != this.state.activeFormId}
+                          disabled={isTabDisabled}
                         />
                       );
                     })}

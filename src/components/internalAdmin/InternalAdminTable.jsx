@@ -41,6 +41,7 @@ export default function InternalAdminTable({
   handleApproveOnClick,
   regionList,
   citiesList,
+  selectedDates,
   // statesList,
   handleRegionChange,
   // handleStatesChange,
@@ -301,13 +302,14 @@ export default function InternalAdminTable({
               label="Compaign"
               labelId="demo-select-small-label"
               placeholder="Select"
+              value={selectedDates?.campaign_id ?? ''}
               onChange={(item) => {
                 handleCampaignChange(item.target.value);
               }}
             >
               {compaignList?.length > 0
-                ? compaignList.map((item, i) => {
-                    return <MenuItem value={item._id}>{item.name}</MenuItem>;
+                ? compaignList.map((item) => {
+                    return <MenuItem key={item._id} value={item._id}>{item.name}</MenuItem>;
                   })
                 : null}
             </Select>
@@ -319,9 +321,10 @@ export default function InternalAdminTable({
             <Select
               sx={{ marginRight: 0 }}
               size="big"
-              label="Compaign"
+              label="Region"
               labelId="demo-select-small-label"
               placeholder="Select"
+              value={selectedDates?.region ?? ''}
               onChange={(item) => {
                 handleRegionChange(item.target.value);
               }}
@@ -340,9 +343,10 @@ export default function InternalAdminTable({
             <Select
               sx={{ marginRight: 0 }}
               size="big"
-              label="Compaign"
+              label="City"
               labelId="demo-select-small-label"
               placeholder="Select"
+              value={selectedDates?.city ?? ''}
               onChange={(item) => {
                 handleCitiesChange(item.target.value);
               }}

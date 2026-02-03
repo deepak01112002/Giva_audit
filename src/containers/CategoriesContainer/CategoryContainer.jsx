@@ -16,15 +16,29 @@ class CategoryContainer extends Component {
     this.props.getCompaign();
     this.props.getStoreData();
   }
-  handleCampaingChange = (index,campaign) => {
-    const {name,_id} =this.props.compaignList?.data[index]
- 
-    
-    let stateValues = this.state;
-    stateValues[campaign] = { name: name, id: _id };
+
+  componentDidUpdate(prevProps) {
+    // When campaign list first loads, set default filter to the last option
+    const campaignData = this.props.compaignList?.data;
+    const hasCampaigns = campaignData?.length > 0;
+    const hadNoCampaigns = !prevProps.compaignList?.data?.length;
+    if (hasCampaigns && hadNoCampaigns) {
+      const lastIndex = campaignData.length - 1;
+      this.handleCampaingChange(lastIndex, 'selectedCampaign');
+    }
+  }
+
+  handleCampaingChange = (value, campaign) => {
+    // value can be index (number) or _id (string) from MenuItem
+    const campaignData = this.props.compaignList?.data ?? [];
+    const item = typeof value === 'number' ? campaignData[value] : campaignData.find((c) => c._id === value);
+    if (!item) return;
+    const { name, _id } = item;
+
+    let stateValues = { ...this.state };
+    stateValues[campaign] = { name, id: _id };
     this.setState(stateValues);
-    setCookie('campaingIds',JSON.stringify({ campaign_name: name, campaign_id: _id }))
-   
+    setCookie('campaingIds', JSON.stringify({ campaign_name: name, campaign_id: _id }));
     this.props.setSelectedCampaignIds({ campaign_name: name, campaign_id: _id });
   };
   handleStoreSelection = (store) => {

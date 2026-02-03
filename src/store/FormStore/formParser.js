@@ -257,9 +257,7 @@ export const parseData = async (res) => {
   return {
     formContent,
     tabs,
-    subtab: multiFormData.map((val)=>(
-      val.subtab
-    )),
+    subtab: multiFormData.map((val) => Array.isArray(val.subtab) ? val.subtab : []),
     answerContent,
     module_code: data["data"][0]["module_code"],
     campaign_id,
