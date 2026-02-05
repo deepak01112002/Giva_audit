@@ -44,58 +44,82 @@ class FormContainer extends Component {
   }
 
   async componentDidMount() {
-    await this.getFormDataApiCall();
-    await this.handleInitialSubmitFormData();
+    const formDataFromApi = await this.getFormDataApiCall();
+    await this.handleInitialSubmitFormData(formDataFromApi);
   }
 
   async getFormDataApiCall() {
     const user = await isAuth();
-    const userData = user['data'];
+    const userData = user?.['data'];
+    if (!userData) return;
 
-    let campaignIds = getCookie('campaingIds');
-    let campaignIdsParsed = JSON.parse(campaignIds);
+    let campaignIdsParsed = null;
+    try {
+      const campaignIds = getCookie('campaingIds');
+      if (campaignIds) campaignIdsParsed = JSON.parse(campaignIds);
+    } catch (_) {}
 
-    if (userData) {
+    const result = await this.props.getFormData({ campaign_id: campaignIdsParsed?.campaign_id });
+    const formData = result?.payload ?? result;
+    if (!formData?.answerContent) return;
 
-      await this.props.getFormData({ campaign_id: campaignIdsParsed?.campaign_id, });
+    const { tabs, answerContent } = formData;
 
-      const { form_data } = this.props;
-      const { tabs } = form_data;
-
-      if (tabs?.length > 0 && this.state.activeFormId == '') {
-        this.setState({
-          activeFormId: tabs[0].id,
-          submitFormData: this.props.formID !== undefined && this.props.formID != '' ? this.props.fetchSubmitData : this.props.form_data.answerContent,
-        });
-      }
+    if (tabs?.length > 0 && this.state.activeFormId == '') {
+      this.setState({
+        activeFormId: tabs[0].id,
+        submitFormData: this.props.formID !== undefined && this.props.formID != '' ? this.props.fetchSubmitData : answerContent,
+      });
     }
+    return formData;
   }
 
-  async handleInitialSubmitFormData() {
-    const { form_data, location } = this.props;
-    const { tabs, subtab } = form_data;
+  async handleInitialSubmitFormData(formDataFromApi) {
+    const { location } = this.props;
+    const form_data = formDataFromApi ?? this.props.form_data;
+    const { tabs = [], subtab = [] } = form_data ?? {};
+
+    if (!form_data?.answerContent) return;
 
     try {
-
-      let submitFormData = JSON.parse(JSON.stringify(this.props.form_data.answerContent));
+      let submitFormData = JSON.parse(JSON.stringify(form_data.answerContent));
       const dynamicKey = Object.keys(submitFormData)[0];
+      if (!dynamicKey) return;
+
       let campaignIds = getCookie('campaingIds');
       let campaignIdsParsed = JSON.parse(campaignIds);
-      const storeNameFromLocation = this.props.location?.state?.store_name ?? '';
-      const storeCodeFromLocation = this.props.location?.state?.store_code ?? '';
+      const storeObj = location?.state;
+      const storeNameFromLocation = storeObj?.store_name ?? storeObj?.storeName ?? '';
+      const storeCodeFromLocation = storeObj?.store_code ?? storeObj?.storeCode ?? '';
 
-      // Find Store Name field key from form content (API may use 'store_name' or 'Store Name' etc.)
-      const formFields = form_data?.formContent?.[dynamicKey] ?? [];
-      const storeNameField = formFields.find((f) => f.label === 'Store Name');
-      const storeNameKey = storeNameField?.attributes?.props?.name ?? 'store_name';
-      const storeCodeField = formFields.find((f) => f.label === 'Store Code');
-      const storeCodeKey = storeCodeField?.attributes?.props?.name ?? 'store_code';
-
-      if (submitFormData[dynamicKey]?.[storeNameKey] && storeNameFromLocation) {
-        submitFormData[dynamicKey][storeNameKey].answer = storeNameFromLocation;
-      }
-      if (submitFormData[dynamicKey]?.[storeCodeKey] && storeCodeFromLocation) {
-        submitFormData[dynamicKey][storeCodeKey].answer = storeCodeFromLocation;
+      // Prefill store name/code from location.state – find correct key per tab (API may use 'store_name', 'Store Name', etc.)
+      if (storeNameFromLocation || storeCodeFromLocation) {
+        Object.keys(submitFormData).forEach((tabId) => {
+          const formFieldsForTab = form_data?.formContent?.[tabId] ?? [];
+          const storeNameField = formFieldsForTab.find((f) => f.label === 'Store Name');
+          const storeCodeField = formFieldsForTab.find((f) => f.label === 'Store Code');
+          const storeNameKey = storeNameField?.attributes?.props?.name ?? 'store_name';
+          const storeCodeKey = storeCodeField?.attributes?.props?.name ?? 'store_code';
+          if (storeNameFromLocation && submitFormData[tabId]?.[storeNameKey]) {
+            submitFormData[tabId][storeNameKey].answer = storeNameFromLocation;
+          }
+          if (storeCodeFromLocation && submitFormData[tabId]?.[storeCodeKey]) {
+            submitFormData[tabId][storeCodeKey].answer = storeCodeFromLocation;
+          }
+          // Fallback: set common key names in case form uses different casing/spacing
+          const storeNameKeys = [storeNameKey, 'store_name', 'Store Name'].filter(Boolean);
+          const storeCodeKeys = [storeCodeKey, 'store_code', 'Store Code'].filter(Boolean);
+          storeNameKeys.forEach((key) => {
+            if (submitFormData[tabId]?.[key] && storeNameFromLocation) {
+              submitFormData[tabId][key].answer = storeNameFromLocation;
+            }
+          });
+          storeCodeKeys.forEach((key) => {
+            if (submitFormData[tabId]?.[key] && storeCodeFromLocation) {
+              submitFormData[tabId][key].answer = storeCodeFromLocation;
+            }
+          });
+        });
       }
 
       this.setState({
@@ -161,12 +185,12 @@ class FormContainer extends Component {
     const { form_data } = this.props;
     const { tabs, subtab } = form_data;
 
-    // Sync data from server when it changes
-    if (prevProps.tabSubmitdata !== this.props.tabSubmitdata && this.props.tabSubmitdata) {
+    // Sync data from server when it changes (preserve store name/code from location state)
+    if (prevProps.tabSubmitdata !== this.props.tabSubmitdata && this.props.tabSubmitdata && tabs?.length) {
       const currentSubmitFormData = JSON.parse(JSON.stringify(this.state.submitFormData));
       this.prefillData(currentSubmitFormData, tabs);
-
       this.setState({
+        submitFormData: currentSubmitFormData,
         _id: this.props.tabSubmitdata?._id || this.state._id
       });
     }
@@ -503,10 +527,39 @@ class FormContainer extends Component {
     }
   };
 
+  getFormDataWithStorePrefill(activeFormId, submitFormData, formContent) {
+    const base = submitFormData[activeFormId] ?? {};
+    const storeObj = this.props.location?.state;
+    const storeName = storeObj?.store_name ?? storeObj?.storeName ?? '';
+    const storeCode = storeObj?.store_code ?? storeObj?.storeCode ?? '';
+    if (!storeName && !storeCode) return base;
+
+    const merged = { ...base };
+    const setIfEmpty = (key, value) => {
+      const current = merged[key]?.answer?.trim?.() ?? '';
+      if (!current && value) {
+        merged[key] = { ...(merged[key] || {}), answer: value };
+      }
+    };
+    const fields = formContent?.[activeFormId] ?? [];
+    fields.forEach((f) => {
+      const key = f?.attributes?.props?.name;
+      if (!key) return;
+      const label = (f?.label ?? '').toLowerCase().trim();
+      if (label === 'store name') setIfEmpty(key, storeName);
+      if (label === 'store code') setIfEmpty(key, storeCode);
+    });
+    ['store_name', 'Store Name', 'store_code', 'Store Code'].forEach((key) => {
+      if (key === 'store_name' || key === 'Store Name') setIfEmpty(key, storeName);
+      if (key === 'store_code' || key === 'Store Code') setIfEmpty(key, storeCode);
+    });
+    return merged;
+  }
+
   render() {
     const { activeFormId, activeFormIndex, submitFormData } = this.state;
     const { formDataLoading, form_data, fetchSubmitDataLoading, defaultFormDataLoading, } = this.props;
-    const { tabs, formContent, subtab } = form_data;
+    const { tabs, formContent, subtab } = form_data ?? {};
 
     if (formDataLoading) {
       return (
@@ -522,7 +575,6 @@ class FormContainer extends Component {
         </>
       );
     }
-    console.log('this.state.activeFormIndex ', this.props.form_data.tabs?.length, this.state.activeFormIndex)
     return (
       <>
         <Stack>
@@ -597,11 +649,11 @@ class FormContainer extends Component {
                   handleOnSubmit={this.handleOnSubmit}
                   handleOnPrev={this.handleOnPrev}
                   handleOnChange={this.handleOnChange}
-                  formContent={formContent[activeFormId]}
-                  formData={submitFormData[activeFormId] ?? {}}
+                  formContent={formContent?.[activeFormId]}
+                  formData={this.getFormDataWithStorePrefill(activeFormId, submitFormData, formContent)}
                   isNextValid={
                     this.state.activeFormIndex <
-                    this.props.form_data.tabs.length - 1
+                    (this.props.form_data?.tabs?.length ?? 1) - 1
                   }
                   selectedSubTab={this.state.activeSubTab}
                 />
