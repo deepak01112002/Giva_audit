@@ -23,7 +23,15 @@ export default function ResultsTable({ item }) {
   };
 
   function isImage(url) {
-    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/i.test(url);
+  }
+
+  function resolveImgSrc(v) {
+    if (!v) return '';
+    // Already a full URL — return as-is
+    if (v.startsWith('http://') || v.startsWith('https://')) return v;
+    // Relative filename — prefix with base URL
+    return imgBaseUrl + v;
   }
 
   const columns = [
@@ -44,8 +52,9 @@ export default function ResultsTable({ item }) {
           return (
             <>
               <img
-                src={imgBaseUrl + v}
-                style={{ width: "150px", height: "100px" }}
+                src={resolveImgSrc(v)}
+                alt="answer"
+                style={{ width: "150px", height: "100px", objectFit: "contain" }}
               />
             </>
           );
