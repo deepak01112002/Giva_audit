@@ -8,6 +8,7 @@ import {
   Font,
 } from '@react-pdf/renderer';
 import { getAttributeByScore } from '../utils/colors';
+import { imgBaseUrl } from '../helpers/constants';
 let client_code = 'samsung';
 
 let clientConfiguration = {
@@ -115,20 +116,26 @@ Font.registerHyphenationCallback((word) => {
 });
 
 const isImage = (url) => {
-  return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+  return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/i.test(url);
 };
+
 function isURL(str) {
-  // Regular expression pattern for URL validation
-  // var pattern = /^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:www\.)?(?:[^\s.]+\.\S{2}|localhost[\:?\d]*)\S*$/;
   var pattern =
     /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
   return pattern.test(str);
 }
 
+// Returns the correct image src — handles full URLs and relative filenames
+function resolveImgSrc(value) {
+  if (!value) return '';
+  if (value.startsWith('http://') || value.startsWith('https://')) return value;
+  return imgBaseUrl + value;
+}
+
 function Answer(props) {
   const { answer } = props;
   if (isImage(answer)) {
-    return <Image style={styles.questionnarieImage} src={answer} />;
+    return <Image style={styles.questionnarieImage} src={resolveImgSrc(answer)} />;
   } else if (isURL(answer)) {
     return (
       <Text break style={styles.questionnarieBox}>
@@ -301,10 +308,10 @@ const Report = (props) => {
           </View>
           {data.audit_details && data.audit_details.length > 0
             ? data?.audit_details.map((item, i) => (
-                <AudiTextetails item={item} key={i} index={i} />
-              ))
+              <AudiTextetails item={item} key={i} index={i} />
+            ))
             : data.audit_details && Object.keys(data.audit_details).length > 0
-            ? Object.keys(data.audit_details).map((itemKey, i) => (
+              ? Object.keys(data.audit_details).map((itemKey, i) => (
                 <AudiTextetails
                   key={i}
                   index={i}
@@ -314,7 +321,7 @@ const Report = (props) => {
                   }}
                 />
               ))
-            : null}
+              : null}
         </View>
 
         {/* over all expireince  */}
@@ -408,54 +415,54 @@ const Report = (props) => {
               </View>
               <View>
                 {data.category_percentages &&
-                data.category_percentages.length > 0
+                  data.category_percentages.length > 0
                   ? data.category_percentages.map((item, i) => (
+                    <View
+                      wrap={false}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        backgroundColor: i % 2 == 0 ? '#f2f2f2' : 'white',
+                        minHeight: '28px',
+                        paddingTop: '2px',
+                        paddingBottom: '2px',
+                      }}
+                      key={i}
+                    >
+                      <Text style={styles.questionnarieBox}>{i + 1}</Text>
+                      <Text style={styles.questionnarieBox}>
+                        {item.category_name}
+                      </Text>
                       <View
-                        wrap={false}
                         style={{
+                          ...styles.questionnarieBox,
                           display: 'flex',
                           flexDirection: 'row',
-                          justifyContent: 'space-between',
                           alignItems: 'center',
-                          backgroundColor: i % 2 == 0 ? '#f2f2f2' : 'white',
-                          minHeight: '28px',
-                          paddingTop: '2px',
-                          paddingBottom: '2px',
+                          paddingTop: '6px',
+                          paddingBottom: '6px',
                         }}
-                        key={i}
                       >
-                        <Text style={styles.questionnarieBox}>{i + 1}</Text>
-                        <Text style={styles.questionnarieBox}>
-                          {item.category_name}
-                        </Text>
-                        <View
+                        <Text
                           style={{
-                            ...styles.questionnarieBox,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            paddingTop: '6px',
-                            paddingBottom: '6px',
+                            padding: 0,
+                            margin: 0,
+                            marginRight: '5px',
                           }}
                         >
-                          <Text
-                            style={{
-                              padding: 0,
-                              margin: 0,
-                              marginRight: '5px',
-                            }}
-                          >
-                            {Math.round(item.category_percentage)}%
-                          </Text>
+                          {Math.round(item.category_percentage)}%
+                        </Text>
 
-                          <ProgressBar
-                            progress={Math.round(item.category_percentage)}
-                            text={false}
-                            small={true}
-                          />
-                        </View>
+                        <ProgressBar
+                          progress={Math.round(item.category_percentage)}
+                          text={false}
+                          small={true}
+                        />
                       </View>
-                    ))
+                    </View>
+                  ))
                   : null}
               </View>
             </View>
@@ -477,7 +484,7 @@ const Report = (props) => {
                 borderColor: getAttributeByScore(
                   (categoryResult.marks_scored /
                     categoryResult.category_marks) *
-                    100
+                  100
                 ),
               }}
             >
@@ -486,7 +493,7 @@ const Report = (props) => {
                   backgroundColor: getAttributeByScore(
                     (categoryResult.marks_scored /
                       categoryResult.category_marks) *
-                      100,
+                    100,
                     'background'
                   ),
                   textTransform: 'capitalize',
@@ -497,7 +504,7 @@ const Report = (props) => {
                   color: getAttributeByScore(
                     (categoryResult.marks_scored /
                       categoryResult.category_marks) *
-                      100
+                    100
                   ),
                 }}
               >

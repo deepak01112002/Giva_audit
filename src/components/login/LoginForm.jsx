@@ -14,7 +14,7 @@ const validateLoginForm = yup.object().shape({
 });
 
 const LoginFormComponent = (props) => {
-  const { submitOtp, loading  } = props;
+  const { submitOtp, loading } = props;
   const initialValues = {
     username: "",
     password: "",
@@ -24,10 +24,10 @@ const LoginFormComponent = (props) => {
     submitOtp(values);
   };
   return (
-    <div 
-    style={{
-      backgroundColor: "#F5F5F5",
-     }}
+    <div
+      style={{
+        backgroundColor: "#F5F5F5",
+      }}
     >
       <Formik
         initialValues={initialValues}
@@ -85,11 +85,10 @@ const LoginFormComponent = (props) => {
                   onChange={handleChange("username")}
                   onBlur={handleBlur("username")}
                   value={values.username}
-                  error={!touched.username && Boolean(errors.username)}
-                  helperText={!touched.username && errors.username}
-
+                  error={Boolean(props.serverErrorMessage) || (touched.username && Boolean(errors.username))}
+                  helperText={props.serverErrorMessage || (touched.username && errors.username)}
                 />
-                 <Input
+                <Input
                   type="password"
                   fullWidth
                   placeholder="Enter Password"
@@ -99,14 +98,14 @@ const LoginFormComponent = (props) => {
                   onChange={handleChange("password")}
                   onBlur={handleBlur("password")}
                   value={values.password}
-                  error={!touched.password && Boolean(errors.password)}
-                  helperText={!touched.password && errors.password}
+                  error={touched.password && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
 
                   onKeyPress={(e) => {
                     if (e.key === "Enter") {
-                   
+
                       handleSubmit();
-                     
+
                     }
                   }}
 
@@ -125,9 +124,9 @@ const LoginFormComponent = (props) => {
                     },
                   }}
                 >
-                  Login 
+                  Login
                 </Button>
-               
+
               </Stack>
             </Container>
           </>
