@@ -357,7 +357,7 @@ const Report = (props) => {
 							<View style={{ backgroundColor: '#e6e7e8', padding: '5px' }}>
 								<Text>Audit Summary</Text>
 							</View>
-							<View style={styles.tableHeader}>
+                            <View wrap={false} style={styles.tableHeader}>
 								<Text style={styles.tableTitle}>#</Text>
 								<Text style={styles.tableTitle}>Section</Text>
 								<Text style={styles.tableTitle}>Score</Text>
@@ -367,12 +367,17 @@ const Report = (props) => {
                                     ? data.category_percentages.map((item, i) => (
                                             <View
                                                 wrap={false}
+<<<<<<< HEAD
+=======
+                                                minPresenceAhead={96}
+>>>>>>> 071aa7b10991107c209f4e58bb3e880e802a12ba
                                                 style={{
                                                     display: 'flex',
                                                     flexDirection: 'row',
                                                     justifyContent: 'space-between',
                                                     alignItems: 'center',
                                                     backgroundColor: i % 2 == 0 ? '#f2f2f2' : 'white',
+<<<<<<< HEAD
                                                     minHeight: '28px',
                                                     paddingTop: '2px',
                                                     paddingBottom: '2px',
@@ -399,16 +404,40 @@ const Report = (props) => {
 													>
 														{Math.round(item.category_percentage)}%
 													</Text>
+=======
+                                                }}
+                                            >
+                                                <Text wrap={false} style={styles.questionnarieBox}>{i + 1}</Text>
+                                                <Text wrap={false} style={styles.questionnarieBox}>{item.category_name}</Text>
+                                                <View
+                                                    wrap={false}
+                                                    style={{
+                                                        ...styles.questionnarieBox,
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                    }}
+                                                >
+                                                    <Text
+                                                        wrap={false}
+                                                        style={{
+                                                            padding: 0,
+                                                            margin: 0,
+                                                            marginRight: '5px',
+                                                        }}
+                                                    >
+                                                        {Math.round(item.category_percentage)}%
+                                                    </Text>
+>>>>>>> 071aa7b10991107c209f4e58bb3e880e802a12ba
 
-													<ProgressBar
-														progress={Math.round(item.category_percentage)}
-														text={false}
-														small={true}
-													/>
-												</View>
-											</View>
-									  ))
-									: null}
+                                                    <ProgressBar
+                                                        progress={Math.round(item.category_percentage)}
+                                                        text={false}
+                                                        small={true}
+                                                    />
+                                                </View>
+                                            </View>
+                                      ))
+                                    : null}
 							</View>
 						</View>
 					</View>
