@@ -237,12 +237,35 @@ class FormContainer extends Component {
       }
       let buildFormData = JSON.parse(JSON.stringify(currentFormData));
       if (type === 'image') {
-        if (val && val[0]) {
-          buildFormData[this.state.activeFormId][name]['imageData'] = URL.createObjectURL(new Blob([val[0]]));
-          let formData = new FormData();
-          formData.append('file', val[0]);
-          const imageResponse = await this.props.uploadFile(formData);
-          buildFormData[this.state.activeFormId][name]['answer'] = imageResponse.payload.data.data.result.file.filename;
+        if (val && val.length > 0) {
+          this.setState({ formDataSubmitting: true });
+          try {
+            const filesArray = Array.from(val);
+            const localUrls = filesArray.map(file => URL.createObjectURL(file));
+            buildFormData[this.state.activeFormId][name]['imageData'] = localUrls.join(',');
+            
+            this.setState({ submitFormData: buildFormData });
+
+            const uploadPromises = filesArray.map(async (file) => {
+              let formData = new FormData();
+              formData.append('file', file);
+              const response = await this.props.uploadFile(formData);
+              return response.payload.data.data.result.file.filename;
+            });
+
+            const filenames = await Promise.all(uploadPromises);
+            let updatedFormData = JSON.parse(JSON.stringify(this.state.submitFormData));
+            updatedFormData[this.state.activeFormId][name]['answer'] = filenames.join(',');
+            
+            this.setState({
+              submitFormData: updatedFormData,
+              formDataSubmitting: false
+            });
+          } catch (uploadError) {
+            console.error("Upload error:", uploadError);
+            this.setState({ formDataSubmitting: false });
+          }
+          return;
         } else {
           // Handle image removal
           buildFormData[this.state.activeFormId][name]['imageData'] = "";

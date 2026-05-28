@@ -1,5 +1,6 @@
 import React from "react";
 import Box from "../../common/Box";
+import { imgBaseUrl } from "../../helpers/constants";
 
 export default function MDropzoneDialog({
   handleOnChange,
@@ -7,54 +8,70 @@ export default function MDropzoneDialog({
   value,
   imageValue
 }) {
-  const [imgUrl, setImgUrl] = React.useState("");
+  const [imgUrls, setImgUrls] = React.useState([]);
 
   const onChange = (val) => {
-    let reader = new FileReader();
-
-    reader.onload = function (e) {
-      setImgUrl(e.target.result);
-    };
-
-    reader.readAsDataURL(val.target.files[0]);
+    if (val.target.files && val.target.files.length > 0) {
+      const files = Array.from(val.target.files);
+      const urls = files.map(file => URL.createObjectURL(file));
+      setImgUrls(urls);
+    } else {
+      setImgUrls([]);
+    }
     handleOnChange(val);
   };
 
-  const imgReader = (val) => {
-    let res = ''
-    // let reader = new FileReader();
-    // reader.onload = function (e) {
-    //   res = e.target.result;
-    // };
-    // reader.readAsDataURL(val.target.files[0]);
-    if(val){
-
-    return  URL.createObjectURL( new Blob([val[0]]))
-    }else{
-      return ''
+  const getImagesToPreview = () => {
+    if (imgUrls.length > 0) {
+      return imgUrls;
     }
-  }
+    const valToUse = imageValue || value;
+    if (valToUse) {
+      if (typeof valToUse === 'string') {
+        return valToUse.split(',').map(p => p.trim()).filter(Boolean).map(val => {
+          if (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('blob:')) {
+            return val;
+          }
+          return imgBaseUrl + val;
+        });
+      } else if (Array.isArray(valToUse)) {
+        return valToUse;
+      }
+    }
+    return [];
+  };
+
+  const previewImages = getImagesToPreview();
 
   return (
     <div>
-      {/* <DropzoneArea /> */}
-      {imgUrl || value ? (
+      {previewImages.length > 0 ? (
         <Box
           sx={{
-            border: "1px solid #c7c7c7",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "10px",
             marginTop: "20px",
             marginBottom: "20px",
-            display: "flex",
-            padding: "10px",
-            borderRadius: "7px",
-            // paddingBottom: "9px",
-            justifyContent: "center",
-            alignItems: "center",
-            width: '200px',
-            height: '100px'
           }}
         >
-          <img src={imageValue ? imageValue : value} height="100%" width="100%"  />
+          {previewImages.map((src, idx) => (
+            <Box
+              key={idx}
+              sx={{
+                border: "1px solid #c7c7c7",
+                display: "flex",
+                padding: "5px",
+                borderRadius: "7px",
+                justifyContent: "center",
+                alignItems: "center",
+                width: '100px',
+                height: '100px'
+              }}
+            >
+              <img src={src} height="100%" width="100%" style={{ objectFit: 'contain' }} />
+            </Box>
+          ))}
         </Box>
       ) : null}
       <Box
@@ -67,7 +84,7 @@ export default function MDropzoneDialog({
           paddingBottom: "9px",
         }}
       >
-        <input onChange={onChange} type="file" />
+        <input onChange={onChange} type="file" multiple />
       </Box>
     </div>
   );

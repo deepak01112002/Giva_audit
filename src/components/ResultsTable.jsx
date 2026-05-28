@@ -23,13 +23,15 @@ export default function ResultsTable({ item }) {
   };
 
   function isImage(url) {
-    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/i.test(url);
+    if (!url || typeof url !== 'string') return false;
+    const parts = url.split(',').map(p => p.trim()).filter(Boolean);
+    return parts.length > 0 && parts.every(part => /\.(jpg|jpeg|png|webp|avif|gif|svg)(\?.*)?$/i.test(part));
   }
 
   function resolveImgSrc(v) {
     if (!v) return '';
     // Already a full URL — return as-is
-    if (v.startsWith('http://') || v.startsWith('https://')) return v;
+    if (v.startsWith('http://') || v.startsWith('https://') || v.startsWith('blob:')) return v;
     // Relative filename — prefix with base URL
     return imgBaseUrl + v;
   }
@@ -49,14 +51,18 @@ export default function ResultsTable({ item }) {
       headerName: "Answer",
       valueGetter: (v, d, i) => {
         if (isImage(v)) {
+          const imgs = v.split(',').map(p => p.trim()).filter(Boolean);
           return (
-            <>
-              <img
-                src={resolveImgSrc(v)}
-                alt="answer"
-                style={{ width: "150px", height: "100px", objectFit: "contain" }}
-              />
-            </>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              {imgs.map((img, idx) => (
+                <img
+                  key={idx}
+                  src={resolveImgSrc(img)}
+                  alt="answer"
+                  style={{ width: "150px", height: "100px", objectFit: "contain" }}
+                />
+              ))}
+            </Box>
           );
         }
         return (

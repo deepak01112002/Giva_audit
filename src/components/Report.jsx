@@ -116,7 +116,9 @@ Font.registerHyphenationCallback((word) => {
 });
 
 const isImage = (url) => {
-  return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/i.test(url);
+  if (!url || typeof url !== 'string') return false;
+  const parts = url.split(',').map(p => p.trim()).filter(Boolean);
+  return parts.length > 0 && parts.every(part => /\.(jpg|jpeg|png|webp|avif|gif|svg)(\?.*)?$/i.test(part));
 };
 
 function isURL(str) {
@@ -128,14 +130,21 @@ function isURL(str) {
 // Returns the correct image src — handles full URLs and relative filenames
 function resolveImgSrc(value) {
   if (!value) return '';
-  if (value.startsWith('http://') || value.startsWith('https://')) return value;
+  if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('blob:')) return value;
   return imgBaseUrl + value;
 }
 
 function Answer(props) {
   const { answer } = props;
   if (isImage(answer)) {
-    return <Image style={styles.questionnarieImage} src={resolveImgSrc(answer)} />;
+    const imgs = answer.split(',').map(p => p.trim()).filter(Boolean);
+    return (
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 5 }}>
+        {imgs.map((img, idx) => (
+          <Image key={idx} style={styles.questionnarieImage} src={resolveImgSrc(img)} />
+        ))}
+      </View>
+    );
   } else if (isURL(answer)) {
     return (
       <Text break style={styles.questionnarieBox}>

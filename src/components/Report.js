@@ -100,8 +100,19 @@ Font.registerHyphenationCallback((word) => {
 });
 
 const isImage = (url) => {
-	return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+	if (!url || typeof url !== 'string') return false;
+	const parts = url.split(',').map(p => p.trim()).filter(Boolean);
+	return parts.length > 0 && parts.every(part => /\.(jpg|jpeg|png|webp|avif|gif|svg)(\?.*)?$/i.test(part));
 };
+
+const imgBaseUrl = 'https://product.infield.co.in:8092/api/docs/getmyfile/';
+
+function resolveImgSrc(value) {
+	if (!value) return '';
+	if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('blob:')) return value;
+	return imgBaseUrl + value;
+}
+
 function isURL(str) {
 	// Regular expression pattern for URL validation
 	// var pattern = /^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:www\.)?(?:[^\s.]+\.\S{2}|localhost[\:?\d]*)\S*$/;
@@ -112,7 +123,14 @@ function isURL(str) {
 function Answer(props) {
 	const { answer } = props;
 	if (isImage(answer)) {
-		return <Image style={styles.questionnarieImage} src={answer} />;
+		const imgs = answer.split(',').map(p => p.trim()).filter(Boolean);
+		return (
+			<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 5 }}>
+				{imgs.map((img, idx) => (
+					<Image key={idx} style={styles.questionnarieImage} src={resolveImgSrc(img)} />
+				))}
+			</View>
+		);
 	} else if (isURL(answer)) {
 		return (
 			<Text break style={styles.questionnarieBox}>
@@ -367,44 +385,13 @@ const Report = (props) => {
                                     ? data.category_percentages.map((item, i) => (
                                             <View
                                                 wrap={false}
-<<<<<<< HEAD
-=======
                                                 minPresenceAhead={96}
->>>>>>> 071aa7b10991107c209f4e58bb3e880e802a12ba
                                                 style={{
                                                     display: 'flex',
                                                     flexDirection: 'row',
                                                     justifyContent: 'space-between',
                                                     alignItems: 'center',
                                                     backgroundColor: i % 2 == 0 ? '#f2f2f2' : 'white',
-<<<<<<< HEAD
-                                                    minHeight: '28px',
-                                                    paddingTop: '2px',
-                                                    paddingBottom: '2px',
-                                                }}
-                                            >
-												<Text style={styles.questionnarieBox}>{i + 1}</Text>
-												<Text style={styles.questionnarieBox}>{item.category_name}</Text>
-												<View
-													style={{
-														...styles.questionnarieBox,
-														display: 'flex',
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        paddingTop: '6px',
-                                                        paddingBottom: '6px',
-													}}
-												>
-													<Text
-														style={{
-															padding: 0,
-															margin: 0,
-															marginRight: '5px',
-														}}
-													>
-														{Math.round(item.category_percentage)}%
-													</Text>
-=======
                                                 }}
                                             >
                                                 <Text wrap={false} style={styles.questionnarieBox}>{i + 1}</Text>
@@ -427,7 +414,6 @@ const Report = (props) => {
                                                     >
                                                         {Math.round(item.category_percentage)}%
                                                     </Text>
->>>>>>> 071aa7b10991107c209f4e58bb3e880e802a12ba
 
                                                     <ProgressBar
                                                         progress={Math.round(item.category_percentage)}
