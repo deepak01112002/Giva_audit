@@ -4,7 +4,8 @@ import React, { Component } from "react";
 import Stack from "../../common/Stack";
 import withNavigate from "../../routes/withNavigate";
 import { pdf } from "@react-pdf/renderer";
-import Report from "../../components/Report";
+import Report from "../../components/Report.jsx";
+import { prefetchImages } from "../../components/Report.jsx";
 import Result from "../../components/Result";
 
 class ResultContainer extends Component {
@@ -42,8 +43,9 @@ class ResultContainer extends Component {
 
     this.setState({ generatingPdf: true });
     try {
+      const imageMap = await prefetchImages(dataToUse);
       const store_name = dataToUse.audit_details?.["Store Name"] || "document";
-      const blob = await pdf(<Report data={dataToUse} />).toBlob();
+      const blob = await pdf(<Report data={dataToUse} imageMap={imageMap} />).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;

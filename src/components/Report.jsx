@@ -105,8 +105,8 @@ const styles = StyleSheet.create({
   },
   questionnarieImage: {
     flex: 1,
-    width: '100px',
-    height: '100px',
+    width: 100,
+    height: 100,
     objectFit: 'contain',
   },
 });
@@ -127,22 +127,98 @@ function isURL(str) {
   return pattern.test(str);
 }
 
-// Returns the correct image src — handles full URLs and relative filenames
+// Returns the correct image src for @react-pdf/renderer
 function resolveImgSrc(value) {
   if (!value) return '';
   if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('blob:')) return value;
+  if (value.startsWith('/')) {
+    return window.location.origin + value;
+  }
   return imgBaseUrl + value;
 }
 
+// Pre-fetch all images in pdfData, resize them, and convert to base64 data URLs
+export async function prefetchImages(pdfData) {
+  const imageMap = {};
+  const urls = new Set();
+
+  // Collect all image URLs from categories_result questionnaires
+  if (pdfData?.categories_result) {
+    for (const cat of pdfData.categories_result) {
+      if (cat.questionnarie) {
+        for (const q of cat.questionnarie) {
+          if (q.answer && isImage(q.answer)) {
+            const imgs = q.answer.split(',').map(p => p.trim()).filter(Boolean);
+            for (const img of imgs) {
+              const fullUrl = (img.startsWith('http://') || img.startsWith('https://'))
+                ? img
+                : imgBaseUrl + img;
+              urls.add(fullUrl);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Get username from localStorage (same as axios interceptor does)
+  let username = '';
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    username = user?.data?.username || '';
+  } catch (e) {
+    // ignore
+  }
+
+  // Fetch all images in parallel and convert to base64
+  const entries = await Promise.all(
+    [...urls].map(async (url) => {
+      try {
+        const fetchUrl = username ? `${url}${url.includes('?') ? '&' : '?'}username=${encodeURIComponent(username)}` : url;
+        const resp = await fetch(fetchUrl);
+        if (!resp.ok) return [url, null];
+        const blob = await resp.blob();
+        // Convert blob directly to base64 data URL (preserves original format/dimensions)
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(blob);
+        });
+        return [url, base64];
+      } catch (e) {
+        console.warn('prefetchImages: failed to fetch', url, e);
+        return [url, null];
+      }
+    })
+  );
+
+  for (const [url, base64] of entries) {
+    if (base64) {
+      imageMap[url] = base64;
+    }
+  }
+  return imageMap;
+}
+
 function Answer(props) {
-  const { answer } = props;
+  const { answer, imageMap } = props;
   if (isImage(answer)) {
     const imgs = answer.split(',').map(p => p.trim()).filter(Boolean);
     return (
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 5 }}>
-        {imgs.map((img, idx) => (
-          <Image key={idx} style={styles.questionnarieImage} src={resolveImgSrc(img)} />
-        ))}
+      <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 5 }}>
+        {imgs.map((img, idx) => {
+          const fullUrl = (img.startsWith('http://') || img.startsWith('https://'))
+            ? img
+            : imgBaseUrl + img;
+          // Use base64 from imageMap if available, otherwise fallback to URL
+          const src = (imageMap && imageMap[fullUrl]) ? imageMap[fullUrl] : fullUrl;
+          return (
+            <View key={idx} style={{ width: 100, height: 100 }}>
+              <Image style={{ width: 100, height: 100, objectFit: 'contain' }} src={src} />
+            </View>
+          );
+        })}
       </View>
     );
   } else if (isURL(answer)) {
@@ -259,7 +335,7 @@ const ProgressBar = (props) => {
 };
 
 const Report = (props) => {
-  const { data } = props;
+  const { data, imageMap } = props;
   const overallPercentage = Math.round(data.overall_percentage ?? 0);
   return (
     <Document
@@ -545,7 +621,7 @@ const Report = (props) => {
                           {' '}
                           {questionnarie?.question ?? '-'}
                         </Text>
-                        <Answer answer={questionnarie?.answer} />
+                        <Answer answer={questionnarie?.answer} imageMap={imageMap} />
                         <Text style={styles.questionnarieBox}>
                           {questionnarie?.marks ?? '-'}
                         </Text>
