@@ -378,7 +378,7 @@ class FormContainer extends Component {
 
     if (user) {
       //file upload section
-      var ourData = this.state.submitFormData;
+      var ourData = this.applyStorePrefillToSubmitData(this.state.submitFormData);
       let firstPositionForm = this.props.form_data.tabs[0].id;
       let audit_detail = ourData[firstPositionForm];
       let allStores = this.props.form_data.extraStore;
@@ -401,19 +401,20 @@ class FormContainer extends Component {
 
       user = user['data'];
       // Destructure necessary state and props
-      const { StoreCode, regionform, storeName, city, state, submitFormData, activeFormId, activeFormIndex, _id } = this.state;
+      const { StoreCode, regionform, storeName, city, state, activeFormId, activeFormIndex, _id } = this.state;
       const { formID, module_code } = this.props;
 
       // Get fallback data from `submitFormData`
-      const fallbackData = submitFormData?.[activeFormId] ?? {};
+      const fallbackData = ourData?.[activeFormId] ?? {};
+      const auditDetailData = ourData?.[firstPositionForm] ?? {};
 
       // Builder data common fields
       let builderData = {
         username: user.name,
         multitab_data: this.getAnswerSheet(ourData),
-        store_code: StoreCode?.length > 0 ? StoreCode : fallbackData.store_code?.answer ?? '',
+        store_code: StoreCode?.length > 0 ? StoreCode : auditDetailData.store_code?.answer ?? fallbackData.store_code?.answer ?? '',
         region: regionform?.length > 0 ? regionform : fallbackData.region?.answer ?? '',
-        store_name: storeName?.length > 0 ? storeName : fallbackData.store_name?.answer ?? '',
+        store_name: storeName?.length > 0 ? storeName : auditDetailData.store_name?.answer ?? fallbackData.store_name?.answer ?? '',
         city: city?.length > 0 ? city : fallbackData.city?.answer ?? '',
         state: state?.length > 0 ? state : fallbackData.state?.answer ?? '',
         campaign_id: campaignIdsParsed?.campaign_id,
@@ -577,6 +578,65 @@ class FormContainer extends Component {
       if (key === 'store_code' || key === 'Store Code') setIfEmpty(key, storeCode);
     });
     return merged;
+  }
+
+  applyStorePrefillToSubmitData(submitFormData) {
+    const formData = this.props.form_data ?? {};
+    const firstFormId = formData.tabs?.[0]?.id;
+    if (!firstFormId) return submitFormData;
+
+    const storeObj = this.props.location?.state;
+    const firstTabData = submitFormData?.[firstFormId] ?? {};
+    const storeCode =
+      this.state.StoreCode ||
+      storeObj?.store_code ||
+      storeObj?.storeCode ||
+      firstTabData.store_code?.answer ||
+      firstTabData['Store Code']?.answer ||
+      '';
+    const storeName =
+      this.state.storeName ||
+      storeObj?.store_name ||
+      storeObj?.storeName ||
+      firstTabData.store_name?.answer ||
+      firstTabData['Store Name']?.answer ||
+      '';
+    const storeFromCode = formData.extraStore?.find((store) => {
+      const candidateCode = store?.store_code ?? store?.storeCode;
+      return candidateCode && storeCode && candidateCode === storeCode;
+    });
+    const resolvedStoreName =
+      storeFromCode?.store_name ||
+      storeFromCode?.storeName ||
+      '';
+
+    const finalStoreName = storeName || resolvedStoreName;
+
+    if (!finalStoreName && !storeCode) return submitFormData;
+
+    const hydratedData = JSON.parse(JSON.stringify(submitFormData));
+    hydratedData[firstFormId] = hydratedData[firstFormId] ?? {};
+
+    const setStoreAnswer = (key, value) => {
+      if (!key || !value) return;
+      hydratedData[firstFormId][key] = {
+        ...(hydratedData[firstFormId][key] ?? {}),
+        answer: value,
+      };
+    };
+
+    const fields = formData.formContent?.[firstFormId] ?? [];
+    fields.forEach((field) => {
+      const key = field?.attributes?.props?.name;
+      const label = (field?.label ?? '').toLowerCase().trim();
+      if (label === 'store name') setStoreAnswer(key, finalStoreName);
+      if (label === 'store code') setStoreAnswer(key, storeCode);
+    });
+
+    setStoreAnswer('store_name', finalStoreName);
+    setStoreAnswer('store_code', storeCode);
+
+    return hydratedData;
   }
 
   render() {

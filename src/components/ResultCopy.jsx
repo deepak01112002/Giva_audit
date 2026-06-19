@@ -251,7 +251,7 @@ const ResultCopy = ({ data, mWidth }) => (
                           fontWeight: "bold",
                           marginTop: "1px",
                         }}
-                      >{`${Math.round(data.overall_percentage) ?? 0}%`}</span>
+                      >{`${Number(data.overall_percentage ?? 0).toFixed(2)}%`}</span>
                     </div>
                   </div>
                   <span style={{ fontWeight: "bold" }}>Average</span>
