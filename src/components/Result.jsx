@@ -17,8 +17,10 @@ import AppStyle, { getColorByScore } from "../utils/colors";
 export default function Result(props) {
 
   const {categoryResult, category_percentages, overall_percentage, auditDetails, images} = props;
+  const overallPercentageValue = Number(overall_percentage ?? 0);
+  const overallPercentageDisplay = overallPercentageValue.toFixed(2);
 
-  let auditData = {...auditDetails,overall_experience:overall_percentage};
+  let auditData = {...auditDetails,overall_experience:overallPercentageDisplay};
   const columns = [
     {
       
@@ -199,7 +201,7 @@ export default function Result(props) {
         {/* {category_percentages.map((item) => (
          
         ))} */}
-        <OverallExperience overall_percentage={overall_percentage} />
+        <OverallExperience overall_percentage={overallPercentageValue} />
 
 
         {/* //OverallExperience section */}

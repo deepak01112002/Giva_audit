@@ -5,6 +5,7 @@ import Text from "../common/Text";
 import AppStyle, { getColorByScore } from "../utils/colors";
 
 export default function OverallExperience({ overall_percentage }) {
+  const overallPercentageDisplay = Number(overall_percentage ?? 0).toFixed(2);
   // function color(percent) {
   //   let color = "success";
 
@@ -97,7 +98,7 @@ export default function OverallExperience({ overall_percentage }) {
               variant="body2"
               color="text.secondary"
             >
-              {overall_percentage}%
+              {overallPercentageDisplay}%
             </Text>
           </Box>
         </Grid>

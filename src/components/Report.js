@@ -193,7 +193,7 @@ const AudiTextetails = (props) => {
 	);
 };
 const ProgressBar = (props) => {
-	const { progress, small, text } = props;
+	const { progress, small, text, displayValue } = props;
 	return (
 		<View
 			style={{
@@ -225,7 +225,7 @@ const ProgressBar = (props) => {
 							color: 'white',
 							alignSelf: 'center',
 						}}
-					>{`${progress}%`}</Text>
+					>{`${displayValue ?? progress}%`}</Text>
 				)}
 			</View>
 		</View>
@@ -234,7 +234,8 @@ const ProgressBar = (props) => {
 
 const Report = (props) => {
 	const { data } = props;
-	const overallPercentage = Math.round(data.overall_percentage ?? 0);
+	const overallPercentage = Number(data.overall_percentage ?? 0);
+	const overallPercentageDisplay = overallPercentage.toFixed(2);
 	return (
 		<Document
 			style={{
@@ -328,7 +329,12 @@ const Report = (props) => {
 									flexDirection: 'column',
 								}}
 							>
-								<ProgressBar text={true} progress={overallPercentage} small={false} />
+								<ProgressBar
+									text={true}
+									progress={overallPercentage}
+									displayValue={overallPercentageDisplay}
+									small={false}
+								/>
 								<Text
 									style={{
 										fontSize: '10px',
