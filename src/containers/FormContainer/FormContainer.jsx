@@ -89,8 +89,17 @@ class FormContainer extends Component {
       let campaignIds = getCookie('campaingIds');
       let campaignIdsParsed = JSON.parse(campaignIds);
       const storeObj = location?.state;
-      const storeNameFromLocation = storeObj?.store_name ?? storeObj?.storeName ?? '';
-      const storeCodeFromLocation = storeObj?.store_code ?? storeObj?.storeCode ?? '';
+      const storeCreds = this.props.storeCreds;
+      const storeNameFromLocation =
+        storeObj?.store_name ??
+        storeObj?.storeName ??
+        storeCreds?.storeName ??
+        '';
+      const storeCodeFromLocation =
+        storeObj?.store_code ??
+        storeObj?.storeCode ??
+        storeCreds?.storeCode ??
+        '';
 
       // Prefill store name/code from location.state – find correct key per tab (API may use 'store_name', 'Store Name', etc.)
       if (storeNameFromLocation || storeCodeFromLocation) {
@@ -335,9 +344,53 @@ class FormContainer extends Component {
     return answerSheet;
   };
 
+  getActiveStoreCode = () => {
+    const storeObj = this.props.location?.state;
+    const storeCreds = this.props.storeCreds;
+    const firstFormId = this.props.form_data?.tabs?.[0]?.id;
+    const firstTabData = this.state.submitFormData?.[firstFormId] ?? {};
+    return (
+      this.state.StoreCode ||
+      storeObj?.store_code ||
+      storeObj?.storeCode ||
+      storeCreds?.storeCode ||
+      firstTabData.store_code?.answer ||
+      firstTabData['Store Code']?.answer ||
+      ''
+    ).trim();
+  };
+
+  getActiveStoreName = () => {
+    const storeObj = this.props.location?.state;
+    const storeCreds = this.props.storeCreds;
+    const firstFormId = this.props.form_data?.tabs?.[0]?.id;
+    const firstTabData = this.state.submitFormData?.[firstFormId] ?? {};
+    return (
+      this.state.storeName ||
+      storeObj?.store_name ||
+      storeObj?.storeName ||
+      storeCreds?.storeName ||
+      firstTabData.store_name?.answer ||
+      firstTabData['Store Name']?.answer ||
+      ''
+    ).trim();
+  };
+
   handleOnSubmit = async (e, shouldIncrement = true) => {
     // handler
     if (e && e.preventDefault) e.preventDefault();
+
+    if (shouldIncrement && this.state.activeFormIndex === 0) {
+      const storeCode = this.getActiveStoreCode();
+      const storeName = this.getActiveStoreName();
+      if (!storeCode || !storeName) {
+        this.setState({
+          snackBarOpen: true,
+          snackbarMsg: 'Please select a store code and store name before continuing.',
+        });
+        return;
+      }
+    }
 
     const { tabs, subtab } = this.props.form_data;
     const { activeFormIndex, activeSubTab } = this.state;
@@ -554,8 +607,17 @@ class FormContainer extends Component {
   getFormDataWithStorePrefill(activeFormId, submitFormData, formContent) {
     const base = submitFormData[activeFormId] ?? {};
     const storeObj = this.props.location?.state;
-    const storeName = storeObj?.store_name ?? storeObj?.storeName ?? '';
-    const storeCode = storeObj?.store_code ?? storeObj?.storeCode ?? '';
+    const storeCreds = this.props.storeCreds;
+    const storeName =
+      storeObj?.store_name ??
+      storeObj?.storeName ??
+      storeCreds?.storeName ??
+      '';
+    const storeCode =
+      storeObj?.store_code ??
+      storeObj?.storeCode ??
+      storeCreds?.storeCode ??
+      '';
     if (!storeName && !storeCode) return base;
 
     const merged = { ...base };
@@ -586,11 +648,13 @@ class FormContainer extends Component {
     if (!firstFormId) return submitFormData;
 
     const storeObj = this.props.location?.state;
+    const storeCreds = this.props.storeCreds;
     const firstTabData = submitFormData?.[firstFormId] ?? {};
     const storeCode =
       this.state.StoreCode ||
       storeObj?.store_code ||
       storeObj?.storeCode ||
+      storeCreds?.storeCode ||
       firstTabData.store_code?.answer ||
       firstTabData['Store Code']?.answer ||
       '';
@@ -598,6 +662,7 @@ class FormContainer extends Component {
       this.state.storeName ||
       storeObj?.store_name ||
       storeObj?.storeName ||
+      storeCreds?.storeName ||
       firstTabData.store_name?.answer ||
       firstTabData['Store Name']?.answer ||
       '';
