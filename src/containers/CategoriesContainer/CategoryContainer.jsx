@@ -28,6 +28,28 @@ class CategoryContainer extends Component {
     }
   }
 
+  normalizeSelectedStore = (store) => {
+    if (!store) return null;
+
+    const storeData = this.props.storeData ?? [];
+    const storeCode = (store.store_code ?? store.storeCode ?? '').trim();
+    if (!storeCode) return null;
+
+    const matched =
+      storeData.find(
+        (item) => (item.store_code ?? item.storeCode ?? '').trim() === storeCode
+      ) ?? store;
+
+    const storeName = (matched.store_name ?? matched.storeName ?? '').trim();
+    if (!storeName) return null;
+
+    return {
+      ...matched,
+      store_code: storeCode,
+      store_name: storeName,
+    };
+  };
+
   handleCampaingChange = (value, campaign) => {
     // value can be index (number) or _id (string) from MenuItem
     const campaignData = this.props.compaignList?.data ?? [];
@@ -35,14 +57,23 @@ class CategoryContainer extends Component {
     if (!item) return;
     const { name, _id } = item;
 
-    let stateValues = { ...this.state };
+    let stateValues = { ...this.state, selectedStore: null };
     stateValues[campaign] = { name, id: _id };
     this.setState(stateValues);
     setCookie('campaingIds', JSON.stringify({ campaign_name: name, campaign_id: _id }));
     this.props.setSelectedCampaignIds({ campaign_name: name, campaign_id: _id });
   };
+
   handleStoreSelection = (store) => {
-    this.setState({selectedStore:store})
+    const normalizedStore = this.normalizeSelectedStore(store);
+    this.setState({ selectedStore: normalizedStore });
+
+    if (normalizedStore) {
+      this.props.setStoreCreds({
+        storeName: normalizedStore.store_name,
+        storeCode: normalizedStore.store_code,
+      });
+    }
   };
   handleCategoryChange = (id, name) => {   
     let stateValues = this.state;
@@ -60,7 +91,27 @@ class CategoryContainer extends Component {
   };
 
   onSubmit = () => {
-    this.props.navigate(`/dashboard`,{ state: this.state.selectedStore });
+    const { selectedStore, selectedCampaign } = this.state;
+    const normalizedStore = this.normalizeSelectedStore(selectedStore);
+    if (!normalizedStore?.store_code || !normalizedStore?.store_name) {
+      return;
+    }
+    if (!selectedCampaign?.id) {
+      return;
+    }
+
+    this.props.setStoreCreds({
+      storeName: normalizedStore.store_name,
+      storeCode: normalizedStore.store_code,
+    });
+
+    this.props.navigate(`/dashboard`, {
+      state: {
+        store_code: normalizedStore.store_code,
+        store_name: normalizedStore.store_name,
+        ...normalizedStore,
+      },
+    });
   };
   render() {
     

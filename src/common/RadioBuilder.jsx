@@ -1,7 +1,7 @@
 import React from "react";
 import Select from "./Select";
 import InputLabel from "./InputLabel";
-import { Box } from "@mui/system";
+import Box from "./Box";
 import {
   FormControl,
   FormControlLabel,

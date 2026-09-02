@@ -7,6 +7,7 @@ import {
   setSelectedCampaignIds,
   setSelectedCampaignName,
   setSelectedCategoriesIds,
+  setStoreCreds,
 } from '../../store/FormStore/formSlice';
 import { getCompaign } from '../../store/InternalAdminStore/InternalAdminSlice';
 
@@ -31,6 +32,7 @@ const mapDispatchToProps = (dispatch) =>
       getStoreData: getStoreData,
       setSelectedCampaignIds: setSelectedCampaignIds,
       setSelectedCampaignName: setSelectedCampaignName,
+      setStoreCreds: setStoreCreds,
     },
     dispatch
   );

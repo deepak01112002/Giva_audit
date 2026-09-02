@@ -68,35 +68,37 @@ export default function Category(props) {
           </Select>
         </FormControl>
         <Autocomplete
-          id="auto-select"
+          id="store-code-select"
           autoSelect
           options={storeData}
-          value={selectedStore} 
-          getOptionLabel={(option) => option.store_code || ''} // Display 'store_name' property
+          value={selectedStore}
+          getOptionLabel={(option) => option?.store_code || ''}
+          isOptionEqualToValue={(option, value) =>
+            option?.store_code === value?.store_code
+          }
           onChange={(_, value) => handleStoreSelection(value)}
-          sx={{ width: '500px',  margin: '1rem' }}
+          sx={{ width: '500px', margin: '1rem' }}
           renderInput={(params) => (
-            <TextField {...params} label="Store Code" size="small" />
+            <TextField {...params} label="Store Code" size="small" required />
           )}
         />
 
-        <Autocomplete
-          id="auto-select"
-          autoSelect
-          options={storeData}
-          value={selectedStore} 
+        <TextField
+          label="Store Name"
+          size="small"
+          value={selectedStore?.store_name ?? ''}
+          required
           disabled
-          getOptionLabel={(option) => option.store_name || ''} // Display 'store_name' property
-          onChange={(_, value) => handleStoreSelection(value)}
-          sx={{ width: '500px', margin: '0rem 1rem ' }}
-          renderInput={(params) => (
-            <TextField {...params} label="Store Name" size="small" />
-          )}
+          sx={{ width: '500px', margin: '0rem 1rem' }}
         />
 
         <Button
           onClick={onSubmit}
-          // disabled={selectedCategorary ? false : true}
+          disabled={
+            !selectedStore?.store_code ||
+            !selectedStore?.store_name ||
+            !selectedCampaign?.id
+          }
           sx={{ width: '500px', marginTop: '50px' }}
           size="large"
           variant="contained"

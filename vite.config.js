@@ -4,6 +4,13 @@ import jsconfigPaths from "vite-jsconfig-paths";
 
 export default defineConfig({
   plugins: [react(), jsconfigPaths()],
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: {
+        ".js": "jsx",
+      },
+    },
+  },
   resolve: {
     alias: {
       "@components": "/src/components",
