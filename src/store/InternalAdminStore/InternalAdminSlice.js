@@ -141,7 +141,8 @@ import { fetchSubmittedDataApi } from "store/FormStore/formApi";
 
   const initialState = {
     user_data_list: [],
-    user_data_loading: false,
+    user_data_loading: true,
+    fetchUsersRequestId: null,
 
     pdfData: {},
     pdfDataLoading: false,
@@ -177,14 +178,17 @@ import { fetchSubmittedDataApi } from "store/FormStore/formApi";
     extraReducers: (builder) => {
       builder
         // Fetch Users
-        .addCase(fetchUsers.pending, (state) => {
+        .addCase(fetchUsers.pending, (state, action) => {
           state.user_data_loading = true;
+          state.fetchUsersRequestId = action.meta.requestId;
         })
         .addCase(fetchUsers.fulfilled, (state, action) => {
+          if (action.meta.requestId !== state.fetchUsersRequestId) return;
           state.user_data_list = action.payload;
           state.user_data_loading = false;
         })
-        .addCase(fetchUsers.rejected, (state) => {
+        .addCase(fetchUsers.rejected, (state, action) => {
+          if (action.meta.requestId !== state.fetchUsersRequestId) return;
           state.user_data_loading = false;
         })
   

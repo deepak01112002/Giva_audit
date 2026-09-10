@@ -21,7 +21,6 @@ export default class InternalAdminContainer extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchUsers({ project_code: 'giva' });
     this.props.getCompaign();
     this.props.getRegions();
     this.props.getStates();
@@ -59,7 +58,10 @@ export default class InternalAdminContainer extends Component {
     // console.log('handleOnDeleteClick payload',  this.props)
     if (window.confirm('Are you sure you want to Delete this audit?')) {
       await this.props.delete_audit(payload);
-      this.props.fetchUsers({ project_code: 'audit' });
+      this.props.fetchUsers({
+        ...this.state.selectedDates,
+        project_code: 'audit',
+      });
     }
   };
 
@@ -67,7 +69,10 @@ export default class InternalAdminContainer extends Component {
     // console.log('handleOnDeleteClick payload',  this.props)
     if (window.confirm('Are you sure you want to Approve this audit?')) {
       await this.props.approve_samsung(payload);
-      this.props.fetchUsers({ project_code: 'audit' });
+      this.props.fetchUsers({
+        ...this.state.selectedDates,
+        project_code: 'audit',
+      });
     }
   };
 
