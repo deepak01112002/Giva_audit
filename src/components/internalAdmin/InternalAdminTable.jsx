@@ -16,6 +16,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import RemoveRedEyeIcon  from '@mui/icons-material/RemoveRedEye';
 
 import {
+  CircularProgress,
   FormControl,
   IconButton,
   InputBase,
@@ -388,8 +389,16 @@ export default function InternalAdminTable({
             // paddingTop: "1.2%",
           }}
         >
-          <Button sx={{ height: 50, width: 100 }} onClick={handleFilter}>
-            Filter
+          <Button
+            sx={{ height: 50, width: 100 }}
+            onClick={handleFilter}
+            disabled={userDataLoading}
+          >
+            {userDataLoading ? (
+              <CircularProgress size={22} color="inherit" />
+            ) : (
+              'Filter'
+            )}
           </Button>
         </Box>
       </Stack>
