@@ -8,7 +8,8 @@ const mapStateToProps = (state) => {
     pdfData: state.internalAdmin.pdfData,
     pdfDataLoading: state.internalAdmin.pdfDataLoading,
     userID: state.internalAdmin.userID,
-    formID: state.internalAdmin.formID
+    formID: state.internalAdmin.formID,
+    storeName: state.internalAdmin.storeName
   };
 };
 

@@ -8,6 +8,42 @@ import Report from "../../components/Report.jsx";
 import { prefetchImages } from "../../components/Report.jsx";
 import Result from "../../components/Result";
 
+const STORE_NAME_KEY = "store name";
+const isBlank = (v) => v === undefined || v === null || String(v).trim() === "";
+
+// The generatepdf API sometimes returns an empty "Store Name" in audit_details
+// even though the audit list (fetchUsers) has it. Fill only the blank value,
+// never overwrite a real one, and never mutate the (frozen) redux object.
+const withStoreName = (pdfData, storeName) => {
+  const details = pdfData?.audit_details;
+  if (!details || isBlank(storeName)) return pdfData;
+
+  if (Array.isArray(details)) {
+    let changed = false;
+    const next = details.map((item) => {
+      if (
+        String(item?.key ?? "").trim().toLowerCase() === STORE_NAME_KEY &&
+        isBlank(item?.value)
+      ) {
+        changed = true;
+        return { ...item, value: storeName };
+      }
+      return item;
+    });
+    return changed ? { ...pdfData, audit_details: next } : pdfData;
+  }
+
+  if (typeof details === "object") {
+    const key = Object.keys(details).find(
+      (k) => k.trim().toLowerCase() === STORE_NAME_KEY
+    );
+    if (key && isBlank(details[key])) {
+      return { ...pdfData, audit_details: { ...details, [key]: storeName } };
+    }
+  }
+  return pdfData;
+};
+
 class ResultContainer extends Component {
   constructor(props) {
     super(props);
@@ -35,7 +71,10 @@ class ResultContainer extends Component {
   }
 
   async handleGeneratePdf2(pdfDataArg) {
-    const dataToUse = pdfDataArg || this.props.pdfData;
+    const dataToUse = withStoreName(
+      pdfDataArg || this.props.pdfData,
+      this.props.storeName
+    );
     if (!dataToUse || Object.keys(dataToUse).length === 0) {
       console.error("No data available for PDF generation");
       return;
@@ -44,7 +83,10 @@ class ResultContainer extends Component {
     this.setState({ generatingPdf: true });
     try {
       const imageMap = await prefetchImages(dataToUse);
-      const store_name = dataToUse.audit_details?.["Store Name"] || "document";
+      const store_name =
+        dataToUse.audit_details?.["Store Name"] ||
+        this.props.storeName ||
+        "document";
       const blob = await pdf(<Report data={dataToUse} imageMap={imageMap} />).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -97,7 +139,10 @@ class ResultContainer extends Component {
           <Grid item lg={12} xs={12} md={12}>
             {Object.keys(this.props.pdfData).length > 0 ? (
               <Result
-                auditDetails={this.props.pdfData.audit_details}
+                auditDetails={
+                  withStoreName(this.props.pdfData, this.props.storeName)
+                    .audit_details
+                }
                 categoryResult={this.props.pdfData.categories_result}
                 category_percentages={this.props.pdfData.category_percentages}
                 overall_percentage={this.props.pdfData.overall_percentage ?? 0}
