@@ -242,14 +242,19 @@ import { fetchSubmittedDataApi } from "store/FormStore/formApi";
         .addCase(setFormCreds.pending, (state) => {
           state.userID = "";
           state.formID = "";
+          state.storeName = "";
         })
         .addCase(setFormCreds.fulfilled, (state, action) => {
           state.userID = action.payload.userID;
           state.formID = action.payload.formID;
+          // store name from the audit list row, used as a fallback when the
+          // generatepdf API returns an empty "Store Name"
+          state.storeName = action.payload.storeName ?? "";
         })
         .addCase(setFormCreds.rejected, (state) => {
           state.userID = "";
           state.formID = "";
+          state.storeName = "";
         })
   
         // Fetch Campaigns

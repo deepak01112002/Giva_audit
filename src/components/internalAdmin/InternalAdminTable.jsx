@@ -97,113 +97,116 @@ export default function InternalAdminTable({
       headerName: 'Actions',
 
       valueGetter: (v, d) => {
+        // Only the internal admin can edit / delete / approve.
+        // View + Download PDF are available to every role that can open this page
+        // (previously the whole block was hidden for non-"admin" roles, e.g. "client").
+        const isInternalAdmin = role === Role.internalAdmin;
         return (
           <Stack
             direction="row"
-            justifyContent="space-around"
+            justifyContent="flex-start"
             alignItems="center"
-            spacing={2}
+            spacing={1}
             sx={{
               padding: 1,
               backgroundColor: '#f9f9f9',
               borderRadius: '8px',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+              whiteSpace: 'nowrap',
+              width: 'fit-content',
             }}
           >
-      
-            {role === Role.internalAdmin && (
+            {/* View Icon */}
+            <IconButton
+              size="small"
+              title="View"
+              sx={{ color: '#1976d2', '&:hover': { color: '#1565c0' } }}
+              onClick={() => {
+                handleOnViewClick({
+                  formID: d.formId,
+                  userID: d.username,
+                  storeName: d.Store,
+                });
+              }}
+            >
+              <RemoveRedEyeIcon />
+            </IconButton>
 
-
-              <>
-
-<IconButton
+            {/* Edit Icon */}
+            {isInternalAdmin && (
+              <IconButton
                 size="small"
-                sx={{ color: '#1976d2', '&:hover': { color: '#1565c0' } }}
+                title="Edit"
+                sx={{ color: '#43a047', '&:hover': { color: '#388e3c' } }}
                 onClick={() => {
-                  handleOnViewClick({
+                  onEditClick({
                     formID: d.formId,
                     userID: d.username,
+                    selectedCategorary: d.category_id,
+                    campaign_id: d.campaign_id,
+                    name: d.Campaign,
+                    store_code: d.store_code,
+                    store_name: d.Store,
                   });
                 }}
               >
-                <RemoveRedEyeIcon />
+                <EditIcon />
               </IconButton>
-                {/* Edit Icon */}
-               
-                  <IconButton
-                    size="small"
-                    sx={{ color: '#43a047', '&:hover': { color: '#388e3c' } }}
-                    onClick={() => {
-                      onEditClick({
-                        formID: d.formId,
-                        userID: d.username,
-                        selectedCategorary: d.category_id,
-                        campaign_id: d.campaign_id,
-                        name: d.Campaign,
-                        store_code:d.store_code,
-                        store_name:d.Store
-                      });
-                    }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-          
-      
-                {/* Delete Icon */}
-               
-                  <IconButton
-                    size="small"
-                    sx={{ color: '#e53935', '&:hover': { color: '#c62828' } }}
-                    onClick={() => {
-                      handleOnDeleteClick(d.formId);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-              
-                {/* Download Icon */}
-               
-                  <IconButton
-                    size="small"
-                    sx={{ color: '#ffb300', '&:hover': { color: '#ffa000' } }}
-                    onClick={() => {
-                      handleOnDownlodClick({
-                        formID: d.formId,
-                        userID: d.username,
-                      });
-                    }}
-                  >
-                    <DownloadIcon />
-                  </IconButton>
-          
-      
-                {/* Approve Button */}
-                {d?.audit_status !== 'APPROVED' && (
-                  
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      sx={{
-                        fontWeight: 500,
-                        textTransform: 'capitalize',
-                        borderRadius: '20px',
-                        boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1)',
-                        '&:hover': { backgroundColor: '#1565c0' },
-                      }}
-                      onClick={() => {
-                        handleApproveOnClick(d.formId);
-                      }}
-                    >
-                      Approve
-                    </Button>
-             
-                )}
-              </>
+            )}
+
+            {/* Delete Icon */}
+            {isInternalAdmin && (
+              <IconButton
+                size="small"
+                title="Delete"
+                sx={{ color: '#e53935', '&:hover': { color: '#c62828' } }}
+                onClick={() => {
+                  handleOnDeleteClick(d.formId);
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
+
+            {/* Download PDF Icon */}
+            <IconButton
+              size="small"
+              title="Download PDF"
+              sx={{ color: '#ffb300', '&:hover': { color: '#ffa000' } }}
+              onClick={() => {
+                handleOnDownlodClick({
+                  formID: d.formId,
+                  userID: d.username,
+                  storeName: d.Store,
+                });
+              }}
+            >
+              <DownloadIcon />
+            </IconButton>
+
+            {/* Approve Button */}
+            {isInternalAdmin && d?.audit_status !== 'APPROVED' && (
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                sx={{
+                  fontWeight: 500,
+                  textTransform: 'capitalize',
+                  borderRadius: '20px',
+                  boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1)',
+                  '&:hover': { backgroundColor: '#1565c0' },
+                }}
+                onClick={() => {
+                  handleApproveOnClick(d.formId);
+                }}
+              >
+                Approve
+              </Button>
             )}
           </Stack>
         );
-      }
+      },
       
     },
   ];
