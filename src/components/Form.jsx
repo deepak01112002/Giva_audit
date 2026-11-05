@@ -12,17 +12,24 @@ export default function Form({
   handleOnPrev,
   activeFormId,
   selectedSubTab,
+  hideSubsections = false,
 }) {
   console.log('Form -> formData', formData);
+  // Original subsection filter (kept for reference / admin edit):
+  // formContent?.filter(
+  //   (element) =>
+  //     element.sub_tab === selectedSubTab || element.sub_tab === ''
+  // )
+  const visibleContent = hideSubsections
+    ? formContent
+    : formContent?.filter(
+        (element) =>
+          element.sub_tab === selectedSubTab || element.sub_tab === ''
+      );
   return (
     <>
       <form key={activeFormId} onSubmit={handleOnSubmit.bind(this)}>
-        {formContent
-          ?.filter(
-            (element) =>
-              element.sub_tab === selectedSubTab || element.sub_tab === ''
-          )
-          .map((element, i) => (
+        {visibleContent?.map((element, i) => (
             <TagFieldBuilder
               key={element.attributes?.props?.name || i}
               {...element}

@@ -8,7 +8,7 @@ import { TabContext } from '@mui/lab';
 import { getCookie, isAuth } from '../../helpers/cookies';
 import withNavigate from '../../routes/withNavigate';
 import AppStyle from '../../utils/colors';
-import Role from '../../utils/roles';
+import Role, { isTestPortalUser } from '../../utils/roles';
 import BackdropProgress from '../../common/BackdropProgress';
 import Snackbar from '../../common/Snackbar';
 import getQuestinaire from '../../utils/helper';
@@ -402,17 +402,10 @@ class FormContainer extends Component {
     let nextActiveFormIndex = activeFormIndex;
     let isLastForm = false;
 
+    // Test Portal users: skip subsections, advance by main tab only.
+    // Real users: keep original subtab next-flow.
     if (shouldIncrement) {
-      let isLastSubTab = true;
-      if (subtab && subtab[activeFormIndex]?.length > 0) {
-        const index = subtab[activeFormIndex].indexOf(activeSubTab);
-        if (index !== subtab[activeFormIndex].length - 1) {
-          nextActiveSubTab = subtab[activeFormIndex][index + 1];
-          isLastSubTab = false;
-        }
-      }
-
-      if (isLastSubTab) {
+      if (isTestPortalUser(user)) {
         const nextIndex = activeFormIndex + 1;
         if (nextIndex < tabs.length) {
           nextActiveFormIndex = nextIndex;
@@ -420,6 +413,26 @@ class FormContainer extends Component {
           nextActiveSubTab = subtab?.[nextIndex]?.[0] || "";
         } else {
           isLastForm = true;
+        }
+      } else {
+        let isLastSubTab = true;
+        if (subtab && subtab[activeFormIndex]?.length > 0) {
+          const index = subtab[activeFormIndex].indexOf(activeSubTab);
+          if (index !== subtab[activeFormIndex].length - 1) {
+            nextActiveSubTab = subtab[activeFormIndex][index + 1];
+            isLastSubTab = false;
+          }
+        }
+
+        if (isLastSubTab) {
+          const nextIndex = activeFormIndex + 1;
+          if (nextIndex < tabs.length) {
+            nextActiveFormIndex = nextIndex;
+            nextActiveFormId = tabs[nextIndex]?.id;
+            nextActiveSubTab = subtab?.[nextIndex]?.[0] || "";
+          } else {
+            isLastForm = true;
+          }
         }
       }
     }
@@ -585,7 +598,9 @@ class FormContainer extends Component {
       behavior: 'smooth', // Smooth scrolling effect
     });
     const { tabs, subtab } = this.props.form_data;
-    if (subtab && subtab?.[this.state.activeFormIndex]?.length > 0) {
+    const hideSubsections = isTestPortalUser(isAuth());
+    // Test Portal: previous main tab only. Real users: original subtab prev-flow.
+    if (!hideSubsections && subtab && subtab?.[this.state.activeFormIndex]?.length > 0) {
       const index = subtab[this.state.activeFormIndex].indexOf(this.state.activeSubTab);
       if (index !== 0) {
         this.setState({
@@ -763,7 +778,8 @@ class FormContainer extends Component {
                   </Tabs>
                 </Box>
               </TabContext>
-              {subtab && subtab[activeFormIndex]?.length > 0 && (
+              {/* Subsections bar: hidden only for Test Portal users; real users still see it */}
+              {!isTestPortalUser(isAuth()) && subtab && subtab[activeFormIndex]?.length > 0 && (
                 <TabContext value={this.state.activeSubTab}>
                   <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs
@@ -804,6 +820,7 @@ class FormContainer extends Component {
                     (this.props.form_data?.tabs?.length ?? 1) - 1
                   }
                   selectedSubTab={this.state.activeSubTab}
+                  hideSubsections={isTestPortalUser(isAuth())}
                 />
               ) : null}
             </Container>
